@@ -1,0 +1,27 @@
+{
+  "file_name": "1492004818999.pdf",
+  "file_title": "COMPANIES (ISSUE OF GLOBAL DEPOSITORY RECEIPTS) RULES, 2014",
+  "date_extracted": "2025-05-25",
+  "definitions": [
+    {
+      "term": "Act",
+      "definition": "the Companies Act, 2013 (18 of 2013)",
+      "source": "Rule 2(1)(a)",
+      "references": []
+    },
+    {
+      "term": "Section",
+      "definition": "section of the Act",
+      "source": "Rule 2(1)(b)",
+      "references": [
+        "Act"
+      ]
+    },
+    {
+      "term": "Scheme",
+      "definition": "the Foreign Currency Convertible Bonds and Ordinary Shares (Through Depository Receipt Mechanism) Scheme, 1993 or any modification or re-enactment thereof",
+      "source": "Rule 2(1)(c)",
+      "references": []
+    }
+  ]
+}
