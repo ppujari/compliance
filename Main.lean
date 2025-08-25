@@ -314,7 +314,7 @@ def red_herring_company : Issuer :=
 
 
 -- #eval explain_compliance red_herring_company
-#eval explainAll red_herring_company
+-- #eval explainAll red_herring_company
 
 def main : IO Unit := do
   IO.println (explainAll red_herring_company)
