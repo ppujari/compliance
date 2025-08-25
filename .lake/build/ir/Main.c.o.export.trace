@@ -1,0 +1,15 @@
+{"log":
+ [{"message":
+   ".> /Users/saunakpanda/.elan/toolchains/leanprover--lean4---v4.21.0/bin/clang -c -o /Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/.lake/build/ir/Main.c.o.export /Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/.lake/build/ir/Main.c -I /Users/saunakpanda/.elan/toolchains/leanprover--lean4---v4.21.0/include -fstack-clash-protection -fwrapv -fvisibility=hidden -Wno-unused-command-line-argument --sysroot /Users/saunakpanda/.elan/toolchains/leanprover--lean4---v4.21.0 -nostdinc -isystem /Users/saunakpanda/.elan/toolchains/leanprover--lean4---v4.21.0/include/clang -O3 -DNDEBUG -DLEAN_EXPORTING",
+   "level": "trace"}],
+ "inputs":
+ [["Main:c",
+   [["/Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/.lake/build/ir/Main.c",
+     "9890463536283319353"],
+    ["Lean 4.21.0, commit 6741444a63eec253a7eae7a83f1beb3de015023d",
+     "11123825329739276520"]]],
+  ["Lean 4.21.0, commit 6741444a63eec253a7eae7a83f1beb3de015023d",
+   "11123825329739276520"],
+  ["traceArgs: #[-O3, -DNDEBUG, -DLEAN_EXPORTING]", "13974588697068907418"],
+  ["arm64-apple-darwin23.6.0", "17616366027971700708"]],
+ "depHash": "9000594664425623556"}

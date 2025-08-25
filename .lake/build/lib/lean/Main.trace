@@ -1,0 +1,23 @@
+{"log":
+ [{"message":
+   ".> LEAN_PATH=/Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/.lake/build/lib/lean /Users/saunakpanda/.elan/toolchains/leanprover--lean4---v4.21.0/bin/lean /Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/Main.lean -R /Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance -o /Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/.lake/build/lib/lean/Main.olean -i /Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/.lake/build/lib/lean/Main.ilean -c /Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/.lake/build/ir/Main.c --json",
+   "level": "trace"},
+  {"message":
+   "Main.lean:317:0: \"❌ Not Eligible: some rules failed\\n\\n— Failed —\\n❌ SEBI ICDR 6(1)(b) — Operating profit: ≥ ₹15 cr in each of the last 3 years\\nReason: Operating profit below ₹15 cr in: Year 3\\nSuggested remedy: Demonstrate ≥ ₹15 cr operating profit in each of the last 3 full financial years (restated, consolidated).\\nRef: ICDR 6(1)(b)\\n\\n— Passed —\\n✅ SEBI ICDR 5(1) — No debarments/defaulter/fraudulent/fugitive\\n✅ SEBI ICDR 5(2) — No outstanding convertibles (with ESOP/SAR/MandConv carve-outs)\\n✅ SEBI ICDR 6(1)(a) — Net tangible assets ≥ ₹3 cr; monetary assets ≤ 50% (or committed use) / OSF carve-out\\n✅ SEBI ICDR 6(1)(c) — Net worth: ≥ ₹1 cr in each of the last 3 years\\n✅ SEBI ICDR 6(1)(d) — If name changed within 1 year: ≥50% revenue from new-line activity\\n✅ SEBI ICDR 7(1) — Listing application, demat agreements, promoter holdings fully demat, no partly-paid\"",
+   "level": "info"}],
+ "inputs":
+ [["Main:deps",
+   [["deps",
+     [["compliance/compliance:extraDep", [["@compliance:extraDep", "1723"]]],
+      ["import oleans", "1723"]]],
+    ["libs",
+     [["import dynlibs", "1723"],
+      ["package external libraries", "1723"],
+      ["module dynlibs", "1723"],
+      ["module plugins", "1723"]]]]],
+  ["Lean 4.21.0, commit 6741444a63eec253a7eae7a83f1beb3de015023d",
+   "11123825329739276520"],
+  ["Module.leanArgs: #[]", "1723"],
+  ["/Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/Main.lean",
+   "7685423449497737348"]],
+ "depHash": "4006975344697932347"}
