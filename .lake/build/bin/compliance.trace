@@ -1,0 +1,14 @@
+{"log":
+ [{"message":
+   ".> MACOSX_DEPLOYMENT_TARGET=99.0 /Users/saunakpanda/.elan/toolchains/leanprover--lean4---v4.21.0/bin/clang -o /Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/.lake/build/bin/compliance /Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/.lake/build/ir/Main.c.o.export -L /Users/saunakpanda/.elan/toolchains/leanprover--lean4---v4.21.0/lib/lean --sysroot /Users/saunakpanda/.elan/toolchains/leanprover--lean4---v4.21.0 -L /Users/saunakpanda/.elan/toolchains/leanprover--lean4---v4.21.0/lib -L /Users/saunakpanda/.elan/toolchains/leanprover--lean4---v4.21.0/lib/libc -fuse-ld=lld -lleancpp -lInit -lStd -lLean -lleanrt -lc++ -lLake -lgmp -luv",
+   "level": "trace"}],
+ "inputs":
+ [["linkObjs",
+   [["/Users/saunakpanda/Library/CloudStorage/OneDrive-UniversityOfHouston/Work/Compliance Project/compliance/.lake/build/ir/Main.c.o.export",
+     "8346106802235165420"]]],
+  ["linkLibs", "1723"],
+  ["Lean 4.21.0, commit 6741444a63eec253a7eae7a83f1beb3de015023d",
+   "11123825329739276520"],
+  ["traceArgs: #[]", "1723"],
+  ["arm64-apple-darwin23.6.0", "17616366027971700708"]],
+ "depHash": "12806121414581966083"}
