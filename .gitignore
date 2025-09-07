@@ -1,0 +1,11 @@
+# Lean / Lake
+.lake/
+*.olean
+*.olean-db
+lake-manifest.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
