@@ -1,4 +1,8 @@
+import Lean
+import Lean.Data.Json
+open Lean
 set_option linter.unusedVariables false
+
 
 structure Issuer where
   is_debarred : Bool
@@ -39,6 +43,7 @@ structure Issuer where
   is_bonus_from_free_reserve : Bool
   underlying_held_1y : Bool
   bonus_not_from_revaluation : Bool
+  deriving Repr, ToJson, FromJson
 
   /-- A rule with metadata (for audit/explanations) and a computable check. -/
 structure ComplianceRule where
@@ -56,7 +61,7 @@ structure RuleResult where
   reference : String
   passed    : Bool
   reason?   : Option String     -- present when failed
-  deriving Repr
+  deriving Repr, ToJson, FromJson
 
 /-- Evaluate a single ComplianceRule against an Issuer. -/
 def runRule (i : Issuer) (r : ComplianceRule) : RuleResult :=
@@ -233,26 +238,21 @@ def renderReport (results : List RuleResult) : String :=
   "\n— Failed —\n" ++ (if failed.isEmpty then "(none)\n" else String.intercalate "\n\n" (failed.map showOne)) ++
   "\n\n— Passed —\n" ++ (if passed.isEmpty then "(none)\n" else String.intercalate "\n" (passed.map showOne))
 
+structure Report where
+  eligible : Bool
+  failed   : List RuleResult
+  passed   : List RuleResult
+  deriving Repr, ToJson, FromJson
+
+def buildReport (i : Issuer) : Report :=
+  let results := runAll i
+  let eligible := overallEligible results
+  let (passed, failed) := results.partition (·.passed)
+  { eligible := eligible, failed := failed, passed := passed }
+
 /-- Convenience: run and print. -/
 def explainAll (i : Issuer) : String :=
   renderReport (runAll i)
-
-
--- def eligible_ipo (i : Issuer) : Bool :=
---   ¬i.is_debarred ∧
---   ¬i.has_debarred_directors ∧
---   ¬i.is_fraudulent ∧
---   ¬i.is_fugitive ∧
---   (¬i.has_outstanding_convertibles ∨ i.has_esop_exemption ∨ i.has_sar_exemption ∨ i.has_mandatory_convertibles) ∧
---   (i.net_tangible_assets.all (λ x => x ≥ 30000000) ∧ (i.monetary_asset_ratio ≤ 50 ∨ i.used_monetary_assets) ∨ i.is_offer_for_sale_only) ∧
---   (i.operating_profits.all (λ x => x ≥ 150000000)) ∧
---   (i.net_worths.all (λ x => x ≥ 10000000)) ∧
---   (¬i.changed_name_recently ∨ i.percent_revenue_from_new_name ≥ 50) ∨
---   (i.uses_book_building ∧ i.qib_allocation_done) ∧
---   (i.sr_net_worth ≤ 10000000000 ∧ i.is_tech_firm ∧ i.sr_holder_exec ∧ i.sr_issued_3mo_prior ∧ (2 ≤ i.sr_voting_ratio ∧ i.sr_voting_ratio ≤ 10) ∧ i.sr_class_count = 1 ∧ i.sr_same_face_value) ∧
---   i.applied_to_stock_exchange ∧ i.has_demat_agreement ∧ i.promoter_securities_demat ∧
---   i.no_partly_paid_shares ∧ i.finance_75_percent_done ∧ i.general_corp_purpose_ratio ≤ 25 ∧
---   (i.shares_held_duration_months ≥ 12 ∨ i.is_govt_entity ∨ i.via_merger_scheme ∨ (i.is_bonus_from_free_reserve ∧ i.underlying_held_1y ∧ ¬i.bonus_not_from_revaluation))
 
 def red_herring_company : Issuer :=
 { is_debarred := false,
@@ -294,27 +294,56 @@ def red_herring_company : Issuer :=
   underlying_held_1y := false,
   bonus_not_from_revaluation := true }
 
--- def failure_reasons (i : Issuer) : List String :=
---   []
---   ++ (if i.is_debarred then ["Debarred by SEBI or other regulators"] else [])
---   ++ (if i.has_debarred_directors then ["Promoter or director is debarred"] else [])
---   ++ (if i.operating_profits.length ≠ 3 ∨ ¬i.operating_profits.all (λ x => x ≥ 150000000)
---       then ["Operating profit for 3 years not ≥ ₹15 Cr"] else [])
---   ++ (if i.net_worths.length ≠ 3 ∨ ¬i.net_worths.all (λ x => x ≥ 10000000)
---       then ["Net worth for 3 years not ≥ ₹1 Cr"] else [])
---   ++ (if i.changed_name_recently ∧ i.percent_revenue_from_new_name < 50
---       then ["Changed name recently and <50% revenue from new name"] else [])
+-- def main : IO Unit := do
+--   IO.println (explainAll red_herring_company)
 
--- def explain_compliance (i : Issuer) : String :=
---   if eligible_ipo i then
---     "✅ Eligible: All conditions satisfied"
---   else
---     let fails := failure_reasons i
---     "❌ Not Eligible:\n" ++ String.intercalate "\n" (fails.map (λ r => "❌ " ++ r))
+/-- Parse Issuer JSON from a string or throw a user-friendly IO error. -/
+def parseIssuerJson (s : String) : IO Issuer := do
+  let j ← match Lean.Json.parse s with
+          | Except.ok j      => pure j
+          | Except.error err => throw <| IO.userError s!"Invalid JSON: {err}"
+  match Lean.fromJson? (α := Issuer) j with
+  | Except.ok issuer   => pure issuer
+  | Except.error err   => throw <| IO.userError s!"Invalid Issuer JSON: {err}"
+
+/-- Read entire stdin as text (Lean 4.21). Uses `getLine` in a loop and stops on EOF. -/
+partial def readStdinAll : IO String := do
+  let h ← IO.getStdin
+  let rec loop (acc : String) : IO String := do
+    try
+      let line ← h.getLine        -- throws on EOF
+      loop (acc ++ line)
+    catch _ =>
+      pure acc
+  loop ""
+
+/-- Write Report as compact JSON to file or stdout. -/
+def writeReportJson (rep : Report) (outPath? : Option String) : IO Unit := do
+  let out := (Lean.toJson rep).compress
+  match outPath? with
+  | some p => IO.FS.writeFile p out
+  | none   => IO.println out
 
 
--- #eval explain_compliance red_herring_company
--- #eval explainAll red_herring_company
+def main (args : List String) : IO Unit := do
+  match args with
+  | [] =>
+      let data   ← readStdinAll
+      let issuer ← parseIssuerJson data
+      let rep := buildReport issuer
+      writeReportJson rep none
 
-def main : IO Unit := do
-  IO.println (explainAll red_herring_company)
+  | ["--in", inPath] =>
+      let data   ← IO.FS.readFile inPath
+      let issuer ← parseIssuerJson data
+      let rep := buildReport issuer
+      writeReportJson rep none
+
+  | ["--in", inPath, "--out", outPath] =>
+      let data   ← IO.FS.readFile inPath
+      let issuer ← parseIssuerJson data
+      let rep := buildReport issuer
+      writeReportJson rep (some outPath)
+
+  | _ =>
+      IO.eprintln "Usage:\n  compliance --in <file> [--out <file>]\n  (or) echo '{Issuer JSON}' | compliance"
