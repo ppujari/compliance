@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ComplianceRule",
+  "type": "object",
+  "required": ["rule_id", "domain", "title", "text", "lean_id"],
+  "properties": {
+    "rule_id": { "type": "string" },
+    "domain": { "type": "string" },
+    "title": { "type": "string" },
+    "text": { "type": "string" },
+    "lean_id": { "type": "string" },
+    "category": { "type": "string" },
+    "notes": { "type": "string" },
+
+    "maps_to": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field"],
+        "properties": {
+          "field": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "type_hint": { "type": "string" },
+          "constraints_text": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

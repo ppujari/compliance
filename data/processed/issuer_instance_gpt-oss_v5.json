@@ -1,0 +1,270 @@
+{
+  "issuer_id": "POC_red_herring",
+  "source": "data\\POC\\POC_red_herring.pdf",
+  "fields": {
+    "is_debarred": false,
+    "has_debarred_directors": false,
+    "is_fraudulent": false,
+    "is_fugitive": false,
+    "has_outstanding_convertibles": false,
+    "has_esop_exemption": true,
+    "has_sar_exemption": false,
+    "has_mandatory_convertibles": false,
+    "net_tangible_assets": [
+      10171420000000,
+      12454100000000,
+      14444530000000
+    ],
+    "monetary_asset_ratio": 6,
+    "used_monetary_assets": false,
+    "is_offer_for_sale_only": false,
+    "operating_profits": [
+      1491890000000,
+      2426540000000,
+      2953290000000
+    ],
+    "net_worths": [
+      10436090000000,
+      12802760000000,
+      14936500000000
+    ],
+    "changed_name_recently": false,
+    "percent_revenue_from_new_name": null,
+    "uses_book_building": null,
+    "qib_allocation_done": null,
+    "sr_net_worth": 14936500000000,
+    "is_tech_firm": null,
+    "sr_holder_exec": false,
+    "sr_voting_ratio": null,
+    "sr_class_count": null,
+    "sr_same_face_value": null,
+    "sr_issued_3mo_prior": null,
+    "applied_to_stock_exchange": true,
+    "has_demat_agreement": null,
+    "promoter_securities_demat": true,
+    "no_partly_paid_shares": false,
+    "finance_75_percent_done": null,
+    "general_corp_purpose_ratio": null,
+    "shares_held_duration_months": null,
+    "is_govt_entity": false,
+    "via_merger_scheme": null,
+    "is_bonus_from_free_reserve": null,
+    "bonus_not_from_revaluation": null
+  },
+  "provenance": {
+    "is_debarred": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "has_debarred_directors": {
+      "pages": [
+        2,
+        1
+      ]
+    },
+    "is_fraudulent": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "is_fugitive": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "has_outstanding_convertibles": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "has_esop_exemption": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "has_sar_exemption": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "has_mandatory_convertibles": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "net_tangible_assets": {
+      "pages": [
+        2,
+        1
+      ]
+    },
+    "monetary_asset_ratio": {
+      "pages": [
+        2,
+        1
+      ]
+    },
+    "used_monetary_assets": {
+      "pages": [
+        2,
+        1
+      ]
+    },
+    "is_offer_for_sale_only": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "operating_profits": {
+      "pages": [
+        2,
+        1
+      ]
+    },
+    "net_worths": {
+      "pages": [
+        2,
+        1
+      ]
+    },
+    "changed_name_recently": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "percent_revenue_from_new_name": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "uses_book_building": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "qib_allocation_done": {
+      "pages": [
+        2,
+        1
+      ]
+    },
+    "sr_net_worth": {
+      "pages": [
+        2
+      ]
+    },
+    "is_tech_firm": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "sr_holder_exec": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "sr_voting_ratio": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "sr_class_count": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "sr_same_face_value": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "sr_issued_3mo_prior": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "applied_to_stock_exchange": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "has_demat_agreement": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "promoter_securities_demat": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "no_partly_paid_shares": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "finance_75_percent_done": {
+      "pages": [
+        2
+      ]
+    },
+    "general_corp_purpose_ratio": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "shares_held_duration_months": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "is_govt_entity": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "via_merger_scheme": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "is_bonus_from_free_reserve": {
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "bonus_not_from_revaluation": {
+      "pages": [
+        1,
+        2
+      ]
+    }
+  }
+}

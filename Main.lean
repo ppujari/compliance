@@ -1,7 +1,9 @@
 import Lean
 import Lean.Data.Json
+import GeneratedRules_v2
 open Lean
 set_option linter.unusedVariables false
+
 
 
 structure Issuer where
@@ -327,11 +329,11 @@ def writeReportJson (rep : Report) (outPath? : Option String) : IO Unit := do
 
 def main (args : List String) : IO Unit := do
   match args with
-  | [] =>
-      let data   ← readStdinAll
-      let issuer ← parseIssuerJson data
-      let rep := buildReport issuer
-      writeReportJson rep none
+  -- | [] =>
+  --     let data   ← readStdinAll
+  --     let issuer ← parseIssuerJson data
+  --     let rep := buildReport issuer
+  --     writeReportJson rep none
 
   | ["--in", inPath] =>
       let data   ← IO.FS.readFile inPath

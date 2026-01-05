@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schema/lean_rules_schema.json",
+  "title": "Lean Compliance Rules IR",
+  "description": "Validation schema for an intermediate representation (IR) of Lean ComplianceRule items prior to code generation.",
+  "type": "object",
+  "required": ["namespace", "module_import", "rules"],
+  "properties": {
+    "namespace": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Lean namespace that will contain the generated rules."
+    },
+    "module_import": {
+      "type": "string",
+      "const": "Main",
+      "description": "Lean module to import for Issuer and ComplianceRule definitions."
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "reference"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "reference": {"type": "string", "minLength": 1},
+          "notes": {"type": "string"},
+          "fields_used": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true,
+            "description": "Issuer field names referenced by the check/failReason."
+          },
+          "check_hint": {
+            "type": "string",
+            "description": "Natural-language hint for the Lean predicate (optional)."
+          },
+          "fail_reason_hint": {
+            "type": "string",
+            "description": "Natural-language hint for the failure reason (optional)."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
+
+

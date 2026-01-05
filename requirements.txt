@@ -1,0 +1,32 @@
+# --- Core Python Version ---
+# Python >= 3.11
+
+# --- PDF Parsing ---
+pymupdf==1.24.9           # PDF text extraction (used in extract_rules_pdf.py and llm_extract_rules.py)
+
+# --- LLM Integration ---
+requests==2.32.3          # HTTP client for Ollama local model API calls
+
+# --- JSON & Schema Validation ---
+jsonschema==4.22.0        # Schema validation for rules.jsonl and issuers.jsonl
+jsonlines==4.0.0          # Optional convenience library for JSONL file handling
+
+# --- Data Utilities ---
+tqdm==4.66.4              # Progress bars for large extractions (optional, can be used later)
+numpy==1.26.4             # For numeric utilities (if needed for future issuer data checks)
+
+# --- Lean ↔ Python Bridge ---
+# These are standard library-based (subprocess, json), so no external deps required.
+
+# --- Development / Formatting Tools ---
+black==24.4.2             # Code formatter (optional but recommended)
+flake8==7.1.1             # Linter for scripts
+mypy==1.10.1              # Type checker
+pytest==8.3.2             # Testing (for schema and Lean rule checks)
+
+# --- Optional Local LLM Infrastructure ---
+# Install only if you’re running local models
+ollama==0.1.0             # Python client wrapper for Ollama (optional, can use requests instead)
+
+# --- CLI UX Enhancements ---
+rich==13.7.1              # Pretty CLI output for validation logs (optional)

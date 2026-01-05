@@ -1,0 +1,589 @@
+{
+  "rules": [
+    {
+      "id": "ICDR_4_22",
+      "title": "Exemption for Securities under clause (b), (d) and (e) of sub-regulation (1) of regulation 9 of SAST Regulations, 2011",
+      "reference": "ICDR_4_22",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_5_1_a",
+      "title": "Disqualification: issuer/promoters/directors/selling shareholders debarred",
+      "reference": "ICDR_5_1_a",
+      "remedy": null,
+      "check": "fun i => (i.is_debarred) || (i.has_debarred_directors) || (i.selling_shareholders_debarred)",
+      "failReason": "fun i => if (i.is_debarred) then \"Issuer is debarred.\" else if (i.has_debarred_directors) then \"One or more directors are debarred.\" else if (i.selling_shareholders_debarred) then \"Selling shareholders are debarred.\" else \"No disqualifying debarment found.\",\n    remedy? := some \"Lift the debarment to become eligible.\""
+    },
+    {
+      "id": "ICDR_5_1_b",
+      "title": "Disqualification: promoter/director of another debarred company",
+      "reference": "ICDR_5_1_b",
+      "remedy": null,
+      "check": "fun i => (i.directors.exists (fun d => d.other_debarred_companies.length > 0))",
+      "failReason": "fun i => if (i.directors.exists (fun d => d.other_debarred_companies.length > 0)) then \"One or more directors are associated with a debarred company.\" else \"No disqualifying director-company relationship found.\",\n    remedy? := some \"Remove the association with the debarred company to become eligible.\""
+    },
+    {
+      "id": "ICDR_5_1_c",
+      "title": "Disqualification: wilful defaulter or fraudulent borrower",
+      "reference": "ICDR_5_1_c",
+      "remedy": null,
+      "check": "fun i => (i.is_fraudulent)",
+      "failReason": "fun _ => \"Issuer is fraudulent.\",\n    remedy? := some \"Rectify the fraudulent activities to become eligible.\""
+    },
+    {
+      "id": "ICDR_5_2",
+      "title": "No outstanding convertibles/rights (pre-IPO)",
+      "reference": "ICDR_5_2",
+      "remedy": null,
+      "check": "fun i => !i.has_outstanding_convertibles",
+      "failReason": "fun _ => \"Issuer has outstanding convertibles.\",\n    remedy? := some \"Resolve the outstanding convertibles to become eligible.\""
+    },
+    {
+      "id": "ICDR_6_1_a",
+      "title": "Net tangible assets ≥ ₹3 cr (pre-IPO)",
+      "reference": "ICDR_6_1_a",
+      "remedy": null,
+      "check": "fun i => (i.net_tangible_assets.length == 3) && allGeNat i.net_tangible_assets 30000000",
+      "failReason": "fun i =>\n      let ntaMsg :=\n        if !(lengthIs i.net_tangible_assets 3) then \"Need 3 full-year NTA figures.\"\n        else if !(allGeNat i.net_tangible_assets 30000000) then \"Each year’s net tangible assets must be ≥ ₹3.0 crore.\"\n        else \"\"\n      String.intercalate \" \" ([ntaMsg].filter (· ≠ \"\")),\n    remedy? := some \"Demonstrate ≥ ₹3 cr in each of the last 3 full years.\""
+    },
+    {
+      "id": "ICDR_6_1_b",
+      "title": "Operating profit ≥ ₹15 cr (pre-IPO)",
+      "reference": "ICDR_6_1_b",
+      "remedy": null,
+      "check": "fun i => (lengthIs i.operating_profits 3) && allGeNat i.operating_profits 150000000",
+      "failReason": "fun i =>\n      let fails := i.operating_profits.zipIdx |>.filter (fun (x, idx) => x < 150000000)\n      let years := fails.map (fun (_, idx) => s!\"Year {idx + 1}\")\n      \"Operating profit below ₹15 cr in: \" ++ String.intercalate \", \" years,\n    remedy? := some \"Demonstrate ≥ ₹15 cr operating profit in each of the last 3 full financial years (restated, consolidated).\""
+    },
+    {
+      "id": "ICDR_6_1_c",
+      "title": "Net worth ≥ ₹1 cr (pre-IPO)",
+      "reference": "ICDR_6_1_c",
+      "remedy": null,
+      "check": "fun i => (lengthIs i.net_worths 3) && allGeNat i.net_worths 10000000",
+      "failReason": "fun i =>\n      let fails := i.net_worths.zipIdx |>.filter (fun (x, idx) => x < 10000000)\n      let years := fails.map (fun (_, idx) => s!\"Year {idx + 1}\")\n      \"Net worth below ₹1 cr in: \" ++ String.intercalate \", \" years,\n    remedy? := some \"Increase equity/retained earnings to meet ≥ ₹1 cr in each of the last 3 full years.\""
+    },
+    {
+      "id": "ICDR_7_1_a",
+      "title": "Application for in-principle approval to one or more stock exchanges",
+      "reference": "Regulation 7(1)(a)",
+      "remedy": null,
+      "check": "fun i => i.applied_to_stock_exchange",
+      "failReason": "fun _ => \"No application for in-principle approval submitted.\",\n    remedy? := some \"Apply to one or more stock exchanges for in-principle approval.\""
+    },
+    {
+      "id": "ICDR_7_1_b",
+      "title": "Agreement with depository for dematerialisation of securities",
+      "reference": "Regulation 7(1)(b)",
+      "remedy": null,
+      "check": "fun i => i.has_demat_agreement",
+      "failReason": "fun _ => \"No agreement with a depository for dematerialisation.\",\n    remedy? := some \"Sign an agreement with a depository for dematerialisation.\""
+    },
+    {
+      "id": "ICDR_7_1_c",
+      "title": "All specified securities held by promoters in dematerialized form",
+      "reference": "7(1)(c)",
+      "remedy": null,
+      "check": "fun i => i.promoter_securities_demat",
+      "failReason": "fun _ => \"Promoters' specified securities not in dematerialised form.\",\n    remedy? := some \"Convert promoters' specified securities to dematerialised form.\""
+    },
+    {
+      "id": "ICDR_7_1_d",
+      "title": "All existing partly paid-up equity shares fully paid or forfeited",
+      "reference": "7(1)(d)",
+      "remedy": null,
+      "check": "fun i => i.no_partly_paid_shares",
+      "failReason": "fun _ => \"Existing partly paid-up equity shares not fully paid or forfeited.\",\n    remedy? := some \"Fully pay or forfeit existing partly paid-up equity shares.\""
+    },
+    {
+      "id": "ICDR_7_1_e",
+      "title": "Firm arrangements of finance towards 75% of issue proceeds",
+      "reference": "7(1)(e)",
+      "remedy": null,
+      "check": "fun i => i.finance_75_percent_done",
+      "failReason": "fun _ => \"No firm arrangements of finance towards 75% of issue proceeds.\",\n    remedy? := some \"Secure firm arrangements of finance towards 75% of issue proceeds.\""
+    },
+    {
+      "id": "ICDR_8_core",
+      "title": "Equity shares offered for sale must be held for at least 1 year",
+      "reference": "ICDR_8_core",
+      "remedy": null,
+      "check": "fun i => (i.has_held_equity_shares_for_1_year)",
+      "failReason": "fun _ => \"Equity shares offered for sale not held for at least 1 year.\",\n    remedy? := some \"Hold equity shares for at least 1 year before offering them for sale.\""
+    },
+    {
+      "id": "ICDR_8_provided",
+      "title": "Equity shares from conversion/exchange of compulsorily convertible securities also subject to holding period",
+      "reference": "ICDR_8_provided",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_8_provided_further",
+      "title": "Holding period of 1 year must be complied at the time of filing draft offer document",
+      "reference": "ICDR_8_provided_further",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_8_a",
+      "title": "Exemption for offer for sale of government companies or statutory authorities",
+      "reference": "ICDR_8_a",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_8_b",
+      "title": "Exemption for equity shares acquired under court-approved schemes or government approval",
+      "reference": "ICDR_8_b",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_8_c",
+      "title": "Exemption for equity shares issued under bonus issue on securities held for at least 1 year",
+      "reference": "ICDR_8_c",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_9",
+      "title": "IPO of convertible debt instruments without equity listing",
+      "reference": "ICDR_9",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_10",
+      "title": "Additional requirements for issue of convertible debt instruments",
+      "reference": "ICDR_10",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_10_1b",
+      "title": "Debenture trustee for IPO of convertible debt instruments",
+      "reference": "ICDR_10_1b",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_13_1a",
+      "title": "Tenure of warrants ≤ 18 months",
+      "reference": "13(1)(a)",
+      "remedy": null,
+      "check": "fun i => (i.warrant_tenure <= 18)",
+      "failReason": "fun _ => \"Warrant tenure exceeds 18 months.\",\n    remedy? := some \"Reduce warrant tenure to ≤ 18 months.\""
+    },
+    {
+      "id": "ICDR_13_1c",
+      "title": "Upfront determination of exercise price",
+      "reference": "13(1)(c)",
+      "remedy": null,
+      "check": "fun i => (i.upfront_exercise_price)",
+      "failReason": "fun _ => \"Exercise price not determined upfront.\",\n    remedy? := some \"Determine the exercise price upfront and receive at least 25% of the consideration amount based on the exercise price upfront.\""
+    },
+    {
+      "id": "ICDR_14_1",
+      "title": "Minimum promoters’ contribution ≥ 20%",
+      "reference": "14(1)",
+      "remedy": null,
+      "check": "fun i => (i.promoter_contribution >= 20)",
+      "failReason": "fun _ => \"Promoters' contribution is less than 20%.\",\n    remedy? := some \"Increase promoters’ contribution to meet the minimum of 20%.\""
+    },
+    {
+      "id": "ICDR_13_1d",
+      "title": "Warrant consideration forfeiture",
+      "reference": "Regulation 13(1)(d)",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_15_15_a_i",
+      "title": "Ineligible securities: non-cash acquisition or revaluation/capitalization",
+      "reference": "15(1)(a)(i)",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_15_15_a_ii",
+      "title": "Ineligible securities: bonus issue against ineligible shares",
+      "reference": "15(1)(a)(ii)",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_15_1",
+      "title": "Specified securities ineligible for minimum promoters’ contribution (preceding three years, consideration other than cash)",
+      "reference": "ICDR_15_1",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_15_1_i",
+      "title": "Specified securities ineligible for minimum promoters’ contribution (preceding three years, bonus issue)",
+      "reference": "ICDR_15_1_i",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_16_1a",
+      "title": "Lock-in of specified securities held by promoters (minimum contribution)",
+      "reference": "Regulation 16(1)(a)",
+      "remedy": null,
+      "check": "fun i => (i.lock_in_period_minimum_contribution == 18)",
+      "failReason": "fun _ => \"Lock-in period for minimum promoters’ contribution is not 18 months.\",\n    remedy? := some \"Extend the lock-in period for minimum promoters’ contribution to 18 months.\""
+    },
+    {
+      "id": "ICDR_16_1b",
+      "title": "Lock-in of specified securities held by promoters (excess contribution)",
+      "reference": "Regulation 16(1)(b)",
+      "remedy": null,
+      "check": "fun i => (i.lock_in_period_excess_contribution == 6)",
+      "failReason": "fun _ => \"Lock-in period for promoters’ excess contribution is not 6 months.\",\n    remedy? := some \"Extend the lock-in period for promoters’ excess contribution to 6 months.\""
+    },
+    {
+      "id": "ICDR_17_c",
+      "title": "Lock-in of specified securities held by persons other than promoters",
+      "reference": "ICDR_17_c",
+      "remedy": null,
+      "check": "fun i => (i.lock_in_period == 6) && (i.lock_in_holders == \"persons other than promoters\")",
+      "failReason": "fun _ => \"Lock-in period or holders are incorrect for specified securities held by persons other than promoters.\",\n    remedy? := some \"Correct the lock-in period and holders for specified securities held by persons other than promoters.\""
+    },
+    {
+      "id": "ICDR_17_c_i",
+      "title": "Lock-in of convertible securities and resultant equity shares",
+      "reference": "ICDR_17_c_i",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_17_c_ii",
+      "title": "Lock-in of bonus equity shares",
+      "reference": "ICDR_17_c_ii",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_22",
+      "title": "Lock-in of specified securities",
+      "reference": "ICDR_22",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    },
+    {
+      "id": "ICDR_23",
+      "title": "Appointment of lead manager(s)",
+      "reference": "ICDR_23",
+      "remedy": null,
+      "check": "fun i => (i.lead_manager_appointment)",
+      "failReason": "fun _ => \"No lead manager(s) appointed.\",\n    remedy? := some \"Appoint one or more merchant bankers, which are registered with the Board, as lead manager(s) to the issue.\""
+    },
+    {
+      "id": "ICDR_23_1",
+      "title": "Rights, obligations and responsibilities of lead managers",
+      "reference": "ICDR_23_1",
+      "remedy": null,
+      "check": "fun i => True, -- No applicable fields in Issuer structure\n    failReason := fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none",
+      "failReason": "fun _ => \"This rule does not apply to the provided Issuer structure.\",\n    remedy? := none"
+    }
+  ],
+  "issuer_questions": [
+    {
+      "field": "is_debarred",
+      "question": "Is the issuer debarred?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_debarred_directors",
+      "question": "Do any directors have a debarment record?",
+      "type": "Bool"
+    },
+    {
+      "field": "selling_shareholders_debarred",
+      "question": "Are selling shareholders debarred?",
+      "type": "Bool"
+    },
+    {
+      "field": "directors.*.other_debarred_companies",
+      "question": "Which companies are the directors associated with (if any)?",
+      "type": "List Nat"
+    },
+    {
+      "field": "has_outstanding_convertibles",
+      "question": "Does the issuer have outstanding convertibles or rights to receive equity before filing?",
+      "type": "Bool"
+    },
+    {
+      "field": "net_tangible_assets",
+      "question": "What is the net tangible assets for each of the last 3 full years (₹ paise)?",
+      "type": "List Nat"
+    },
+    {
+      "field": "monetary_asset_ratio",
+      "question": "What percentage of net tangible assets are held in monetary assets?",
+      "type": "Nat"
+    },
+    {
+      "field": "used_monetary_assets",
+      "question": "Have excess monetary assets been used or firmly committed?",
+      "type": "Bool"
+    },
+    {
+      "field": "is_offer_for_sale_only",
+      "question": "Is the IPO entirely an offer for sale (no fresh issue)?",
+      "type": "Bool"
+    },
+    {
+      "field": "operating_profits",
+      "question": "What is the operating profit for each of the last 3 full years (₹ paise)?",
+      "type": "List Nat"
+    },
+    {
+      "field": "net_worths",
+      "question": "What is the net worth for each of the last 3 full years (₹ paise)?",
+      "type": "List Nat"
+    },
+    {
+      "field": "changed_name_recently",
+      "question": "Has the company changed its name within the last 1 year?",
+      "type": "Bool"
+    },
+    {
+      "field": "percent_revenue_from_new_name",
+      "question": "What percentage of revenue came from the new-name activity in the preceding full year?",
+      "type": "Nat"
+    },
+    {
+      "field": "applied_to_stock_exchange",
+      "question": "Has an application been made to one or more stock exchanges for in-principle approval?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_demat_agreement",
+      "question": "Is there an agreement with a depository for dematerialisation of securities?",
+      "type": "Bool"
+    },
+    {
+      "field": "promoter_securities_demat",
+      "question": "Are all specified securities held by promoters in dematerialised form?",
+      "type": "Bool"
+    },
+    {
+      "field": "no_partly_paid_shares",
+      "question": "Have all existing partly paid-up equity shares been fully paid or forfeited?",
+      "type": "Bool"
+    },
+    {
+      "field": "finance_75_percent_done",
+      "question": "Have firm arrangements of finance towards 75% of issue proceeds been made?",
+      "type": "Bool"
+    },
+    {
+      "field": "warrant_tenure",
+      "question": "What is the tenure of warrants (months)?",
+      "type": "Nat"
+    },
+    {
+      "field": "upfront_exercise_price",
+      "question": "Is the exercise price determined upfront and at least 25% of the consideration amount based on the exercise price received upfront?",
+      "type": "Bool"
+    },
+    {
+      "field": "promoter_contribution",
+      "question": "What percentage of post-issue capital is held by promoters?",
+      "type": "Nat"
+    },
+    {
+      "field": "lock_in_period_minimum_contribution",
+      "question": "What is the lock-in period for minimum promoters’ contribution (months)?",
+      "type": "Nat"
+    },
+    {
+      "field": "lock_in_period_excess_contribution",
+      "question": "What is the lock-in period for promoters’ excess contribution (months)?",
+      "type": "Nat"
+    },
+    {
+      "field": "lock_in_period",
+      "question": "What is the lock-in period for specified securities held by persons other than promoters (months)?",
+      "type": "Nat"
+    },
+    {
+      "field": "lock_in_holders",
+      "question": "Who holds the specified securities (persons other than promoters)?",
+      "type": "String"
+    }
+  ],
+  "issuer_schema": [
+    {
+      "field": "is_debarred",
+      "type": "Bool"
+    },
+    {
+      "field": "has_debarred_directors",
+      "type": "Bool"
+    },
+    {
+      "field": "is_fraudulent",
+      "type": "Bool"
+    },
+    {
+      "field": "is_fugitive",
+      "type": "Bool"
+    },
+    {
+      "field": "has_outstanding_convertibles",
+      "type": "Bool"
+    },
+    {
+      "field": "has_esop_exemption",
+      "type": "Bool"
+    },
+    {
+      "field": "has_sar_exemption",
+      "type": "Bool"
+    },
+    {
+      "field": "has_mandatory_convertibles",
+      "type": "Bool"
+    },
+    {
+      "field": "net_tangible_assets",
+      "type": "List Nat"
+    },
+    {
+      "field": "monetary_asset_ratio",
+      "type": "Nat"
+    },
+    {
+      "field": "used_monetary_assets",
+      "type": "Bool"
+    },
+    {
+      "field": "is_offer_for_sale_only",
+      "type": "Bool"
+    },
+    {
+      "field": "operating_profits",
+      "type": "List Nat"
+    },
+    {
+      "field": "net_worths",
+      "type": "List Nat"
+    },
+    {
+      "field": "changed_name_recently",
+      "type": "Bool"
+    },
+    {
+      "field": "percent_revenue_from_new_name",
+      "type": "Nat"
+    },
+    {
+      "field": "uses_book_building",
+      "type": "Bool"
+    },
+    {
+      "field": "qib_allocation_done",
+      "type": "Bool"
+    },
+    {
+      "field": "is_tech_firm",
+      "type": "Bool"
+    },
+    {
+      "field": "sr_net_worth",
+      "type": "Nat"
+    },
+    {
+      "field": "sr_holder_exec",
+      "type": "Bool"
+    },
+    {
+      "field": "sr_voting_ratio",
+      "type": "Nat"
+    },
+    {
+      "field": "sr_class_count",
+      "type": "Nat"
+    },
+    {
+      "field": "sr_same_face_value",
+      "type": "Bool"
+    },
+    {
+      "field": "sr_issued_3mo_prior",
+      "type": "Bool"
+    },
+    {
+      "field": "applied_to_stock_exchange",
+      "type": "Bool"
+    },
+    {
+      "field": "has_demat_agreement",
+      "type": "Bool"
+    },
+    {
+      "field": "promoter_securities_demat",
+      "type": "Bool"
+    },
+    {
+      "field": "no_partly_paid_shares",
+      "type": "Bool"
+    },
+    {
+      "field": "finance_75_percent_done",
+      "type": "Bool"
+    },
+    {
+      "field": "general_corp_purpose_ratio",
+      "type": "Nat"
+    },
+    {
+      "field": "shares_fully_paid",
+      "type": "Bool"
+    },
+    {
+      "field": "shares_held_duration_months",
+      "type": "Nat"
+    },
+    {
+      "field": "is_govt_entity",
+      "type": "Bool"
+    },
+    {
+      "field": "via_merger_scheme",
+      "type": "Bool"
+    },
+    {
+      "field": "is_bonus_from_free_reserve",
+      "type": "Bool"
+    },
+    {
+      "field": "underlying_held_1y",
+      "type": "Bool"
+    },
+    {
+      "field": "bonus_not_from_revaluation",
+      "type": "Bool"
+    }
+  ]
+}

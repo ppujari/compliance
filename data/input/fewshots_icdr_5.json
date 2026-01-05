@@ -1,0 +1,51 @@
+{
+  "examples": [
+    {
+      "input": "5. (1) An issuer shall not be eligible to make an initial public offer -\n(a) if the issuer, any of its promoters, promoter group or directors or selling shareholders are debarred from accessing the capital market by the Board.\n(b) if any of the promoters or directors of the issuer is a promoter or director of any other company which is debarred from accessing the capital market by the Board.\n(c) if the issuer or any of its promoters or directors is a 26[wilful defaulter or a fraudulent borrower.]\n(d) if any of its promoters or directors is a fugitive economic offender.\nExplanation: The restrictions under (a) and (b) above shall not apply to the persons or entities mentioned therein, who were debarred in the past by the Board and the period of debarment is already over as on the date of filing of the draft offer document with the Board.\n(2) An issuer shall not be eligible to make an initial public offer if there are any outstanding convertible securities or any other right which would entitle any person with any option to receive equity shares of the issuer:\nProvided that the provisions of this sub-regulation shall not apply to:\n\n(a) outstanding options granted to employees, whether currently an employee or not, pursuant to an employee stock option scheme in compliance with the Companies Act, 2013, the relevant Guidance Note or accounting standards, if any, issued by the Institute of Chartered Accountants of India or pursuant to the Companies Act, 2013, in this regard;\n27[(b) outstanding stock appreciation rights granted to employees pursuant to a stock appreciation right scheme, which are fully exercised for equity shares prior to the filing of the red herring prospectus (in case of book-built issues) or the prospectus (in case of fixed price issues), as the case may be, disclosures regarding such stock appreciation rights and the scheme and the total number of equity shares resulting from the exercise of such rights are made in the draft offer document and offer document.]\n28[(c)] fully paid-up outstanding convertible securities which are required to be converted on or before the date of filing of the red herring prospectus (in case of book-built issues) or the prospectus (in case of fixed price issues), as the case may be.",
+      "output": [
+        {
+          "rule_id": "ICDR_5_1_a",
+          "domain": "SEBI_ICDR",
+          "title": "Disqualification: issuer/promoters/directors/sellers debarred",
+          "text": "Not eligible if issuer, any promoter/promoter group/director/selling shareholder is debarred from accessing capital markets by SEBI (unless past debarment has expired).",
+          "lean_id": "rule_5_1_a",
+          "notes": "Maps to is_debarred + has_debarred_directors + selling_shareholders_debarred."
+        },
+        {
+          "rule_id": "ICDR_5_1_b",
+          "domain": "SEBI_ICDR",
+          "title": "Disqualification: promoter/director of another debarred company",
+          "text": "Not eligible if any promoter/director is promoter/director of another company debarred by SEBI.",
+          "lean_id": "rule_5_1_b",
+          "notes": "Add a relational check (director cross-links)."
+        },
+        {
+          "rule_id": "ICDR_5_1_c",
+          "domain": "SEBI_ICDR",
+          "title": "Disqualification: wilful defaulter or fraudulent borrower",
+          "text": "Not eligible if issuer/promoters/directors is/are wilful defaulters or fraudulent borrowers.",
+          "lean_id": "rule_5_1_c",
+          "notes": "You already modelled this as is_fraudulent."
+        },
+        {
+          "rule_id": "ICDR_5_1_d",
+          "domain": "SEBI_ICDR",
+          "title": "Disqualification: fugitive economic offender",
+          "text": "Not eligible if any promoter/director is a fugitive economic offender.",
+          "lean_id": "rule_5_1_d",
+          "notes": "Map to is_fugitive."
+        },
+        {
+          "rule_id": "ICDR_5_2_core",
+          "domain": "SEBI_ICDR",
+          "title": "No outstanding convertibles/rights (pre-IPO)",
+          "text": "Not eligible if there are outstanding convertibles or rights to receive equity before filing, except carve-outs for ESOP, SAR (exercised pre-RHP/prospectus with disclosures) and fully paid mandatorily convertible securities converted by filing.",
+          "lean_id": "rule_5_2_core",
+          "notes": "Your ESOP/SAR/mandatory conversion carve-outs match this."
+        }
+      ]
+    }
+  ]
+}
+
+

@@ -1,0 +1,285 @@
+{
+  "threshold": 1,
+  "demoted_fields": [
+    "b",
+    "conditions_a",
+    "consolidated",
+    "has_demat_agreement",
+    "has_dematerialized_promoter_securities",
+    "has_firm_arrangements_of_finance",
+    "has_fully_paid_or_forfeited_partly_paid_equity",
+    "has_held_equity_shares_for_1_year",
+    "has_in_principle_approval",
+    "lead_manager_appointment",
+    "lock_in_bonus_equity_shares_if_applicable",
+    "lock_in_convertible_securities_if_applicable",
+    "lock_in_holders_persons_other_than_promoters",
+    "lock_in_period",
+    "lock_in_period_6_months",
+    "lock_in_period_excess_contribution",
+    "lock_in_period_minimum_contribution",
+    "lock_in_resultant_equity_shares_if_applicable",
+    "pari_passu_date_if_applicable",
+    "return_date",
+    "securities_acquired_by_certain_entities_at_lower_price",
+    "securities_acquired_non_cash_revaluation_capitalization",
+    "securities_resulting_from_ineligible_bonus_issue",
+    "upfront_exercise_price"
+  ],
+  "kept_fields": [
+    "operating_profits_length",
+    "promoter_contribution",
+    "warrant_tenure"
+  ],
+  "scores": [
+    {
+      "name": "b",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "conditions_a",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "consolidated",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "has_demat_agreement",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "has_dematerialized_promoter_securities",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "has_firm_arrangements_of_finance",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "has_fully_paid_or_forfeited_partly_paid_equity",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "has_held_equity_shares_for_1_year",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "has_in_principle_approval",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lead_manager_appointment",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lock_in_bonus_equity_shares_if_applicable",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lock_in_convertible_securities_if_applicable",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lock_in_holders_persons_other_than_promoters",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lock_in_period",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lock_in_period_6_months",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lock_in_period_excess_contribution",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lock_in_period_minimum_contribution",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lock_in_resultant_equity_shares_if_applicable",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "operating_profits_length",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "pari_passu_date_if_applicable",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "promoter_contribution",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "return_date",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "securities_acquired_by_certain_entities_at_lower_price",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "securities_acquired_non_cash_revaluation_capitalization",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "securities_resulting_from_ineligible_bonus_issue",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "upfront_exercise_price",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "warrant_tenure",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    }
+  ]
+}

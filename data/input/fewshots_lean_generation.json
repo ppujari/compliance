@@ -1,0 +1,42 @@
+{
+  "examples": [
+    {
+      "items": [
+        {
+          "rule_id": "ICDR_6_1_a",
+          "title": "Net tangible assets requirement",
+          "text": "it has net tangible assets of at least three crore rupees, calculated on a restated and consolidated basis, in each of the preceding three full years (of twelve months each), of which not more than fifty per cent. are held in monetary assets: Provided that if more than fifty per cent. of the net tangible assets are held in monetary assets, the issuer has utilised or made firm commitments to utilise such excess monetary assets in its business or project; Provided further that the limit of fifty per cent. on monetary assets shall not be applicable in case the initial public offer is made entirely through an offer for sale.",
+          "lean_id": "rule_6_1_a",
+          "notes": "Map to net_tangible_assets length=3 and each ≥ 3 cr; monetary_asset_ratio ≤ 50 unless used/committed; OSF-only carve-out.",
+          "source": { "reg": "Regulation 6(1)(a)" }
+        },
+        {
+          "rule_id": "ICDR_6_1_b",
+          "title": "Average operating profit requirement",
+          "text": "it has an average operating profit of at least fifteen crore rupees, calculated on a restated and consolidated basis, during the preceding three years (of twelve months each), with operating profit in each of these preceding three years;",
+          "lean_id": "rule_6_1_b",
+          "notes": "operating_profits length=3 and each ≥ 15 cr (restated, consolidated).",
+          "source": { "reg": "Regulation 6(1)(b)" }
+        },
+        {
+          "rule_id": "ICDR_6_1_c",
+          "title": "Net worth requirement",
+          "text": "it has a net worth of at least one crore rupees in each of the preceding three full years (of twelve months each), calculated on a restated and consolidated basis;",
+          "lean_id": "rule_6_1_c",
+          "notes": "net_worths length=3 and each ≥ 1 cr.",
+          "source": { "reg": "Regulation 6(1)(c)" }
+        },
+        {
+          "rule_id": "ICDR_6_1_d",
+          "title": "Name change revenue source requirement",
+          "text": "if it has changed its name within the last one year, at least fifty per cent. of the revenue, calculated on a restated and consolidated basis, for the preceding one full year has been earned by it from the activity indicated by its new name.",
+          "lean_id": "rule_6_1_d",
+          "notes": "changed_name_recently → percent_revenue_from_new_name ≥ 50.",
+          "source": { "reg": "Regulation 6(1)(d)" }
+        }
+      ],
+      "lean": "```lean\nimport Main\nopen Main\nnamespace GeneratedRules\n\ndef generatedRulesetChunk : List ComplianceRule := [\n  { id := \"SEBI ICDR 6(1)(a)\",\n    title := \"Net tangible assets ≥ ₹3 cr; monetary assets ≤ 50% (or committed use) / OSF carve-out\",\n    reference := \"ICDR 6(1)(a)\",\n    check := fun i =>\n      let ntaOK := (lengthIs i.net_tangible_assets 3) && allGeNat i.net_tangible_assets 30000000\n      let moneyOK := (i.monetary_asset_ratio ≤ 50) || i.used_monetary_assets || i.is_offer_for_sale_only\n      ntaOK && moneyOK,\n    failReason := fun i =>\n      let ntaMsg :=\n        if !(lengthIs i.net_tangible_assets 3) then \"Need 3 full-year NTA figures.\"\n        else if !(allGeNat i.net_tangible_assets 30000000) then \"Each year’s net tangible assets must be ≥ ₹3.0 crore.\"\n        else \"\"\n      let moneyMsg :=\n        if i.is_offer_for_sale_only then \"\"\n        else if i.monetary_asset_ratio > 50 && !i.used_monetary_assets then \"Monetary assets exceed 50% of NTA without evidence of committed/actual use.\"\n        else \"\"\n      String.intercalate \" \" ([ntaMsg, moneyMsg].filter (· ≠ \"\")),\n    remedy? := some \"Demonstrate firm commitments/use of monetary assets, or restructure to OSF-only; ensure each NTA year ≥ ₹3 cr.\" },\n\n  { id := \"SEBI ICDR 6(1)(b)\",\n    title := \"Operating profit: ≥ ₹15 cr in each of the last 3 years\",\n    reference := \"ICDR 6(1)(b)\",\n    check := fun i => (lengthIs i.operating_profits 3) && allGeNat i.operating_profits 150000000,\n    failReason := fun i =>\n      if !(lengthIs i.operating_profits 3) then \"Need 3 full-year operating profit figures.\"\n      else\n        let fails := i.operating_profits.zipIdx |>.filter (fun (x, idx) => x < 150000000)\n        let years := fails.map (fun (_, idx) => s!\"Year {idx + 1}\")\n        \"Operating profit below ₹15 cr in: \" ++ String.intercalate \", \" years,\n    remedy? := some \"Demonstrate ≥ ₹15 cr operating profit in each of the last 3 full financial years (restated, consolidated).\" },\n\n  { id := \"SEBI ICDR 6(1)(c)\",\n    title := \"Net worth: ≥ ₹1 cr in each of the last 3 years\",\n    reference := \"ICDR 6(1)(c)\",\n    check := fun i => (lengthIs i.net_worths 3) && allGeNat i.net_worths 10000000,\n    failReason := fun i =>\n      if !(lengthIs i.net_worths 3) then \"Need 3 full-year net worth figures.\"\n      else\n        let fails := i.net_worths.zipIdx |>.filter (fun (x, idx) => x < 10000000)\n        let years := fails.map (fun (_, idx) => s!\"Year {idx + 1}\")\n        \"Net worth below ₹1 cr in: \" ++ String.intercalate \", \" years,\n    remedy? := some \"Increase equity/retained earnings to meet ≥ ₹1 cr in each of the last 3 full years.\" },\n\n  { id := \"SEBI ICDR 6(1)(d)\",\n    title := \"If name changed within 1 year: ≥50% revenue from new-line activity\",\n    reference := \"ICDR 6(1)(d)\",\n    check := fun i => (!i.changed_name_recently) || (i.percent_revenue_from_new_name ≥ 50),\n    failReason := fun i =>\n      if i.changed_name_recently && i.percent_revenue_from_new_name < 50 then\n        \"Changed name within 1 year but <50% revenue from new-name activity in the preceding full year.\"\n      else \"Condition not met.\",\n    remedy? := some \"Demonstrate ≥50% revenue from the activity indicated by the new name or defer filing.\" }\n]\n\n-- one (field, question, type)\n def issuerQuestionsChunk : List (String × String × String) := [\n  (\"net_tangible_assets\", \"Provide NTA for each of the last 3 full years (₹ paise).\", \"List Nat\"),\n  (\"monetary_asset_ratio\", \"What % of NTA is held in monetary assets?\", \"Nat\"),\n  (\"used_monetary_assets\", \"Have excess monetary assets been used or firmly committed?\", \"Bool\"),\n  (\"is_offer_for_sale_only\", \"Is the IPO entirely an offer for sale (no fresh issue)?\", \"Bool\"),\n  (\"operating_profits\", \"Provide operating profit for each of the last 3 full years (₹ paise).\", \"List Nat\"),\n  (\"net_worths\", \"Provide net worth for each of the last 3 full years (₹ paise).\", \"List Nat\"),\n  (\"changed_name_recently\", \"Has the company changed its name within the last 1 year?\", \"Bool\"),\n  (\"percent_revenue_from_new_name\", \"What % of last year’s revenue came from the new-name activity?\", \"Nat\")\n]\n\nend GeneratedRules\n```"
+    }
+  ]
+}
+
