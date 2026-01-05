@@ -1,0 +1,46 @@
+{
+  "issuer_facts": [
+    {
+      "name": "operating_profits_length",
+      "lean_type": "List Nat",
+      "python_type": "List[int]",
+      "description": "Series of non-negative integers over multiple years for operating profits length.",
+      "from_rules": [
+        "ICDR_6_1_b"
+      ],
+      "raw_tokens_seen": [
+        "operating_profits length"
+      ],
+      "normalization_applied": [
+        "collapse_space_hyphen"
+      ]
+    },
+    {
+      "name": "promoter_contribution",
+      "lean_type": "Nat",
+      "python_type": "int",
+      "description": "Non-negative integer (e.g. percentage or ratio) for promoter contribution.",
+      "from_rules": [
+        "ICDR_14_1"
+      ],
+      "raw_tokens_seen": [
+        "promoter_contribution"
+      ],
+      "normalization_applied": []
+    },
+    {
+      "name": "warrant_tenure",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Boolean flag: warrant tenure.",
+      "from_rules": [
+        "ICDR_13_1a"
+      ],
+      "raw_tokens_seen": [
+        "warrant_tenure"
+      ],
+      "normalization_applied": []
+    }
+  ],
+  "offer_facts": []
+}

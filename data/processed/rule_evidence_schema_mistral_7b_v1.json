@@ -1,0 +1,482 @@
+[
+  {
+    "rule_id": "ICDR_10",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_10_1b",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_13_1a",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_13_1c",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_13_1d",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_14_1",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_15_1",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_15_15_a_i",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_15_15_a_ii",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_15_15_b",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_15_1_i",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_16_1a",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_16_1b",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_17_c",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_17_c_i",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_17_c_ii",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_22",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_23",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_23_1",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_23_2",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_4_22",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_5_1_a",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_5_1_b",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_5_1_c",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_5_2",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_6_1_a",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_6_1_b",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_6_1_c",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_7_1_a",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_7_1_b",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_7_1_c",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_7_1_d",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_7_1_e",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_8_a",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_8_b",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_8_c",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_8_core",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_8_provided",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_8_provided_further",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  },
+  {
+    "rule_id": "ICDR_9",
+    "status_type": "enum(present, absent, unclear)",
+    "evidence": [
+      {
+        "page": null,
+        "quote": null
+      }
+    ],
+    "extracted_values": {},
+    "notes": null
+  }
+]

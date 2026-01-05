@@ -1,9 +1,11 @@
 import Lake
 open Lake DSL
 
-package «compliance» where
-  -- optional: version := v!"0.1"
+package compliance
+
+lean_lib Src where
+  srcDir := "."
 
 @[default_target]
-lean_exe «compliance» where
-  root := `Main
+lean_exe compliance where
+  root := `Src.Main_v2

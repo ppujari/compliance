@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IssuerInstance",
+  "type": "object",
+  "required": ["issuer_id", "fields"],
+  "properties": {
+    "issuer_id": {"type": "string"},
+    "source": {"type": "string"},
+    "fields": {
+      "type": "object",
+      "properties": {
+        "operating_profits": {"type": "array", "items": {"type": "integer"}},
+        "net_worths": {"type": "array", "items": {"type": "integer"}},
+        "is_debarred": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  }
+}
