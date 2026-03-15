@@ -29,7 +29,14 @@ from jsonschema import Draft202012Validator
 from pathlib import Path
 import json
 import unicodedata
-from typing import Any
+from typing import Any, List, Dict
+
+try:
+    # When invoked as `python -c "import scripts.llm_extract_rules"` (namespace-style import)
+    from scripts.rule_refiner import RuleRefiner, OllamaClient as RefinerOllamaClient  # type: ignore[import-not-found]
+except Exception:
+    # When invoked as `python scripts/llm_extract_rules.py` (script execution adds `scripts/` to sys.path)
+    from rule_refiner import RuleRefiner, OllamaClient as RefinerOllamaClient
 
 # ---------- Few-shot utilities ----------
 def load_fewshot_examples(fewshot_path: str | None) -> list[tuple[str, list[dict]]]:
@@ -69,6 +76,43 @@ RULE_SCHEMA = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
 VALIDATOR = Draft202012Validator(RULE_SCHEMA)
 ALLOWED_TOP_KEYS = set((RULE_SCHEMA.get("properties") or {}).keys())
 
+# ---------- Judge schema ----------
+JUDGE_SCHEMA: dict = {
+    "type": "object",
+    "required": ["rule_id", "scores", "overall", "failure_modes", "fix_instructions"],
+    "properties": {
+        "rule_id": {"type": "string"},
+        "scores": {
+            "type": "object",
+            "required": ["atomicity", "fidelity", "completeness", "maps_to_quality", "source_alignment"],
+            "properties": {
+                "atomicity": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                "fidelity": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                "completeness": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                "maps_to_quality": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                "source_alignment": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+            },
+            "additionalProperties": False,
+        },
+        "overall": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+        "failure_modes": {"type": "array", "items": {"type": "string"}},
+        "fix_instructions": {"type": "string"},
+    },
+    "additionalProperties": False,
+}
+
+ARRAY_JUDGE_SCHEMA: dict = {"type": "array", "items": JUDGE_SCHEMA}
+JUDGE_VALIDATOR = Draft202012Validator(ARRAY_JUDGE_SCHEMA)
+
+# Judge rubric (deterministic weights)
+JUDGE_WEIGHTS = {
+    "fidelity": 0.30,
+    "atomicity": 0.25,
+    "completeness": 0.20,
+    "maps_to_quality": 0.15,
+    "source_alignment": 0.10,
+}
+
 # Build an array schema for Ollama JSON schema enforcement (rules array of RULE_SCHEMA items)
 ARRAY_RULES_SCHEMA: dict = {
     "type": "array",
@@ -102,10 +146,14 @@ def sanitize_for_schema(item: dict) -> dict:
     # sanitize nested structures with additionalProperties:false
     if "source" in out and isinstance(out["source"], dict):
         src = out["source"]
+        span_hint = src.get("span_hint", "") or ""
+        # Enforce schema constraint deterministically
+        if isinstance(span_hint, str) and len(span_hint) > 120:
+            span_hint = span_hint[:120].rstrip()
         out["source"] = {
             "pdf": src.get("pdf", ""),
             "pages": src.get("pages", []),
-            "span_hint": src.get("span_hint", ""),
+            "span_hint": span_hint,
             **({"reg": src.get("reg", "")} if "reg" in src else {}),
         }
 
@@ -126,6 +174,194 @@ def sanitize_for_schema(item: dict) -> dict:
         out["maps_to"] = cleaned_maps
 
     return out
+
+
+def clamp_span_hint(rule: dict) -> None:
+    """
+    Deterministically clamp span_hint length to schema limit.
+    """
+    src = rule.get("source")
+    if not isinstance(src, dict):
+        return
+    sh = src.get("span_hint")
+    if isinstance(sh, str) and len(sh) > 120:
+        src["span_hint"] = sh[:120].rstrip()
+
+
+RULE_ID_FORMAT_RE = re.compile(r"^ICDR_\d+(?:_\d+)*(?:_[a-z]+)?$", re.I)
+MAPS_TO_FIELD_RE = re.compile(r"^[a-z][a-z0-9_]*$")
+
+
+def validate_required_fields(rule: dict) -> List[str]:
+    reasons: List[str] = []
+    for k in ["rule_id", "domain", "title", "text", "lean_id", "source"]:
+        if k not in rule:
+            reasons.append(f"missing_{k}")
+    src = rule.get("source")
+    if not isinstance(src, dict):
+        reasons.append("missing_source_object")
+    else:
+        for k in ["pdf", "pages", "span_hint"]:
+            if k not in src:
+                reasons.append(f"missing_source_{k}")
+    return reasons
+
+
+def validate_rule_id_format(rule_id: str) -> bool:
+    return bool(RULE_ID_FORMAT_RE.match((rule_id or "").strip()))
+
+
+def validate_maps_to(rule: dict) -> List[str]:
+    reasons: List[str] = []
+    maps_to = rule.get("maps_to")
+    if maps_to is None:
+        return reasons
+    if not isinstance(maps_to, list):
+        return ["maps_to_not_list"]
+    for idx, m in enumerate(maps_to):
+        if not isinstance(m, dict):
+            reasons.append(f"maps_to[{idx}]_not_object")
+            continue
+        field = (m.get("field") or "").strip()
+        if not field:
+            reasons.append(f"maps_to[{idx}]_missing_field")
+            continue
+        if not MAPS_TO_FIELD_RE.match(field):
+            reasons.append(f"maps_to[{idx}]_bad_field:{field}")
+        th = (m.get("type_hint") or "").strip()
+        if th and th not in ("Bool", "Nat", "List Nat", "String", "OptionBool", "OptionNat", "OptionListNat", "OptionString"):
+            reasons.append(f"maps_to[{idx}]_bad_type_hint:{th}")
+    return reasons
+
+
+def validate_source(rule: dict, chunk_text: str, span_mode: str = "lenient") -> List[str]:
+    reasons: List[str] = []
+    src = rule.get("source")
+    if not isinstance(src, dict):
+        return ["missing_source_object"]
+    span_hint = (src.get("span_hint") or "").strip()
+    if not span_hint:
+        reasons.append("missing_span_hint")
+        return reasons
+    if len(span_hint) > 120:
+        reasons.append("span_hint_too_long")
+    ok = False
+    if span_mode == "strict":
+        ok = contains_span_hint(chunk_text, span_hint) or contains_span_hint_fuzzy(chunk_text, span_hint)
+    else:
+        ok = contains_span_hint_lenient(chunk_text, span_hint) or contains_span_hint_fuzzy(chunk_text, span_hint)
+    if not ok:
+        reasons.append("span_hint_not_in_chunk")
+    return reasons
+
+
+def detect_duplicates(rules: List[dict]) -> Dict[str, int]:
+    """
+    Return dict of rule_id -> count (only for duplicates).
+    """
+    counts: Dict[str, int] = {}
+    for r in rules:
+        rid = str(r.get("rule_id") or "").strip()
+        if not rid:
+            continue
+        counts[rid] = counts.get(rid, 0) + 1
+    return {k: v for (k, v) in counts.items() if v > 1}
+
+
+def compute_overall_score(scores: dict) -> float:
+    total = 0.0
+    for k, w in JUDGE_WEIGHTS.items():
+        try:
+            total += float(scores.get(k, 0.0)) * w
+        except Exception:
+            total += 0.0
+    return round(total, 4)
+
+
+def build_judge_prompt(chunk_text: str, rules: List[dict]) -> str:
+    """
+    Fixed rubric judge prompt. The LLM must only fill in the requested JSON fields.
+    """
+    rubric = (
+        "Score each rule using this fixed rubric (0..1 each):\n"
+        "- atomicity: is it ONE atomic legal requirement (not bundled)?\n"
+        "- fidelity: does it match the clause text without hallucination?\n"
+        "- completeness: includes thresholds/units/exceptions present in text?\n"
+        "- maps_to_quality: maps_to fields are appropriate and correctly typed, or empty if procedural.\n"
+        "- source_alignment: rule clearly comes from the provided chunk and span_hint is a direct quote.\n\n"
+        "Weights (do NOT change): fidelity 0.30, atomicity 0.25, completeness 0.20, maps_to_quality 0.15, source_alignment 0.10.\n"
+        "Pass rule if: overall >= 0.75 AND fidelity >= 0.70.\n"
+        "If a rule is procedural/uncheckable, recommend quarantine: maps_to should be [].\n"
+        "Return STRICT JSON only (no markdown, no prose).\n"
+    )
+    items = []
+    for r in rules:
+        items.append(
+            {
+                "rule_id": r.get("rule_id"),
+                "title": r.get("title"),
+                "text": r.get("text"),
+                "maps_to": r.get("maps_to", []),
+                "notes": r.get("notes", ""),
+                "source": r.get("source", {}),
+            }
+        )
+    # Keep chunk text bounded to avoid context blow-ups that cause judge to return empty/invalid JSON.
+    chunk_text = (chunk_text or "")
+    if len(chunk_text) > 12000:
+        chunk_text = chunk_text[:12000] + "\n\n[TRUNCATED]"
+    return (
+        rubric
+        + "\nCHUNK_TEXT:\n"
+        + chunk_text
+        + "\n\nRULES (JSON):\n"
+        + json.dumps(items, ensure_ascii=False, indent=2)
+        + "\n\nOUTPUT FORMAT: JSON array of objects, one per rule_id, each matching:\n"
+        + json.dumps(JUDGE_SCHEMA, ensure_ascii=False)
+    )
+
+
+def build_regen_prompt(chunk_text: str, bad_rule: dict, judge_feedback: dict, hard_reasons: List[str], soft_reasons: List[str]) -> str:
+    """
+    Targeted regeneration prompt for exactly ONE rule object.
+    """
+    return (
+        "Regenerate EXACTLY ONE rule JSON object for the SAME legal clause, from the SAME chunk text.\n"
+        "Constraints:\n"
+        "- Output MUST be a single JSON object (not an array).\n"
+        "- rule_id MUST be the same.\n"
+        "- Preserve numeric thresholds and units.\n"
+        "- source.pdf and source.pages MUST be preserved; source.span_hint MUST be a direct quote substring from CHUNK_TEXT (<=120 chars).\n"
+        "- If the rule is procedural/uncheckable, set maps_to to [].\n"
+        "- Do NOT invent information not present in CHUNK_TEXT.\n\n"
+        f"CHUNK_TEXT:\n{chunk_text}\n\n"
+        f"BAD_RULE:\n{json.dumps(bad_rule, ensure_ascii=False, indent=2)}\n\n"
+        f"JUDGE_FEEDBACK:\n{json.dumps(judge_feedback, ensure_ascii=False, indent=2)}\n\n"
+        f"DETERMINISTIC_VALIDATION:\n{json.dumps({'hard_fail_reasons': hard_reasons, 'soft_fail_reasons': soft_reasons}, ensure_ascii=False, indent=2)}\n\n"
+        "Return ONLY the corrected JSON object."
+    )
+
+
+def ollama_chat_json_any(model: str, system: str, user: str, timeout: int = 180, debug: bool = False, debug_raw: bool = False) -> Any:
+    url = "http://localhost:11434/api/chat"
+    payload = {
+        "model": model,
+        "options": {"temperature": 0.1, "top_p": 0.9},
+        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+        "stream": False,
+        "format": "json",
+    }
+    r = requests.post(url, json=payload, timeout=timeout)
+    r.raise_for_status()
+    data = r.json()
+    content = (data.get("message", {}) or {}).get("content", "")
+    if debug_raw:
+        print(content, file=sys.stderr)
+    block = extract_first_json_block(content)
+    if not block:
+        return None
+    return json.loads(block)
+
 
 
 def extract_first_json_block(text: str) -> str:
@@ -867,6 +1103,13 @@ def main():
                     help="Span hint verification mode: strict (exact, whitespace-insensitive) or lenient (unicode/punctuation-insensitive)")
     ap.add_argument("--no-anchoring", action="store_true",
                     help="Disable regulation anchoring (do not drop rules whose regulation number is not visible in the window)")
+    ap.add_argument("--judge", action="store_true", help="Enable critic/judge loop with selective regeneration.")
+    ap.add_argument("--judge-model", default="", help="Ollama model to use for judging (default: same as --model).")
+    ap.add_argument("--regen-rounds", type=int, default=2, help="Max regeneration rounds per window for failing rules.")
+    ap.add_argument("--max-regen-per-window", type=int, default=8, help="Max rules to regenerate per window.")
+    ap.add_argument("--judge-overall-threshold", type=float, default=0.75)
+    ap.add_argument("--judge-fidelity-threshold", type=float, default=0.70)
+    ap.add_argument("--judge-report-out", type=str, default="", help="Optional JSONL path to write judge reports per window.")
     args = ap.parse_args()
 
     pdf = Path(args.pdf)
@@ -933,8 +1176,124 @@ def main():
             if isinstance(it, dict):
                 flat_items.extend(flatten_subrules(it))
         if not flat_items and items:
-            # if items were non-dicts, nothing to do
             flat_items = [it for it in items if isinstance(it, dict)]
+
+        # --- Critic/Judge loop (bounded, targeted regeneration) ---
+        if args.judge and flat_items:
+            judge_model = args.judge_model or args.model
+            # Normalize + keep one best candidate per rule_id within this window
+            by_id: dict[str, dict] = {}
+            for it in flat_items:
+                if not isinstance(it, dict):
+                    continue
+                it.setdefault("domain", "SEBI_ICDR")
+                if not isinstance(it.get("source"), dict):
+                    it["source"] = {}
+                it["source"].setdefault("pdf", pdf.name)
+                it["source"].setdefault("pages", page_nums)
+                clamp_span_hint(it)
+                normalize_rule_identifier(it)
+                rid = str(it.get("rule_id") or "").strip()
+                if not rid:
+                    continue
+                prev = by_id.get(rid)
+                by_id[rid] = it if prev is None else choose_best_item(prev, it)
+            window_rules = [by_id[k] for k in sorted(by_id.keys())]
+
+            # Deterministic validation (hard/soft)
+            validation: dict[str, dict[str, List[str]]] = {}
+            for r in window_rules:
+                rid = str(r.get("rule_id") or "")
+                hard: List[str] = []
+                soft: List[str] = []
+                hard.extend(validate_required_fields(r))
+                if rid and not validate_rule_id_format(rid):
+                    hard.append("bad_rule_id_format")
+                soft.extend(validate_maps_to(r))
+                hard.extend(validate_source(r, visible, span_mode=args.span_mode))
+                validation[rid] = {"hard_fail_reasons": sorted(set(hard)), "soft_fail_reasons": sorted(set(soft))}
+
+            # Refine via RuleRefiner (judge + selective regen). Only pass rules that are not hard-failing.
+            candidates = [sanitize_for_schema(r) for r in window_rules if not validation.get(str(r.get("rule_id") or ""), {}).get("hard_fail_reasons")]
+            judge_report: Dict[str, Any] = {}
+            judge_error: str | None = None
+            if candidates:
+                try:
+                    refiner = RuleRefiner(
+                        ollama=RefinerOllamaClient(timeout=args.timeout),
+                        judge_model=judge_model,
+                        gen_model=args.model,
+                    )
+                    refined, judge_report = refiner.refine_rules(
+                        visible,
+                        candidates,
+                        max_iterations=max(0, int(args.regen_rounds)),
+                        overall_th=float(args.judge_overall_threshold),
+                        fidelity_min=float(args.judge_fidelity_threshold),
+                        max_regen_per_window=max(0, int(args.max_regen_per_window)),
+                    )
+                    # Merge refined back by rule_id
+                    for rr in refined:
+                        rid = str(rr.get("rule_id") or "").strip()
+                        if rid:
+                            by_id[rid] = rr
+                except Exception as e:
+                    judge_error = f"{type(e).__name__}: {e}"
+                    if args.debug:
+                        print(f"[WARN] RuleRefiner failed: {judge_error}", file=sys.stderr)
+
+            # Quarantine rules that are hard-failing deterministically (so we still keep coverage)
+            for rid, v in validation.items():
+                if not v.get("hard_fail_reasons"):
+                    continue
+                if rid in by_id:
+                    by_id[rid]["status"] = "quarantined"
+                    by_id[rid]["maps_to"] = []
+                    summary = f"[QUARANTINED] hard={v['hard_fail_reasons']} soft={v['soft_fail_reasons']}"
+                    by_id[rid]["notes"] = (str(by_id[rid].get("notes") or "") + "\n" + summary).strip()
+
+            # Optional judge report output (JSONL)
+            if args.judge_report_out:
+                try:
+                    rec = {
+                        "pdf": pdf.name,
+                        "pages": page_nums,
+                        "window_start": start_idx,
+                        "validation": validation,
+                        "judge_report": judge_report,
+                        "judge_error": judge_error,
+                    }
+                    with open(args.judge_report_out, "a", encoding="utf-8") as jf:
+                        jf.write(json.dumps(rec, ensure_ascii=False) + "\n")
+                except Exception:
+                    pass
+
+            # If --debug, also write one JSON per window into data/processed/judge_reports/
+            if args.debug:
+                try:
+                    out_dir = Path("data/processed/judge_reports")
+                    out_dir.mkdir(parents=True, exist_ok=True)
+                    safe_pdf = re.sub(r"[^A-Za-z0-9_.-]+", "_", pdf.name)
+                    out_path = out_dir / f"{safe_pdf}_win{start_idx}_p{page_nums[0]}-{page_nums[-1]}.json"
+                    out_path.write_text(
+                        json.dumps(
+                            {
+                                "pdf": pdf.name,
+                                "pages": page_nums,
+                                "window_start": start_idx,
+                                "validation": validation,
+                                "judge_report": judge_report,
+                                "judge_error": judge_error,
+                            },
+                            ensure_ascii=False,
+                            indent=2,
+                        ),
+                        encoding="utf-8",
+                    )
+                except Exception:
+                    pass
+
+            flat_items = [by_id[k] for k in sorted(by_id.keys())]
 
         for it in flat_items:
             # Guard: only process dict items; try to coerce JSON strings
@@ -956,6 +1315,7 @@ def main():
                 it["source"] = {}
             it["source"].setdefault("pdf", pdf.name)
             it["source"].setdefault("pages", page_nums)
+            clamp_span_hint(it)
 
             reg_no = normalize_rule_identifier(it)
             if reg_no is None:
@@ -1010,6 +1370,8 @@ def main():
                     continue
 
             # validate basic schema
+            if "status" not in it:
+                it["status"] = "accepted"
             if not validate_rule(it):
                 continue
             rid = it["rule_id"]

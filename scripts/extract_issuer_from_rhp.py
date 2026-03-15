@@ -161,6 +161,27 @@ def load_schema_from_questions(qpath: Path) -> Dict[str, str]:
                 m[f] = t
     return m
 
+
+def load_schema_from_reconciled(path: Path) -> Dict[str, str]:
+    """
+    Load issuer_schema_reconciled.json (array of {field, type}).
+    """
+    try:
+        obj = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    if not isinstance(obj, list):
+        return {}
+    out: Dict[str, str] = {}
+    for it in obj:
+        if not isinstance(it, dict):
+            continue
+        f = (it.get("field") or "").strip()
+        t = (it.get("type") or "").strip()
+        if f and t:
+            out[f] = t
+    return out
+
 def load_rules_index(qpath: Path) -> Dict[str, Dict[str, str]]:
     """
     Build an index {rule_id: {"title": ..., "reference": ...}} from rules array in rules_and_fields JSON.
@@ -288,6 +309,18 @@ def ollama_generate(model: str, prompt: str, timeout: int = 300, json_schema: Di
             return (r3.json().get("response") or "").strip()
         except Exception:
             raise
+
+
+def ollama_request(endpoint: str, model: str, system: str, user: str, timeout: int, json_schema: Dict[str, Any] | None, debug: bool) -> str:
+    if endpoint == "generate":
+        return ollama_generate(model, f"System:\n{system}\n\nUser:\n{user}", timeout=timeout, json_schema=json_schema, debug=debug)
+    if endpoint == "chat":
+        return ollama_chat(model, system, user, timeout=timeout, json_schema=json_schema, debug=debug)
+    # auto: try chat then generate
+    try:
+        return ollama_chat(model, system, user, timeout=timeout, json_schema=json_schema, debug=debug)
+    except Exception:
+        return ollama_generate(model, f"System:\n{system}\n\nUser:\n{user}", timeout=timeout, json_schema=json_schema, debug=debug)
 
 def build_issuer_system_prompt(units: str = "paise", use_cot: bool = False) -> str:
     """
@@ -510,8 +543,11 @@ def main():
     ap.add_argument("--out", type=str, required=True, help="Output issuer instance JSON")
     ap.add_argument("--questions-json", type=str, required=True, help="Path to rules_and_fields*.json")
     ap.add_argument("--schema", type=str, default="", help="Optional issuer_schema.json")
+    ap.add_argument("--schema-reconciled", type=str, default="", help="issuer_schema_reconciled.json (array of {field,type})")
     ap.add_argument("--issuer-id", type=str, default="", help="Issuer identifier to store in output")
     ap.add_argument("--model", type=str, default="llama3:8b")
+    ap.add_argument("--endpoint", choices=["auto", "chat", "generate"], default="auto",
+                    help="Ollama endpoint mode (default: auto chat→generate)")
     ap.add_argument("--timeout", type=int, default=300)
     ap.add_argument("--retrieval", choices=["none","page","keyword"], default="keyword",
                     help="Context selection: none=full text; page=per-page for each field; keyword=select top-k pages by naive keyword match")
@@ -522,6 +558,7 @@ def main():
     ap.add_argument("--chunk-words", type=int, default=800, help="Words per pseudo-page when using --text (no explicit page breaks)")
     ap.add_argument("--per-field", action="store_true", help="Ask LLM per field (more calls; better locality)")
     ap.add_argument("--provenance", action="store_true", help="Record evidence pages per field")
+    ap.add_argument("--field-provenance-out", type=str, default="", help="Optional path to write field provenance JSON")
     ap.add_argument("--no-format", action="store_true", help="Disable json_schema enforcement (plain json)")
     ap.add_argument("--cot", action="store_true", help="Enable hidden step-by-step reasoning (do not include rationale in output)")
     ap.add_argument("--units", type=str, default="paise", help="Target integer unit for currency normalization (default: paise)")
@@ -551,6 +588,8 @@ def main():
 
     # Prefer schema from the rules_and_fields JSON; optionally overlay with --schema file if provided
     schema_types = load_schema_from_questions(Path(args.questions_json))
+    if args.schema_reconciled:
+        schema_types.update(load_schema_from_reconciled(Path(args.schema_reconciled)))
     if args.schema:
         schema_types.update(load_schema(Path(args.schema)))
     rules_index = load_rules_index(Path(args.questions_json))
@@ -604,11 +643,19 @@ def main():
                 "Return JSON with only this field under 'fields'. Example:\n"
                 f"{{\"fields\": {{\"{field}\": <value>}}}}\n"
             )
-            raw = ollama_chat(args.model, system, user, timeout=args.timeout, json_schema={
-                "type": "object",
-                "properties": { "fields": build_schema_for_fields([(field, ftype)]) },
-                "required": ["fields"]
-            } if not args.no_format else None, debug=args.debug)
+            raw = ollama_request(
+                args.endpoint,
+                args.model,
+                system,
+                user,
+                timeout=args.timeout,
+                json_schema={
+                    "type": "object",
+                    "properties": { "fields": build_schema_for_fields([(field, ftype)]) },
+                    "required": ["fields"],
+                } if not args.no_format else None,
+                debug=args.debug,
+            )
             raw = raw.strip()
             try:
                 data = json.loads(raw)
@@ -634,7 +681,7 @@ def main():
             "QUESTIONS (with expected types):\n" + "\n".join(qlines) + "\n\n"
             "Return JSON object with key 'fields' only. Example: {\"fields\": {\"is_debarred\": false, ...}}\n"
         )
-        raw = ollama_chat(args.model, system, user, timeout=args.timeout, json_schema=json_schema, debug=args.debug)
+        raw = ollama_request(args.endpoint, args.model, system, user, timeout=args.timeout, json_schema=json_schema, debug=args.debug)
         raw = raw.strip()
         try:
             data = json.loads(raw)
@@ -668,6 +715,10 @@ def main():
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(out_obj, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"✅ Wrote issuer instance → {args.out}")
+    if args.field_provenance_out and args.provenance:
+        Path(args.field_provenance_out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.field_provenance_out).write_text(json.dumps(provenance, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"✅ Wrote field provenance → {args.field_provenance_out}")
 
 
 if __name__ == "__main__":

@@ -26,6 +26,11 @@
       "type": "string"
     },
 
+    "status": {
+      "type": "string",
+      "enum": ["accepted", "fixed", "quarantined"]
+    },
+
     "maps_to": {
       "type": "array",
       "items": {

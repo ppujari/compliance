@@ -12,7 +12,11 @@ Inputs:
 
 Outputs:
   promotion_report.json
-  updated facts_schema_json (overwritten in place)
+  facts_schema_core.json (only promoted fields)
+  facts_schema_extended.json (all fields or non-generic singletons)
+
+By default, this script does NOT overwrite the input facts schema.
+Pass --write-back to overwrite --facts_schema_json explicitly.
 """
 
 import argparse
@@ -113,6 +117,46 @@ def parse_map_tokens(notes: str) -> List[Tuple[str, bool, List[str]]]:
     return tokens
 
 
+def parse_maps_to_fields(rule_obj: dict) -> List[Tuple[str, bool, List[str]]]:
+    """
+    Preferred parsing: structured maps_to fields.
+    Returns list of (normalized_field, had_numeric_constraint, applied_normalizations).
+    """
+    out: List[Tuple[str, bool, List[str]]] = []
+    maps_to = rule_obj.get("maps_to")
+    if not isinstance(maps_to, list):
+        return out
+    for m in maps_to:
+        if not isinstance(m, dict):
+            continue
+        raw_field = str(m.get("field") or "").strip()
+        if not raw_field:
+            continue
+        normalized, applied = normalize_field_token(raw_field)
+        if not normalized or not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", normalized):
+            continue
+        constraints_text = str(m.get("constraints_text") or "")
+        # Numeric evidence can appear either in constraints_text OR the rule text/title itself.
+        # Scan both to avoid losing numeric_threshold_nearby when constraints_text is missing.
+        rule_text = str(rule_obj.get("text") or "")
+        rule_title = str(rule_obj.get("title") or "")
+        numeric_blob = f"{constraints_text} {rule_title} {rule_text}".lower()
+        had_numeric = bool(
+            re.search(r"(>=|<=|=|>|<|≥|≤|\blength\s*=|\d)", numeric_blob)
+            or "%" in numeric_blob
+            or "per cent" in numeric_blob
+            or "percent" in numeric_blob
+            or "crore" in numeric_blob
+            or "lakh" in numeric_blob
+            or "rupee" in numeric_blob
+            or "₹" in numeric_blob
+        )
+        if "(" in raw_field or ")" in raw_field:
+            applied = applied + ["had_parens_in_raw"]
+        out.append((normalized, had_numeric, applied + ["from_maps_to"]))
+    return out
+
+
 def load_facts_schema(path: Path) -> Dict[str, List[dict]]:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -133,7 +177,20 @@ def main() -> None:
     ap.add_argument("--rules_jsonl", required=True)
     ap.add_argument("--facts_schema_json", required=True)
     ap.add_argument("--rule_evidence_schema_json", required=True)
-    ap.add_argument("--out", default="promotion_report.json")
+    ap.add_argument("--out", default="promotion_report.json", help="Where to write the promotion report JSON.")
+    ap.add_argument("--out-core", default="facts_schema_core.json", help="Write core facts schema (promoted fields only).")
+    ap.add_argument("--out-extended", default="facts_schema_extended.json", help="Write extended facts schema.")
+    ap.add_argument(
+        "--extended-mode",
+        choices=["all", "non_generic"],
+        default="all",
+        help="Extended schema contents: all fields, or only non-generic fields.",
+    )
+    ap.add_argument(
+        "--write-back",
+        action="store_true",
+        help="If set, overwrite --facts_schema_json with the core schema (use with care).",
+    )
     args = ap.parse_args()
 
     rules = read_jsonl(Path(args.rules_jsonl))
@@ -145,8 +202,11 @@ def main() -> None:
     paren_counts: Dict[str, int] = {}
 
     for obj in rules:
-        notes = obj.get("notes") or ""
-        tokens = parse_map_tokens(notes)
+        # Prefer structured maps_to; fall back to legacy notes Map to
+        tokens = parse_maps_to_fields(obj)
+        if not tokens:
+            notes = obj.get("notes") or ""
+            tokens = parse_map_tokens(notes)
         for name, had_comp, applied in tokens:
             counts[name] = counts.get(name, 0) + 1
             if had_comp:
@@ -206,11 +266,42 @@ def main() -> None:
         "offer_facts": _filter(facts_schema["offer_facts"]),
     }
 
-    # Persist updated schema in place
-    facts_schema_path.write_text(json.dumps(updated_schema, ensure_ascii=False, indent=2), encoding="utf-8")
+    # Build an extended schema that does not collapse to a tiny core.
+    if args.extended_mode == "all":
+        extended_schema = {
+            "issuer_facts": facts_schema["issuer_facts"],
+            "offer_facts": facts_schema["offer_facts"],
+        }
+    else:  # non_generic
+        def _non_generic(fields: List[dict]) -> List[dict]:
+            out_fields: List[dict] = []
+            for f in fields:
+                n = str(f.get("name", "")).strip()
+                if not n:
+                    continue
+                if n.lower() in GENERIC_PENALTY:
+                    continue
+                out_fields.append(f)
+            return out_fields
+
+        extended_schema = {
+            "issuer_facts": _non_generic(facts_schema["issuer_facts"]),
+            "offer_facts": _non_generic(facts_schema["offer_facts"]),
+        }
+
+    # Write outputs
+    Path(args.out_core).write_text(json.dumps(updated_schema, ensure_ascii=False, indent=2), encoding="utf-8")
+    Path(args.out_extended).write_text(json.dumps(extended_schema, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # Optionally persist updated schema in place
+    if args.write_back:
+        facts_schema_path.write_text(json.dumps(updated_schema, ensure_ascii=False, indent=2), encoding="utf-8")
 
     report = {
         "threshold": THRESHOLD,
+        "extended_mode": args.extended_mode,
+        "out_core": args.out_core,
+        "out_extended": args.out_extended,
         "demoted_fields": sorted(demoted),
         "kept_fields": sorted(kept),
         "scores": scores,
@@ -218,7 +309,10 @@ def main() -> None:
 
     out_path = Path(args.out)
     out_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Promotion scoring complete. Kept {len(kept)} fields, demoted {len(demoted)}. Report → {out_path}")
+    print(
+        f"Promotion scoring complete. Core kept {len(kept)} fields, demoted {len(demoted)}. "
+        f"Core → {args.out_core}; Extended → {args.out_extended}; Report → {out_path}"
+    )
 
 
 if __name__ == "__main__":

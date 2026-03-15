@@ -20,6 +20,10 @@ Outputs a JSON object:
 }
 
 Usage:
+  # Recommended (schema derived from issuerQuestions; no Main.lean dependency):
+  python scripts/extract_lean_to_json.py --lean GeneratedRules_v2.lean --out data/processed/rules_and_fields.json
+
+  # Optional (also extract issuer_schema_from_main for drift checks):
   python scripts/extract_lean_to_json.py --lean GeneratedRules_v2.lean --main Main.lean --out data/processed/rules_and_fields.json
 """
 from __future__ import annotations
@@ -182,26 +186,107 @@ def parse_issuer_schema(main_src: str) -> List[Dict[str, str]]:
     return fields
 
 
-def extract_to_json(lean_path: str, main_path: str) -> Dict[str, Any]:
+def normalize_question_type(raw: str) -> str:
+    """
+    Normalize common type strings seen in issuerQuestions into Lean-like strings.
+    This function is intentionally small and deterministic.
+    """
+    t = (raw or "").strip()
+    if not t:
+        return "String"
+    t = re.sub(r"\s+", " ", t)
+    mapping = {
+        "OptionBool": "Option Bool",
+        "OptionNat": "Option Nat",
+        "OptionString": "Option String",
+        "OptionListNat": "Option (List Nat)",
+        "ListNat": "List Nat",
+    }
+    return mapping.get(t, t)
+
+
+def base_type_from_question_type(norm: str) -> str:
+    """
+    Convert a question type into a base field type suitable for issuer_schema.
+    Examples:
+      Option Bool -> Bool
+      Option (List Nat) -> List Nat
+    """
+    t = (norm or "").strip()
+    if t.startswith("Option "):
+        inner = t[len("Option ") :].strip()
+        if inner.startswith("(") and inner.endswith(")"):
+            inner = inner[1:-1].strip()
+        return inner
+    return t
+
+
+def build_issuer_schema_from_questions(issuer_questions: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    """
+    Deterministically build a canonical issuer_schema [{field,type}] from issuer_questions.
+    Deduplicates by field and prefers stable base types (Bool, Nat, List Nat, String, List String).
+    """
+    # Dedup questions by field
+    by_field: Dict[str, Dict[str, str]] = {}
+    for q in issuer_questions:
+        field = (q.get("field") or "").strip()
+        if not field:
+            continue
+        qtext = (q.get("question") or "").strip()
+        raw_type = q.get("type") or "String"
+        norm_type = normalize_question_type(raw_type)
+        base_type = base_type_from_question_type(norm_type)
+        cur = by_field.get(field)
+        if cur is None:
+            by_field[field] = {"field": field, "question": qtext, "type": base_type, "type_raw": raw_type, "type_norm": norm_type}
+        else:
+            # Keep the more informative question (longer non-empty)
+            if qtext and (len(qtext) > len(cur.get("question", ""))):
+                cur["question"] = qtext
+            # Prefer the most specific base type by a fixed precedence
+            precedence = ["List Nat", "List String", "String", "Nat", "Bool"]
+            cur_type = cur.get("type") or "String"
+            if base_type in precedence and cur_type in precedence:
+                if precedence.index(base_type) < precedence.index(cur_type):
+                    cur["type"] = base_type
+            elif base_type and cur_type != base_type:
+                # If conflicting and unknown, fall back to String
+                cur["type"] = "String"
+            cur["type_raw"] = cur.get("type_raw", raw_type)
+            cur["type_norm"] = cur.get("type_norm", norm_type)
+
+    schema = [{"field": v["field"], "type": v["type"]} for v in by_field.values()]
+    schema.sort(key=lambda x: x["field"])
+    return schema
+
+
+def extract_to_json(lean_path: str, main_path: str | None = None) -> Dict[str, Any]:
     lean_src = read_text(Path(lean_path))
-    main_src = read_text(Path(main_path))
     rules = parse_generated_ruleset(lean_src)
     issuer_questions = parse_issuer_questions(lean_src)
-    issuer_schema = parse_issuer_schema(main_src)
+    issuer_schema = build_issuer_schema_from_questions(issuer_questions)
+    issuer_schema_from_main: List[Dict[str, str]] = []
+    if main_path:
+        try:
+            main_src = read_text(Path(main_path))
+            issuer_schema_from_main = parse_issuer_schema(main_src)
+        except Exception:
+            issuer_schema_from_main = []
     return {
         "rules": rules,
         "issuer_questions": issuer_questions,
         "issuer_schema": issuer_schema,
+        "issuer_schema_from_main": issuer_schema_from_main,
     }
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--lean", required=True, help="Path to GeneratedRules*.lean")
-    ap.add_argument("--main", required=True, help="Path to Main.lean")
+    ap.add_argument("--main", default="", help="Optional path to Main.lean (only needed to extract issuer_schema_from_main)")
     ap.add_argument("--out", required=True, help="Output JSON file")
     args = ap.parse_args()
-    data = extract_to_json(args.lean, args.main)
+    data = extract_to_json(args.lean, args.main or None)
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"✅ Wrote JSON → {args.out}")

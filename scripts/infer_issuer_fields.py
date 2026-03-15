@@ -43,6 +43,8 @@ class FieldContext:
     notes: List[str]      # full notes where it appeared
     raw_tokens: List[str]  # raw tokens seen prior to normalization
     normalizations: List[str]  # normalization steps applied
+    type_hints: List[str]  # type hints seen from rules["maps_to"][].type_hint
+    constraints_texts: List[str]  # constraints text samples from rules["maps_to"][].constraints_text
 
 @dataclass
 class IssuerField:
@@ -54,6 +56,8 @@ class IssuerField:
     from_rules: List[str]
     raw_tokens_seen: List[str]
     normalization_applied: List[str]
+    type_hints_seen: List[str]
+    constraints_text_samples: List[str]
 
 
 # ----------------------------------------------------------------------
@@ -202,8 +206,29 @@ def collect_field_contexts(rule_files: List[str]) -> Dict[str, FieldContext]:
             notes = obj.get("notes") or ""
             text = obj.get("text") or ""
 
-            field_infos = extract_field_names_from_notes(notes)
-            for fname, raw_tok, applied_norms in field_infos:
+            # Prefer structured maps_to if present; fall back to legacy "Map to ..." notes parsing.
+            field_infos: List[Tuple[str, str, List[str], str, str]] = []
+
+            maps_to = obj.get("maps_to")
+            if isinstance(maps_to, list):
+                for m in maps_to:
+                    if not isinstance(m, dict):
+                        continue
+                    f = (m.get("field") or "").strip()
+                    if not f:
+                        continue
+                    normalized, applied = normalize_field_token(f)
+                    if not normalized or not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", normalized):
+                        continue
+                    type_hint = (m.get("type_hint") or "").strip()
+                    constraints_text = (m.get("constraints_text") or "").strip()
+                    field_infos.append((normalized, f, applied + ["from_maps_to"], type_hint, constraints_text))
+
+            legacy = extract_field_names_from_notes(notes)
+            for fname, raw_tok, applied_norms in legacy:
+                field_infos.append((fname, raw_tok, applied_norms + ["from_notes_map_to"], "", ""))
+
+            for fname, raw_tok, applied_norms, type_hint, constraints_text in field_infos:
                 if fname not in fields:
                     fields[fname] = FieldContext(
                         name=fname,
@@ -212,6 +237,8 @@ def collect_field_contexts(rule_files: List[str]) -> Dict[str, FieldContext]:
                         notes=[],
                         raw_tokens=[],
                         normalizations=[],
+                        type_hints=[],
+                        constraints_texts=[],
                     )
                 ctx = fields[fname]
                 if rule_id not in ctx.rule_ids:
@@ -228,6 +255,13 @@ def collect_field_contexts(rule_files: List[str]) -> Dict[str, FieldContext]:
                 for step in applied_norms:
                     if step not in ctx.normalizations:
                         ctx.normalizations.append(step)
+                if type_hint:
+                    th = normalize_type_hint(type_hint)
+                    if th and th not in ctx.type_hints:
+                        ctx.type_hints.append(th)
+                if constraints_text and constraints_text not in ctx.constraints_texts:
+                    if len(ctx.constraints_texts) < 5:
+                        ctx.constraints_texts.append(constraints_text)
 
     return fields
 
@@ -249,6 +283,52 @@ def guess_python_type(lean_type: str) -> str:
     return "Any"
 
 
+def normalize_type_hint(type_hint: str) -> str:
+    """
+    Map extended hints to the core vocabulary used by this script:
+      Bool, Nat, List Nat, String
+    """
+    t = (type_hint or "").strip()
+    if not t:
+        return ""
+    t = re.sub(r"\s+", " ", t)
+    # Option* -> underlying
+    if t == "OptionBool":
+        return "Bool"
+    if t == "OptionNat":
+        return "Nat"
+    if t == "OptionListNat":
+        return "List Nat"
+    if t == "OptionString":
+        return "String"
+    # Accept either "List Nat" or "ListNat"
+    if t == "ListNat":
+        return "List Nat"
+    return t
+
+
+def choose_type_from_hints(type_hints: List[str]) -> str:
+    """
+    Choose a stable type from a list of type hints.
+    Preference is given to the most common normalized hint. Ties break by a
+    fixed precedence to keep deterministic output.
+    """
+    normed = [normalize_type_hint(x) for x in type_hints if x]
+    normed = [x for x in normed if x in ("Bool", "Nat", "List Nat", "String")]
+    if not normed:
+        return ""
+    counts: Dict[str, int] = {}
+    for x in normed:
+        counts[x] = counts.get(x, 0) + 1
+    max_ct = max(counts.values())
+    top = sorted([k for k, v in counts.items() if v == max_ct])
+    precedence = ["List Nat", "String", "Nat", "Bool"]
+    for p in precedence:
+        if p in top:
+            return p
+    return top[0]
+
+
 def infer_type_for_field(ctx: FieldContext) -> Tuple[str, str, str]:
     """
     Return (lean_type, python_type, description) for a field based on its name
@@ -259,6 +339,78 @@ def infer_type_for_field(ctx: FieldContext) -> Tuple[str, str, str]:
     texts_concat = " ".join(ctx.texts).lower()
     notes_concat = " ".join(ctx.notes).lower()
     combined_text = f"{texts_concat} {notes_concat}"
+    constraints_concat = " ".join(ctx.constraints_texts).lower()
+
+    # --- Strong signal: explicit type hints from maps_to ---
+    hinted = choose_type_from_hints(ctx.type_hints)
+    if hinted:
+        lean_type = hinted
+        py_type = guess_python_type(lean_type)
+        descr = f"Field for {name.replace('_', ' ')} (from rule type_hint)."
+        return lean_type, py_type, descr
+
+    # --- Strong signal: explicit multi-year series constraints -> List Nat ---
+    has_3yr_constraints = (
+        "preceding three years" in constraints_concat
+        or "preceding three full years" in constraints_concat
+        or "last three years" in constraints_concat
+        or "each of the preceding three" in constraints_concat
+        or re.search(r"\blength\s*=\s*3\b", constraints_concat) is not None
+    )
+    if has_3yr_constraints:
+        lean_type = "List Nat"
+        py_type = guess_python_type(lean_type)
+        descr = f"Series of non-negative integers over multiple years for {name.replace('_', ' ')} (from constraints_text)."
+        return lean_type, py_type, descr
+
+    # --- Name-based booleans (avoid defaulting to Nat for compliance flags) ---
+    # Examples: ..._application, ..._agreement, ..._demat(dematerialised), ..._approved, ..._paid_up, ..._forfeited
+    bool_contains = (
+        "agreement",
+        "application",
+        "approved",
+        "approval",
+        "appoint",
+        "obtained",
+        "created",
+        "demat",
+        "dematerial",
+        "forfeit",
+        "forfeited",
+        "paid_up",
+        "paidup",
+        "eligible",
+        "required",
+        "complied",
+        "compliance",
+        "consent",
+        "default",
+    )
+    bool_suffixes = (
+        "_application",
+        "_agreement",
+        "_approved",
+        "_approval",
+        "_appointed",
+        "_obtained",
+        "_created",
+        "_demat",
+        "_dematerialised",
+        "_dematerialized",
+        "_paid_up",
+        "_forfeited",
+        "_required",
+        "_eligible",
+        "_complied",
+        "_in_default",
+    )
+    if lname.endswith(bool_suffixes) or any(tok in lname for tok in bool_contains):
+        # Guard against obvious non-bool numeric facts
+        if not any(k in lname for k in ("period", "tenure", "duration", "months", "years", "age", "term", "ratio", "percent", "_pct", "_count")):
+            lean_type = "Bool"
+            py_type = guess_python_type(lean_type)
+            descr = f"Boolean compliance flag for {name.replace('_', ' ')} (name-based inference)."
+            return lean_type, py_type, descr
 
     # --- Heuristic 1: Booleans by naming convention ---
     bool_prefixes = ("is_", "has_", "uses_")
@@ -363,6 +515,7 @@ def build_issuer_fields(
         ctx.rule_ids.sort()
         ctx.raw_tokens.sort()
         ctx.normalizations.sort()
+        ctx.type_hints.sort()
         lean_type, py_type, descr = infer_type_for_field(ctx)
         fields.append(
             IssuerField(
@@ -373,6 +526,8 @@ def build_issuer_fields(
                 from_rules=ctx.rule_ids,
                 raw_tokens_seen=ctx.raw_tokens,
                 normalization_applied=ctx.normalizations,
+                type_hints_seen=ctx.type_hints,
+                constraints_text_samples=ctx.constraints_texts,
             )
         )
     return fields

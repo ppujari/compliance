@@ -14,7 +14,7 @@ Behavior:
 
 Assumptions:
 - You have a local Ollama server running (http://localhost:11434)
-- The Lean types Issuer and ComplianceRule are defined in Main.lean
+- You provide an issuer schema (derived from rules/maps_to) so the model doesn't invent Issuer fields.
 - The generated file imports Main and defines `namespace GeneratedRules` with `def generatedRuleset : List ComplianceRule := [...]`
 
 Usage:
@@ -74,6 +74,49 @@ def extract_lean_code_block(s: str) -> str:
         return m2.group(1).strip()
     # No fenced block; return whole string
     return s.strip()
+
+
+def _extract_bracketed_list_body(src: str, def_name: str) -> str:
+    """
+    Robustly extract the body of a bracketed list from a definition like:
+      def <def_name> ... := [ <BODY> ]
+    Uses bracket-depth scanning to avoid regex greediness across multiple lists.
+    Returns "" if not found.
+    """
+    m = re.search(rf"def\s+{re.escape(def_name)}\b[\s\S]*?:=\s*\[", src)
+    if not m:
+        return ""
+    i = m.end()  # position right after the opening '['
+    depth = 1
+    in_str = False
+    esc = False
+    for j in range(i, len(src)):
+        ch = src[j]
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+            continue
+        if ch == "[":
+            depth += 1
+        elif ch == "]":
+            depth -= 1
+            if depth == 0:
+                return src[i:j].strip()
+    return ""
+
+
+def _strip_trailing_commas(s: str) -> str:
+    s2 = s.strip()
+    while s2.endswith(","):
+        s2 = s2[:-1].rstrip()
+    return s2
 
 def read_fewshots_json(path: Path) -> List[Tuple[str, str]]:
     """
@@ -226,18 +269,38 @@ def ollama_chat(model: str, system: str, user: str, timeout: int = 180, debug: b
     return content
 
 
-def build_system_prompt(repo_root: Path) -> str:
-    # Dynamically read Main.lean to stay in sync with evolving schema
-    main_path = repo_root / "Main.lean"
-    main_src = read_text_safe(main_path)
-    issuer_block = extract_structure_block(main_src, "Issuer")
-    rule_block = extract_structure_block(main_src, "ComplianceRule")
-    issuer_fields = extract_issuer_fields(issuer_block) if issuer_block else []
+def _load_issuer_fields_from_schema_json(path: Path) -> List[Tuple[str, str]]:
+    """
+    Accepts either:
+      - issuer_fields.json from infer_issuer_fields.py: [{name, lean_type, ...}]
+      - issuer_schema array: [{field, type}]
+    Returns list of (field, lean_type).
+    """
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    out: List[Tuple[str, str]] = []
+    if isinstance(data, list):
+        for it in data:
+            if not isinstance(it, dict):
+                continue
+            if "name" in it and "lean_type" in it:
+                out.append((str(it.get("name") or ""), str(it.get("lean_type") or "String")))
+            elif "field" in it and "type" in it:
+                out.append((str(it.get("field") or ""), str(it.get("type") or "String")))
+    elif isinstance(data, dict) and "issuer_schema" in data and isinstance(data["issuer_schema"], list):
+        for it in data["issuer_schema"]:
+            if isinstance(it, dict) and "field" in it and "type" in it:
+                out.append((str(it.get("field") or ""), str(it.get("type") or "String")))
+    out = [(f, t) for (f, t) in out if f]
+    out.sort(key=lambda x: x[0])
+    return out
 
-    # Fallbacks (minimal) if extraction fails
-    if not issuer_block:
-        issuer_block = "structure Issuer where\n  -- (fields elided; use only fields listed in AVAILABLE_FIELDS)"
-    if not rule_block:
+
+def build_system_prompt(issuer_fields: List[Tuple[str, str]]) -> str:
+    # Build Issuer block from the provided schema (ground truth = derived from rules/maps_to)
+    issuer_block = "structure Issuer where\n" + "\n".join([f"  {n} : {t}" for (n, t) in issuer_fields]) + "\n"
         rule_block = (
             "structure ComplianceRule where\n"
             "  id         : String\n"
@@ -248,7 +311,7 @@ def build_system_prompt(repo_root: Path) -> str:
             "  remedy?    : Option String\n"
         )
 
-    available_fields = ", ".join([f"{name}:{typ}" for name, typ in issuer_fields]) or "(could not parse; do not invent fields)"
+    available_fields = ", ".join([f"{name}:{typ}" for name, typ in issuer_fields]) or "(no issuer schema provided; do not invent fields)"
 
     example_rule = (
         "{ id := \"SEBI ICDR 6(1)(b)\",\n"
@@ -274,7 +337,8 @@ def build_system_prompt(repo_root: Path) -> str:
         "- Use simple pure checks (no IO).\n"
         "- Title should be short; reference can be the regulation if provided.\n"
         "- Fail reason should be concise and data-driven.\n"
-        "- Where JSON `notes` mention specific Issuer fields, prefer those if present in AVAILABLE_FIELDS; otherwise craft a conservative predicate that compiles (e.g., `fun _ => True`) and set a failReason explaining missing data.\n"
+        "- Prefer using JSON `maps_to` fields when available. Do NOT invent new Issuer fields.\n"
+        "- If a rule is not representable using AVAILABLE_FIELDS, craft a conservative predicate that compiles (e.g., `fun _ => True`) and set a failReason explaining missing data.\n"
         "- Use integer paise values for rupee thresholds as per examples.\n"
         "- Output exactly ONE Lean code block for the entire batch.\n"
         "- The file must define:\n"
@@ -287,7 +351,7 @@ def build_system_prompt(repo_root: Path) -> str:
         "    def issuerQuestionsChunk : List (String × String × String) := [ ... ]\n"
         "    end GeneratedRules\n\n"
         "Example (style only):\n"
-        "```lean\nimport Main\nopen Main\nnamespace GeneratedRules\n/-- example style for one rule -/\n#eval (Nat.succ 0)\n-- Example ComplianceRule expression:\n" + example_rule + "\nend GeneratedRules\n```\n"
+        "```lean\nimport Main\nopen Main\nnamespace GeneratedRules\n-- Example ComplianceRule expression:\n" + example_rule + "\nend GeneratedRules\n```\n"
     )
 
 
@@ -295,6 +359,7 @@ def build_user_prompt(batch_items: List[Dict[str, Any]], target_module_name: str
     # Provide a compact JSON the model can use to synthesize rules
     compact = []
     for it in batch_items:
+        maps_to = it.get("maps_to") if isinstance(it.get("maps_to"), list) else []
         compact.append({
             "rule_id": it.get("rule_id"),
             "title": it.get("title"),
@@ -302,6 +367,7 @@ def build_user_prompt(batch_items: List[Dict[str, Any]], target_module_name: str
             "lean_id": it.get("lean_id"),
             "notes": it.get("notes"),
             "reference": (it.get("source") or {}).get("reg") or it.get("rule_id") or "",
+            "maps_to": maps_to,
         })
     items_json = json.dumps(compact, ensure_ascii=False, indent=2)
 
@@ -322,7 +388,7 @@ def build_user_prompt(batch_items: List[Dict[str, Any]], target_module_name: str
     )
 
 
-def merge_chunks_to_file(chunks: List[str], out_path: Path) -> None:
+def merge_chunks_to_file(chunks: List[str], out_path: Path, debug: bool = False) -> None:
     # Compose final Lean file with all chunks under same namespace
     header = (
         "import Main\nopen Main\nnamespace GeneratedRules\n\n"
@@ -332,21 +398,28 @@ def merge_chunks_to_file(chunks: List[str], out_path: Path) -> None:
     body_rules: List[str] = []
     body_questions: List[str] = []
     for idx, chunk in enumerate(chunks):
-        # Extract the list literal from the chunk or keep as-is
-        # Try to capture the list inside `def generatedRulesetChunk : List ComplianceRule := [ ... ]`
-        m = re.search(r"def\s+generatedRulesetChunk\s*:\s*List\s+ComplianceRule\s*:=\s*\[(.*)\]", chunk, flags=re.S)
-        if m:
-            inner = m.group(1).strip()
+        # Extract rules list body (accept either Chunk or full def names)
+        inner = _extract_bracketed_list_body(chunk, "generatedRulesetChunk")
+        if not inner:
+            inner = _extract_bracketed_list_body(chunk, "generatedRuleset")
+        inner = _strip_trailing_commas(inner)
             if inner:
                 body_rules.append(inner)
-        # Extract issuerQuestionsChunk
-        mq = re.search(r"def\s+issuerQuestionsChunk\s*:\s*List\s*\(\s*String\s*×\s*String\s*×\s*String\s*\)\s*:=\s*\[(.*)\]", chunk, flags=re.S)
-        if mq:
-            innerq = mq.group(1).strip()
+        elif debug:
+            print(f"[WARN] batch_chunk[{idx}] missing generatedRulesetChunk/generatedRuleset list; skipped", file=sys.stderr)
+
+        # Extract issuer questions list body
+        innerq = _extract_bracketed_list_body(chunk, "issuerQuestionsChunk")
+        if not innerq:
+            innerq = _extract_bracketed_list_body(chunk, "issuerQuestions")
+        innerq = _strip_trailing_commas(innerq)
             if innerq:
                 body_questions.append(innerq)
+        elif debug:
+            print(f"[WARN] batch_chunk[{idx}] missing issuerQuestionsChunk/issuerQuestions list; skipped", file=sys.stderr)
 
     # Join rules with commas
+    # Join with commas, stripping any trailing commas from chunks first
     joined_rules = ",\n\n".join([s for s in body_rules if s])
     joined_questions = ",\n".join([s for s in body_questions if s])
 
@@ -375,6 +448,12 @@ def main():
     ap.add_argument("--timeout", type=int, default=300, help="HTTP timeout seconds per request")
     ap.add_argument("--fewshot", type=str, default="", help="Path to few-shot JSON for Lean generation")
     ap.add_argument("--json-out", type=str, default="", help="Optional path to also write extracted JSON (rules + issuer questions + issuer schema)")
+    ap.add_argument(
+        "--issuer-schema-json",
+        type=str,
+        default="",
+        help="Path to issuer schema JSON (derived from rules/maps_to). Accepts issuer_fields.json or [{field,type}] array.",
+    )
     args = ap.parse_args()
 
     inp = Path(args.inp)
@@ -386,9 +465,10 @@ def main():
         print(f"No items found in {inp}", file=sys.stderr)
         sys.exit(1)
 
-    # Determine repo root (parent of scripts/)
-    repo_root = Path(__file__).resolve().parents[1]
-    system = build_system_prompt(repo_root)
+    issuer_fields: List[Tuple[str, str]] = []
+    if args.issuer_schema_json:
+        issuer_fields = _load_issuer_fields_from_schema_json(Path(args.issuer_schema_json))
+    system = build_system_prompt(issuer_fields)
     chunks_out: List[str] = []
     total_rules = len(items)
     batches = list(chunked(items, args.batch_size))
@@ -447,10 +527,10 @@ def main():
         print("No Lean content generated.", file=sys.stderr)
         sys.exit(2)
 
-    merge_chunks_to_file(chunks_out, outp)
+    merge_chunks_to_file(chunks_out, outp, debug=args.debug)
     print(f"✅ Processed {total_rules} rule items in {num_batches} batches; wrote Lean ruleset → {outp}")
 
-    # Optional: also emit JSON extraction from Lean + Main.lean
+    # Optional: also emit JSON extraction from Lean (issuer_schema derived from issuer_questions; no Main.lean required)
     if args.json_out:
         try:
             from scripts.extract_lean_to_json import extract_to_json  # type: ignore
@@ -467,9 +547,7 @@ def main():
             except Exception as e:
                 print(f"[WARN] Could not import extractor to write JSON: {e}", file=sys.stderr)
                 return
-        repo_root = Path(__file__).resolve().parents[1]
-        main_path = (repo_root / "Main.lean").as_posix()
-        data = extract_to_json(outp.as_posix(), main_path)
+        data = extract_to_json(outp.as_posix(), None)
         Path(args.json_out).parent.mkdir(parents=True, exist_ok=True)
         Path(args.json_out).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"✅ Also wrote JSON extraction → {args.json_out}")
