@@ -101,7 +101,10 @@ def extract_page_tables(pdf_path: Path) -> List[Dict[str, Any]]:
                             fy_cols.append(i)
                 if not fy_cols:
                     fy_cols = numeric_cols
-                # Map FY label columns to nearest numeric value columns on the left
+                # Map FY label columns to value columns.
+                # Strategy 1: look leftward for the nearest numeric column.
+                # Strategy 2: if no column found to the left, try using the FY column
+                #   itself as the value column (common RHP layout: metric | FY23 | FY22 | FY21).
                 value_cols = []
                 if header_idx >= 0 and fy_cols:
                     for fc in fy_cols:
@@ -111,10 +114,14 @@ def extract_page_tables(pdf_path: Path) -> List[Dict[str, Any]]:
                             if j in numeric_cols:
                                 chosen = j
                                 break
+                        if chosen is None and fc in numeric_cols:
+                            # FY column IS the value column (e.g. metric | FY23val | FY22val)
+                            chosen = fc
                         if chosen is not None and chosen not in value_cols:
                             value_cols.append(chosen)
                 if not value_cols:
-                    value_cols = fy_cols
+                    # Last resort: if multiple FY columns are adjacent numerics, use them all
+                    value_cols = [fc for fc in fy_cols if fc in numeric_cols] or fy_cols
                 # build rows
                 data_rows: List[Dict[str, Any]] = []
                 for r in rows[header_idx + 1 :] if header_idx >= 0 else rows:

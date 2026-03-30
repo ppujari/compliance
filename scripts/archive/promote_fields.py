@@ -25,6 +25,11 @@ import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+try:
+    from scripts.utils import read_jsonl as _read_jsonl_base  # type: ignore[import-not-found]
+except ImportError:
+    from utils import read_jsonl as _read_jsonl_base  # type: ignore
+
 MAP_TO_RE = re.compile(
     r"""
     Map\sto
@@ -45,17 +50,8 @@ THRESHOLD = 1  # score must be >= THRESHOLD to stay in facts schema
 
 
 def read_jsonl(path: Path) -> List[dict]:
-    items: List[dict] = []
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except Exception:
-                continue
-            items.append(obj)
+    """Read JSONL and sort deterministically by rule_id."""
+    items = _read_jsonl_base(path)
     items.sort(key=lambda o: str(o.get("rule_id") or o.get("rule_id_raw") or ""))
     return items
 

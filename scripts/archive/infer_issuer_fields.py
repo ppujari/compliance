@@ -29,6 +29,11 @@ from collections import defaultdict
 from dataclasses import dataclass, asdict
 from typing import Dict, List, Iterable, Tuple, Optional
 
+try:
+    from scripts.utils import read_jsonl  # type: ignore[import-not-found]
+except ImportError:
+    from utils import read_jsonl  # type: ignore
+
 
 # ----------------------------------------------------------------------
 # Data structures
@@ -64,13 +69,6 @@ class IssuerField:
 # Helpers to read rules JSONL
 # ----------------------------------------------------------------------
 
-def read_jsonl(path: str) -> Iterable[dict]:
-    with open(path, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            yield json.loads(line)
 
 
 # ----------------------------------------------------------------------
@@ -499,11 +497,11 @@ def infer_type_for_field(ctx: FieldContext) -> Tuple[str, str, str]:
         descr = f"Text/identifier field for {name.replace('_', ' ')}."
         return lean_type, py_type, descr
 
-    # --- Fallback: treat as Nat (numeric) ---
-    # You can later manually adjust a few to String/Enum if needed.
-    lean_type = "Nat"
+    # --- Fallback: String is the safe default for unclassified fields ---
+    # String avoids forcing numeric types onto entity/category/identifier fields.
+    lean_type = "String"
     py_type = guess_python_type(lean_type)
-    descr = f"Non-negative integer field for {name.replace('_', ' ')}."
+    descr = f"Text field for {name.replace('_', ' ')} (type unresolved; review manually)."
     return lean_type, py_type, descr
 
 

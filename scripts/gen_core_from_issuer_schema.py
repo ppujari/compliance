@@ -13,7 +13,7 @@ def load_schema(path: Path) -> Dict[str, Any]:
         return json.load(f)
 
 
-def discover_fields(schema: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+def discover_fields(schema) -> Dict[str, Dict[str, Any]]:
     """
     Returns a dict of fieldName -> jsonschema for the Issuer fields.
     Supports both:
@@ -22,6 +22,16 @@ def discover_fields(schema: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
       - combined rules_and_fields format containing "issuer_schema": [{field, type}]
     """
     props = {}
+    # Bare array format: [{field, type}, ...]  (issuer_schema_reconciled.json)
+    if isinstance(schema, list):
+        for entry in schema:
+            if not isinstance(entry, dict):
+                continue
+            name = entry.get("field")
+            lean_ty = entry.get("type")
+            if isinstance(name, str) and isinstance(lean_ty, str):
+                props[name] = {"lean_type": lean_ty}
+        return props
     # Combined "rules_and_fields" format
     issuer_schema = schema.get("issuer_schema")
     if isinstance(issuer_schema, list) and issuer_schema:
@@ -53,15 +63,20 @@ def discover_fields(schema: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
 
 
 def _lean_default_for_lean_type(lean_ty: str) -> str:
-    if lean_ty == "Bool":
+    """Return a default literal for the BASE (non-Option) type, used with .getD."""
+    # Strip Option wrapper so we always get the base type's default
+    base = lean_ty.strip()
+    if base.startswith("Option "):
+        base = base[len("Option "):].strip()
+    if base.startswith("(") and base.endswith(")"):
+        base = base[1:-1].strip()
+    if base == "Bool":
         return "false"
-    if lean_ty == "Nat":
+    if base in ("Nat", "Int"):
         return "0"
-    if lean_ty == "Int":
-        return "0"
-    if lean_ty == "String":
+    if base == "String":
         return '""'
-    if lean_ty.startswith("List"):
+    if base.startswith("List"):
         return "[]"
     return '""'
 
@@ -113,6 +128,9 @@ def generate_core(namespace: str, fields: Dict[str, Dict[str, Any]]) -> str:
     normalize_lines = []
 
     def option_type(lean_ty: str) -> str:
+        # Never double-wrap: if type is already Option, keep as-is for IssuerInput
+        if lean_ty.strip().startswith("Option"):
+            return lean_ty
         needs_paren = (" " in lean_ty) or lean_ty.startswith("List") or "(" in lean_ty or ")" in lean_ty
         return f"Option ({lean_ty})" if needs_paren else f"Option {lean_ty}"
 
@@ -192,11 +210,40 @@ def generate_core(namespace: str, fields: Dict[str, Dict[str, Any]]) -> str:
     return header + issuer_struct + issuer_input_struct + normalize_fn + fromjson_inst + rules_structs + footer
 
 
+def generate(schema_path: str, out_path: str, namespace: str = "Src.Core_auto") -> None:
+    """
+    Programmatic entry point — callable from verify_one.py without spawning a subprocess.
+
+    Args:
+        schema_path: Path to the issuer schema JSON (bare list or combined rules_and_fields).
+        out_path:    Destination Lean file path.
+        namespace:   Lean namespace for the generated core (default: Src.Core_auto).
+    """
+    sp = Path(schema_path)
+    schema = load_schema(sp)
+    fields = discover_fields(schema)
+    if not fields:
+        raise ValueError(
+            f"No fields discovered in schema '{schema_path}'. "
+            "Ensure the file is a [{field,type}] list or has 'properties.fields.properties'."
+        )
+    lean_src = generate_core(namespace, fields)
+    op = Path(out_path)
+    op.parent.mkdir(parents=True, exist_ok=True)
+    op.write_text(lean_src, encoding="utf-8")
+    print(f"[DONE] Wrote core -> {op} (namespace {namespace})")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--schema", required=True, help="Path to issuer schema JSON")
+    # Accept both --schema and --issuer-schema (documented alias)
+    schema_grp = ap.add_mutually_exclusive_group(required=True)
+    schema_grp.add_argument("--schema", default="", help="Path to issuer schema JSON")
+    schema_grp.add_argument("--issuer-schema", dest="schema", help="Alias for --schema")
     ap.add_argument("--out", required=True, help="Output Lean path, e.g., Src/Core_auto.lean")
     ap.add_argument("--namespace", default="Src.Core_auto", help="Lean namespace for the generated core")
+    # --rules-lean is accepted but informational only (Core does not embed the rules lean file)
+    ap.add_argument("--rules-lean", default="", help="Path to GeneratedRules*.lean (informational; not embedded in Core)")
     args = ap.parse_args()
 
     schema_path = Path(args.schema)
@@ -210,7 +257,7 @@ def main() -> None:
 
     lean_src = generate_core(args.namespace, fields)
     out_path.write_text(lean_src, encoding="utf-8")
-    print(f"✅ Wrote core → {out_path} (namespace {args.namespace})")
+    print(f"[DONE] Wrote core -> {out_path} (namespace {args.namespace})")
 
 
 if __name__ == "__main__":

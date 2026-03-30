@@ -1,19 +1,19 @@
 import Lean
 import Lean.Data.Json
-import Src.Core_v2
-import Src.GeneratedRules_mistral_7b_v1
+import Src.Core_auto
+import Src.GeneratedRules_judged_v2
 
 namespace Src.Main_v2
 
 open Lean
-open Src.Core_v2
-open Src.GeneratedRules_mistral_7b_v1
+open Src.Core_auto
+open Src.GeneratedRules_judged_v2
 
 set_option linter.unusedVariables false
 
 /-- Ruleset adapted from SEBI ICDR Regulations (anchors in comments). -/
 def ruleset : List ComplianceRule :=
-  Src.GeneratedRules_mistral_7b_v1.generatedRuleset
+  Src.GeneratedRules_judged_v2.generatedRuleset
 
 /-- Run the ruleset and collect results. -/
 def runAll (i : Issuer) : List RuleResult :=
@@ -26,13 +26,13 @@ def overallEligible (results : List RuleResult) : Bool :=
 /-- Render a human-readable report. -/
 def renderReport (results : List RuleResult) : String :=
   let (passed, failed) := results.partition (·.passed)
-  let header := if failed.isEmpty then "✅ Eligible: All applicable rules satisfied\n"
-                else "❌ Not Eligible: some rules failed\n"
+  let header := if failed.isEmpty then "[DONE] Eligible: All applicable rules satisfied\n"
+                else "[ERROR] Not Eligible: some rules failed\n"
   let showOne (r : RuleResult) : String :=
     if r.passed then
-      s!"✅ {r.id} — {r.title}"
+      s!"[DONE] {r.id} — {r.title}"
     else
-      s!"❌ {r.id} — {r.title}\nReason: {r.reason?.getD "(no detail)"}\nRef: {r.reference}"
+      s!"[ERROR] {r.id} — {r.title}\nReason: {r.reason?.getD "(no detail)"}\nRef: {r.reference}"
   header ++
   "\n— Failed —\n" ++ (if failed.isEmpty then "(none)\n" else String.intercalate "\n\n" (failed.map showOne)) ++
   "\n\n— Passed —\n" ++ (if passed.isEmpty then "(none)\n" else String.intercalate "\n" (passed.map showOne))

@@ -1081,7 +1081,13 @@ def normalize_rule_identifier(item: dict) -> int | None:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pdf", required=True)
-    ap.add_argument("--out", default="data/processed/rules.jsonl")
+    ap.add_argument(
+        "--out", default="data/processed/rules.jsonl",
+        help="Output JSONL path. WARNING: opened in APPEND mode by default. "
+             "Re-running on the same file without --dedupe will accumulate duplicates. "
+             "Use --append to opt into append mode explicitly; omit it to overwrite.",
+    )
+    ap.add_argument("--append", action="store_true", help="Append to --out instead of overwriting (default: overwrite)")
     ap.add_argument("--model", default="llama3:8b")
     ap.add_argument("--window", type=int, default=2, help="pages per window")
     ap.add_argument("--overlap", type=int, default=1, help="overlap pages between windows")
@@ -1414,7 +1420,8 @@ def main():
         print("No Lean content generated (all items filtered); writing nothing.", file=sys.stderr)
         return
 
-    with out.open("a", encoding="utf-8") as f_out:
+    write_mode = "a" if args.append else "w"
+    with out.open(write_mode, encoding="utf-8") as f_out:
         for key in item_order:
             item = selected_items[key]
             item.pop("_norm_text", None)

@@ -25,6 +25,11 @@ import requests
 
 import unicodedata
 
+try:
+    from scripts.utils import read_jsonl, parse_bool, parse_number, extract_first_json_block  # type: ignore[import-not-found]
+except ImportError:
+    from utils import read_jsonl, parse_bool, parse_number, extract_first_json_block  # type: ignore
+
 
 TYPE_HINT_VOCAB = {
     "Bool",
@@ -36,21 +41,6 @@ TYPE_HINT_VOCAB = {
     "OptionListNat",
     "OptionString",
 }
-
-
-def read_jsonl(path: Path) -> List[dict]:
-    items: List[dict] = []
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except Exception:
-                continue
-            items.append(obj)
-    return items
 
 
 def read_pdf_pages(path: Path) -> List[str]:
@@ -102,47 +92,6 @@ def contains_span_hint_lenient(window_text: str, hint: str) -> bool:
     return True
 
 
-def extract_first_json_block(text: str) -> str:
-    if not isinstance(text, str):
-        return ""
-    s = text.strip()
-    if not s:
-        return ""
-    s = re.sub(r"^```(?:json)?\s*", "", s, flags=re.I).strip()
-    s = re.sub(r"\s*```$", "", s).strip()
-    start = None
-    opener = ""
-    for i, ch in enumerate(s):
-        if ch in "{[":
-            start = i
-            opener = ch
-            break
-    if start is None:
-        return ""
-    closer = "}" if opener == "{" else "]"
-    depth = 0
-    in_str = False
-    esc = False
-    for j in range(start, len(s)):
-        ch = s[j]
-        if in_str:
-            if esc:
-                esc = False
-            elif ch == "\\":
-                esc = True
-            elif ch == '"':
-                in_str = False
-            continue
-        if ch == '"':
-            in_str = True
-            continue
-        if ch == opener:
-            depth += 1
-        elif ch == closer:
-            depth -= 1
-            if depth == 0:
-                return s[start : j + 1]
-    return ""
 
 
 def ollama_request(endpoint: str, model: str, prompt: str, timeout: int = 180, debug: bool = False) -> Any:
@@ -210,30 +159,6 @@ def select_evidence_pages(pages: List[str], rule_text: str, field: str, topk: in
     return sel
 
 
-def parse_bool(raw: str) -> bool | None:
-    if raw is None:
-        return None
-    s = str(raw).strip().lower()
-    if s in ("true", "yes", "y", "1", "complied", "compliance", "complies", "met", "meets"):
-        return True
-    if s in ("false", "no", "n", "0", "not complied", "not met", "failed"):
-        return False
-    return None
-
-
-def parse_number(raw: str) -> int | None:
-    if raw is None:
-        return None
-    if isinstance(raw, (int, float)):
-        return int(raw)
-    s = str(raw)
-    m = re.search(r"[\d,]+(?:\.\d+)?", s)
-    if not m:
-        return None
-    num = m.group(0).replace(",", "")
-    if "." in num:
-        num = num.split(".", 1)[0]
-    return int(num) if num else None
 
 
 def parse_nat(raw: str) -> int | None:
@@ -268,30 +193,96 @@ def parse_table_numbers(values: List[str]) -> List[int]:
     return out
 
 
+def _field_to_keywords(field: str) -> List[str]:
+    """
+    Generate candidate label-search keywords from a field name.
+    Splits on underscores, strips common non-semantic suffixes, and forms
+    both the full phrase and individual tokens.
+    """
+    _STRIP_SUFFIXES = ("_ratio", "_pct", "_count", "_amount", "_value", "_rate", "_flag")
+    base = field
+    for sfx in _STRIP_SUFFIXES:
+        if base.endswith(sfx):
+            base = base[: -len(sfx)]
+            break
+    tokens = [t for t in base.split("_") if len(t) > 1]
+    phrase = " ".join(tokens)
+    candidates = [phrase]
+    # Also include sub-phrases (pairs of adjacent tokens) for compound concepts
+    for i in range(len(tokens) - 1):
+        candidates.append(f"{tokens[i]} {tokens[i+1]}")
+    # Individual tokens (only meaningful ones, len >= 3)
+    candidates += [t for t in tokens if len(t) >= 3]
+    return candidates
+
+
 def find_table_row(field: str, rule_text: str, tables: List[Dict[str, Any]]) -> Dict[str, Any] | None:
-    keywords = {
+    """
+    Search table rows for the best label match for *field*.
+
+    Strategy (in priority order):
+    1. High-confidence override map  — exact field-name → keyword list.
+    2. Dynamic keyword list via _field_to_keywords()  — substring matching.
+    3. Token-overlap fuzzy fallback  — intersect field name tokens against row
+       label tokens; require ≥ 2 overlapping tokens to avoid false positives.
+    """
+    # High-confidence override map — stays as primary path
+    _OVERRIDE: Dict[str, List[str]] = {
         "net_tangible_assets": ["net tangible assets"],
         "operating_profits": ["operating profit", "average operating profit"],
         "net_worth": ["net worth"],
         "net_worths": ["net worth"],
         "monetary_asset_ratio": ["percentage of monetary assets", "in %", "(d)/(a)"],
     }
-    ks = keywords.get(field, [])
-    if not ks:
+
+    def _make_result(t: Dict[str, Any], row: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            "page": t.get("page"),
+            "table_index": t.get("table_index"),
+            "label": row.get("label"),
+            "values": row.get("values") or [],
+            "unit": row.get("unit") or "",
+        }
+
+    # ── Phase 1: keyword substring matching (override or dynamic) ────────────
+    ks = _OVERRIDE.get(field) or _field_to_keywords(field)
+    best_match: Dict[str, Any] | None = None
+    best_score = 0
+
+    if ks:
+        for t in tables:
+            for row in (t.get("rows") or []):
+                label = str(row.get("label") or "").lower()
+                score = sum(1 for k in ks if k in label)
+                if score > best_score:
+                    best_score = score
+                    best_match = _make_result(t, row)
+
+    if best_match:
+        return best_match
+
+    # ── Phase 2: token-overlap fuzzy fallback ────────────────────────────────
+    # Split the field name on underscores, drop short stop-tokens.
+    field_tokens = {
+        tok for tok in field.lower().replace("_", " ").split()
+        if len(tok) >= 3
+    }
+    if not field_tokens:
         return None
+
+    fuzzy_best: Dict[str, Any] | None = None
+    fuzzy_score = 0
+
     for t in tables:
-        rows = t.get("rows") or []
-        for row in rows:
+        for row in (t.get("rows") or []):
             label = str(row.get("label") or "").lower()
-            if any(k in label for k in ks):
-                return {
-                    "page": t.get("page"),
-                    "table_index": t.get("table_index"),
-                    "label": row.get("label"),
-                    "values": row.get("values") or [],
-                    "unit": row.get("unit") or "",
-                }
-    return None
+            label_tokens = set(label.split())
+            overlap = len(field_tokens & label_tokens)
+            if overlap >= 2 and overlap > fuzzy_score:
+                fuzzy_score = overlap
+                fuzzy_best = _make_result(t, row)
+
+    return fuzzy_best
 
 
 def build_prompt(rule_id: str, field: str, rule_text: str, evidence: str) -> str:
@@ -312,35 +303,33 @@ def build_prompt(rule_id: str, field: str, rule_text: str, evidence: str) -> str
     )
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--rules", required=True, help="rules.jsonl with maps_to")
-    ap.add_argument("--rhp", required=True, help="RHP PDF path")
-    ap.add_argument("--out", required=True, help="Output evidence_store.jsonl")
-    ap.add_argument("--model", default="mistral:7b-instruct")
-    ap.add_argument("--endpoint", choices=["auto", "chat", "generate"], default="generate")
-    ap.add_argument("--timeout", type=int, default=180)
-    ap.add_argument("--topk", type=int, default=3)
-    ap.add_argument("--tables-store", default="", help="Optional tables_store.json")
-    ap.add_argument("--max-rules", type=int, default=0)
-    ap.add_argument("--debug", action="store_true")
-    args = ap.parse_args()
-
-    rules = read_jsonl(Path(args.rules))
-    pages = read_pdf_pages(Path(args.rhp))
-    tables = []
-    if args.tables_store:
+def run_extraction(
+    rules_path: Path,
+    rhp_path: Path,
+    out_path: Path,
+    model: str = "mistral:7b-instruct",
+    endpoint: str = "generate",
+    topk: int = 3,
+    timeout: int = 180,
+    tables_store_path: Path | None = None,
+    max_rules: int = 0,
+    debug: bool = False,
+) -> int:
+    """Core extraction logic, callable directly without argv manipulation."""
+    rules = read_jsonl(rules_path)
+    pages = read_pdf_pages(rhp_path)
+    tables: List[Dict[str, Any]] = []
+    if tables_store_path and tables_store_path.exists():
         try:
-            tables = json.loads(Path(args.tables_store).read_text(encoding="utf-8"))
+            tables = json.loads(tables_store_path.read_text(encoding="utf-8"))
         except Exception:
             tables = []
-    out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     total = 0
     with out_path.open("w", encoding="utf-8") as f:
         for r in rules:
-            if args.max_rules and total >= args.max_rules:
+            if max_rules and total >= max_rules:
                 break
             rule_id = r.get("rule_id") or r.get("id") or ""
             rule_text = r.get("text") or r.get("title") or ""
@@ -351,7 +340,6 @@ def main() -> None:
                 field = (m.get("field") or "").strip()
                 if not field:
                     continue
-                # Try table evidence first
                 table_hit = find_table_row(field, rule_text, tables) if tables else None
                 if table_hit:
                     values = table_hit.get("values") or []
@@ -385,7 +373,7 @@ def main() -> None:
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total += 1
                     continue
-                sel = select_evidence_pages(pages, rule_text, field, args.topk)
+                sel = select_evidence_pages(pages, rule_text, field, topk)
                 used_pages = [idx for (idx, _) in sel]
                 evidence = "\n\n".join([f"[PAGE {idx}]\n{txt}" for (idx, txt) in sel])
                 prompt = build_prompt(str(rule_id), field, rule_text, evidence)
@@ -395,8 +383,8 @@ def main() -> None:
                 span_hint = ""
                 page = used_pages[0] if used_pages else 0
                 try:
-                    endpoint = "generate" if args.endpoint == "auto" else args.endpoint
-                    resp = ollama_request(endpoint, args.model, prompt, timeout=args.timeout, debug=args.debug)
+                    ep = "generate" if endpoint == "auto" else endpoint
+                    resp = ollama_request(ep, model, prompt, timeout=timeout, debug=debug)
                     if isinstance(resp, dict):
                         value_raw = str(resp.get("value_raw") or "")
                         quote = str(resp.get("evidence_quote") or "")
@@ -438,6 +426,40 @@ def main() -> None:
                 total += 1
 
     print(f"Wrote {total} evidence records to {out_path}")
+    return total
+
+
+# Canonical short alias expected by schema_reconcile.py and Phase 1 spec.
+run = run_extraction
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--rules", required=True, help="rules.jsonl with maps_to")
+    ap.add_argument("--rhp", required=True, help="RHP PDF path")
+    ap.add_argument("--out", required=True, help="Output evidence_store.jsonl")
+    ap.add_argument("--model", default="mistral:7b-instruct")
+    ap.add_argument("--endpoint", choices=["auto", "chat", "generate"], default="generate")
+    ap.add_argument("--timeout", type=int, default=180)
+    ap.add_argument("--topk", type=int, default=3)
+    ap.add_argument("--tables-store", default="", help="Optional tables_store.json")
+    ap.add_argument("--max-rules", type=int, default=0)
+    ap.add_argument("--debug", action="store_true")
+    args = ap.parse_args()
+
+    tables_store_path = Path(args.tables_store) if args.tables_store else None
+    run_extraction(
+        rules_path=Path(args.rules),
+        rhp_path=Path(args.rhp),
+        out_path=Path(args.out),
+        model=args.model,
+        endpoint=args.endpoint,
+        topk=args.topk,
+        timeout=args.timeout,
+        tables_store_path=tables_store_path,
+        max_rules=args.max_rules,
+        debug=args.debug,
+    )
 
 
 if __name__ == "__main__":

@@ -18,25 +18,16 @@ import json
 from pathlib import Path
 from typing import List, Dict
 
+try:
+    from scripts.utils import read_jsonl as _read_jsonl_base  # type: ignore[import-not-found]
+except ImportError:
+    from utils import read_jsonl as _read_jsonl_base  # type: ignore
+
 
 def read_jsonl(path: Path) -> List[dict]:
-    items: List[dict] = []
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except Exception:
-                continue
-            items.append(obj)
-    # Deterministic order by rule_id
-    def _rid(o: dict) -> str:
-        rid = o.get("rule_id") or o.get("rule_id_raw") or ""
-        return str(rid)
-
-    items.sort(key=_rid)
+    """Read JSONL and sort deterministically by rule_id."""
+    items = _read_jsonl_base(path)
+    items.sort(key=lambda o: str(o.get("rule_id") or o.get("rule_id_raw") or ""))
     return items
 
 

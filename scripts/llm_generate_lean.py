@@ -28,6 +28,11 @@ Usage:
 from __future__ import annotations
 import argparse
 import json
+
+try:
+    from scripts.utils import read_jsonl as _read_jsonl_base  # type: ignore[import-not-found]
+except ImportError:
+    from utils import read_jsonl as _read_jsonl_base  # type: ignore
 import re
 import sys
 import time
@@ -41,20 +46,10 @@ DEFAULT_MODEL = "llama3:8b"
 
 
 def read_jsonl(path: Path, limit: int = 0) -> List[Dict[str, Any]]:
-    items: List[Dict[str, Any]] = []
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except Exception:
-                continue
-            if isinstance(obj, dict):
-                items.append(obj)
-            if limit and len(items) >= limit:
-                break
+    """Thin wrapper around utils.read_jsonl that adds an optional row limit."""
+    items = [i for i in _read_jsonl_base(path) if isinstance(i, dict)]
+    if limit:
+        items = items[:limit]
     return items
 
 
@@ -271,10 +266,12 @@ def ollama_chat(model: str, system: str, user: str, timeout: int = 180, debug: b
 
 def _load_issuer_fields_from_schema_json(path: Path) -> List[Tuple[str, str]]:
     """
-    Accepts either:
-      - issuer_fields.json from infer_issuer_fields.py: [{name, lean_type, ...}]
-      - issuer_schema array: [{field, type}]
-    Returns list of (field, lean_type).
+    Load the issuer schema and return a list of (field, lean_type) pairs.
+
+    Accepts the reconciled schema produced by schema_reconcile.py:
+      [{field, type}]   — canonical format from issuer_schema_reconciled.json
+    Also accepts the legacy issuer_fields.json format for backwards compatibility:
+      [{name, lean_type, ...}]
     """
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -301,7 +298,7 @@ def _load_issuer_fields_from_schema_json(path: Path) -> List[Tuple[str, str]]:
 def build_system_prompt(issuer_fields: List[Tuple[str, str]]) -> str:
     # Build Issuer block from the provided schema (ground truth = derived from rules/maps_to)
     issuer_block = "structure Issuer where\n" + "\n".join([f"  {n} : {t}" for (n, t) in issuer_fields]) + "\n"
-        rule_block = (
+    rule_block = (
             "structure ComplianceRule where\n"
             "  id         : String\n"
             "  title      : String\n"
@@ -403,8 +400,8 @@ def merge_chunks_to_file(chunks: List[str], out_path: Path, debug: bool = False)
         if not inner:
             inner = _extract_bracketed_list_body(chunk, "generatedRuleset")
         inner = _strip_trailing_commas(inner)
-            if inner:
-                body_rules.append(inner)
+        if inner:
+            body_rules.append(inner)
         elif debug:
             print(f"[WARN] batch_chunk[{idx}] missing generatedRulesetChunk/generatedRuleset list; skipped", file=sys.stderr)
 
@@ -413,8 +410,8 @@ def merge_chunks_to_file(chunks: List[str], out_path: Path, debug: bool = False)
         if not innerq:
             innerq = _extract_bracketed_list_body(chunk, "issuerQuestions")
         innerq = _strip_trailing_commas(innerq)
-            if innerq:
-                body_questions.append(innerq)
+        if innerq:
+            body_questions.append(innerq)
         elif debug:
             print(f"[WARN] batch_chunk[{idx}] missing issuerQuestionsChunk/issuerQuestions list; skipped", file=sys.stderr)
 
@@ -451,8 +448,12 @@ def main():
     ap.add_argument(
         "--issuer-schema-json",
         type=str,
-        default="",
-        help="Path to issuer schema JSON (derived from rules/maps_to). Accepts issuer_fields.json or [{field,type}] array.",
+        default="data/processed/reconcile_run_v3/issuer_schema_reconciled.json",
+        help=(
+            "Path to the reconciled issuer schema JSON [{field, type}]. "
+            "Defaults to the evidence-based reconciled schema produced by schema_reconcile.py. "
+            "schema_reconcile.py must be run before this script."
+        ),
     )
     args = ap.parse_args()
 
@@ -528,16 +529,17 @@ def main():
         sys.exit(2)
 
     merge_chunks_to_file(chunks_out, outp, debug=args.debug)
-    print(f"✅ Processed {total_rules} rule items in {num_batches} batches; wrote Lean ruleset → {outp}")
+    print(f"[DONE] Processed {total_rules} rule items in {num_batches} batches; wrote Lean ruleset -> {outp}")
 
-    # Optional: also emit JSON extraction from Lean (issuer_schema derived from issuer_questions; no Main.lean required)
+    # Always pass --json-out: extract_lean_to_json.py is a library (Phase 3 consolidation).
+    # Running it as a separate pipeline step is no longer required; this block handles it.
     if args.json_out:
         try:
             from scripts.extract_lean_to_json import extract_to_json  # type: ignore
         except Exception:
-            # Try relative import if running as module-less
+            # Fallback: load from file path when running as a standalone script
             try:
-                import importlib.util, sys as _sys
+                import importlib.util
                 _p = Path(__file__).resolve().parents[1] / "scripts" / "extract_lean_to_json.py"
                 spec = importlib.util.spec_from_file_location("extract_lean_to_json", _p.as_posix())
                 mod = importlib.util.module_from_spec(spec)  # type: ignore
@@ -545,12 +547,12 @@ def main():
                 spec.loader.exec_module(mod)  # type: ignore
                 extract_to_json = getattr(mod, "extract_to_json")
             except Exception as e:
-                print(f"[WARN] Could not import extractor to write JSON: {e}", file=sys.stderr)
+                print(f"[WARN] Could not import extract_lean_to_json; JSON output skipped: {e}", file=sys.stderr)
                 return
         data = extract_to_json(outp.as_posix(), None)
         Path(args.json_out).parent.mkdir(parents=True, exist_ok=True)
         Path(args.json_out).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"✅ Also wrote JSON extraction → {args.json_out}")
+        print(f"[DONE] Also wrote JSON extraction -> {args.json_out}")
 
 
 if __name__ == "__main__":

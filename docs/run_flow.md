@@ -1,134 +1,215 @@
-# Step-by-step Run Flow (Rules → Schema → Lean → Extraction)
+# Step-by-step Run Flow  (Evidence-first: RHP → Schema → Lean → Verification)
 
-This is the recommended end-to-end runbook for the current repo, assuming **ground truth schema comes from extracted rules** (`maps_to`), not from `Main.lean`.
-
-The flow has 3 phases:
-
-1. **Rules JSONL** (from PDF or existing rules file)
-2. **Deterministic schema pipeline** (issuer fields, facts, evidence, promotion)
-3. **Lean artifacts + execution** (Core, Rules, Main; build + run)
+> **Consolidated pipeline (post Phase 2/3 cleanup).**
+> Active scripts: 13. Archived/library-only scripts: 8.
+> Key ordering change: `schema_reconcile.py` runs **before** `llm_generate_lean.py`
+> so the LLM uses evidence-based types, not heuristic guesses.
 
 ---
 
-## 0) Inputs you need
+## Inputs required
 
-- **Rules JSONL**: `data/processed/rules_<tag>.jsonl`
-  - Each line is a rule dict, ideally with `maps_to: [{field, type_hint?, constraints_text?}]`.
-- **Tag**: a short name for outputs, e.g. `debug_v8`
-
-Example:
-- rules file: `data/processed/rules_debug_v3.jsonl`
-- tag: `debug_v8`
+| Input | Path | Notes |
+|-------|------|-------|
+| ICDR rules PDF | `data/input/ICDR_rules_4_22.pdf` | Source regulation document |
+| RHP PDF | `data/input/<rhp>.pdf` | Red Herring Prospectus |
+| Tag | e.g. `v3` | Short suffix for all output files |
 
 ---
 
-## 1) (Optional) Generate rules JSONL from PDF (LLM)
+## Step 1 — Extract rules from ICDR PDF  (LLM)
 
-If you already have a `rules_*.jsonl`, skip this.
+> Skip if you already have a `rules_*.jsonl`.
 
 ```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/llm_extract_rules.py --pdf data/input/ICDR_rules_4_22.pdf --out data/processed/rules_debug_v3.jsonl --model llama3:8b --window 4 --overlap 2 --no-anchoring --debug --endpoint chat --timeout 600 --fewshot data/input/fewshots_icdr_5.json
+cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"
+python scripts/llm_extract_rules.py `
+  --pdf data/input/ICDR_rules_4_22.pdf `
+  --out data/processed/rules_v3.jsonl `
+  --model mistral:7b-instruct `
+  --window 4 --overlap 2 `
+  --endpoint chat --timeout 600 `
+  --fewshot data/input/fewshots_icdr_5.json
+```
+
+Output: `data/processed/rules_v3.jsonl`
+
+---
+
+## Step 2 — Schema reconciliation from RHP evidence  (deterministic)
+
+This is the **first major step**. It extracts values from the RHP, infers types
+from evidence, and writes the canonical `issuer_schema_reconciled.json`.
+
+```powershell
+cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"
+python scripts/schema_reconcile.py `
+  --rules-jsonl data/processed/rules_judged_v2.jsonl `
+  --rhp-pdf data/input/<rhp>.pdf `
+  --out-dir data/processed/reconcile_run_v3
+```
+
+Outputs in `data/processed/reconcile_run_v3/`:
+- `issuer_schema_reconciled.json` — canonical field+type schema (used by Step 3)
+- `issuer_candidate.json` — extracted issuer values with provenance
+- `type_reconcile_report.json` — per-field type inference report
+- `evidence_store.jsonl` — all raw evidence records
+
+---
+
+## Step 3 — Generate Lean rules + JSON  (LLM, schema-informed)
+
+`schema_reconcile.py` **must run first** so the LLM receives evidence-backed types.
+`--json-out` is always passed; `extract_lean_to_json.py` runs as a library internally
+and does not need to be invoked separately.
+
+```powershell
+cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"
+python scripts/llm_generate_lean.py `
+  --in data/processed/rules_judged_v2.jsonl `
+  --out data/processed/GeneratedRules_v3.lean `
+  --model mistral:7b-instruct `
+  --batch-size 10 --limit 0 --progress `
+  --issuer-schema-json data/processed/reconcile_run_v3/issuer_schema_reconciled.json `
+  --json-out data/processed/rules_and_fields_from_lean_v3.json
+```
+
+Outputs:
+- `data/processed/GeneratedRules_v3.lean` — raw LLM Lean output
+- `data/processed/rules_and_fields_from_lean_v3.json` — rules + issuer questions + schema
+
+---
+
+## Step 4 — Postprocess rules+fields JSON  (deterministic)
+
+Normalises IDs, types, dedupes questions, and stubs unsafe check expressions.
+
+```powershell
+cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"
+python scripts/postprocess_rules_and_fields.py `
+  --in data/processed/rules_and_fields_from_lean_v3.json `
+  --out data/processed/rules_and_fields_post_v3.json `
+  --report data/processed/rules_and_fields_post_v3_report.json
+```
+
+Output: `data/processed/rules_and_fields_post_v3.json`
+
+---
+
+## Step 5 — Flatten issuer candidate for Lean input  (deterministic)
+
+Converts the rich `issuer_candidate.json` to a flat `{field: value}` JSON
+that the Lean executable can parse.
+
+```powershell
+cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"
+python scripts/flatten_issuer_candidate.py `
+  --candidate data/processed/reconcile_run_v3/issuer_candidate.json `
+  --schema    data/processed/reconcile_run_v3/issuer_schema_reconciled.json `
+  --report    data/processed/reconcile_run_v3/type_reconcile_report.json `
+  --out       data/processed/issuer_facts_flat_v3.json
+```
+
+Output: `data/processed/issuer_facts_flat_v3.json`
+
+---
+
+## Step 6 — Generate Lean artifacts  (deterministic)
+
+### 6a — Core module (Issuer + ComplianceRule structs)
+
+```powershell
+cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"
+python scripts/gen_core_from_issuer_schema.py `
+  --issuer-schema data/processed/reconcile_run_v3/issuer_schema_reconciled.json `
+  --out Src/Core_auto.lean `
+  --namespace Src.Core_auto
+```
+
+### 6b — Rules module (wraps LLM Lean output)
+
+```powershell
+cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"
+python scripts/gen_rules_lean.py `
+  --rules_fields data/processed/rules_and_fields_from_lean_v3.json `
+  --core Src.Core_auto `
+  --tag judged_v2 `
+  --out Src/GeneratedRules_judged_v2.lean
+```
+
+### 6c — Main entrypoint
+
+```powershell
+cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"
+python scripts/gen_main_lean.py `
+  --core  Src.Core_auto `
+  --rules Src.GeneratedRules_judged_v2 `
+  --out   Src/Main_v2.lean
 ```
 
 ---
 
-## 2) Deterministic schema pipeline (no LLM)
-
-### 2.1 Mapping diagnostics (optional but recommended)
+## Step 7 — Build and verify  (Lean / lake)
 
 ```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/score_rule_to_schema.py --rules_jsonl data/processed/rules_debug_v3.jsonl --out data/processed/mapping_report_debug_v8.json
+$env:PATH += ";C:\Users\sauna\.elan\bin"
+cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"
+
+# Build
+lake build
+
+# Run compliance check
+python scripts/verify_one.py `
+  --tag judged_v2 `
+  --issuer data/processed/issuer_facts_flat_v3.json `
+  --out data/processed/compliance_report_v3.json `
+  --rules-fields data/processed/rules_and_fields_from_lean_v3.json `
+  --lean-in data/processed/GeneratedRules_v3.lean `
+  --core-module Src.Core_auto `
+  --core-out Src/Core_auto.lean `
+  --skip-gen
 ```
 
-### 2.2 Infer issuer fields from `maps_to` (stable)
+Output: `data/processed/compliance_report_v3.json`
 
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/infer_issuer_fields.py --rules data/processed/rules_debug_v3.jsonl --out data/processed/issuer_fields_debug_v8.json
+---
+
+## Pipeline at a glance
+
 ```
-
-### 2.3 Split into IssuerFacts / OfferFacts
-
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/build_facts_schema.py --rules_jsonl data/processed/rules_debug_v3.jsonl --issuer_fields_json data/processed/issuer_fields_debug_v8.json --out data/processed/facts_schema_debug_v8.json
-```
-
-### 2.4 Generate RuleEvidence schema (one slot per rule)
-
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/generate_rule_evidence_schema.py --rules_jsonl data/processed/rules_debug_v3.jsonl --out data/processed/rule_evidence_schema_debug_v8.json
-```
-
-### 2.5 Promotion scoring (core + extended)
-
-This produces:
-- `facts_schema_core_<tag>.json` (tight core)
-- `facts_schema_extended_<tag>.json` (all or non-generic)
-
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/promote_fields.py --rules_jsonl data/processed/rules_debug_v3.jsonl --facts_schema_json data/processed/facts_schema_debug_v8.json --rule_evidence_schema_json data/processed/rule_evidence_schema_debug_v8.json --out data/processed/promotion_report_debug_v8.json --out-core data/processed/facts_schema_core_debug_v8.json --out-extended data/processed/facts_schema_extended_debug_v8.json --extended-mode non_generic
+ICDR PDF ──► llm_extract_rules.py ──► rules_judged_v2.jsonl
+                                              │
+RHP PDF ─────────────────────────► schema_reconcile.py ──► issuer_schema_reconciled.json
+                                              │                      │
+                                              │              flatten_issuer_candidate.py
+                                              │                      │
+                                              ▼                      ▼
+                              llm_generate_lean.py         issuer_facts_flat_v3.json
+                              (uses reconciled schema)             │
+                                              │                    │
+                                              ▼                    │
+                              postprocess_rules_and_fields.py      │
+                                              │                    │
+                              ┌───────────────┴──────────────┐     │
+                              ▼               ▼              ▼     │
+                    gen_core_from_    gen_rules_lean.py  gen_main_lean.py
+                    issuer_schema.py       │                   │
+                              │           │                   │
+                              └───────────┴──── lake build ───┘
+                                                    │
+                                           verify_one.py
+                                                    │
+                                    compliance_report_v3.json
 ```
 
 ---
 
-## 3) Lean generation pipeline
+## Archived scripts (not in active pipeline)
 
-There are two supported ways to generate Lean rules:
+See `scripts/archive/README.md` for the full list and rationale.
+Scripts archived: `build_facts_schema.py`, `promote_fields.py`,
+`score_rule_to_schema.py`, `generate_rule_evidence_schema.py`,
+`infer_issuer_fields_with_llm.py`, `postprocess_rules.py`, `infer_issuer_fields.py`.
 
-### Option A (recommended for now): LLM Lean generation → postprocess → deterministic Lean modules
-
-#### 3.1 Generate Lean rules + rules_and_fields JSON
-
-Important: pass `--issuer-schema-json` so the model doesn’t invent Issuer fields.
-
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/llm_generate_lean.py --in data/processed/rules_debug_v3.jsonl --out GeneratedRules_debug_v8.lean --model llama3:8b --batch-size 10 --limit 0 --progress --issuer-schema-json data/processed/issuer_fields_debug_v8.json --json-out data/processed/rules_and_fields_debug_v8.json
-```
-
-#### 3.2 Postprocess the rules_and_fields JSON (highly recommended)
-
-This normalizes ids/types, dedupes questions, and stubs unsafe checks.
-
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/postprocess_rules_and_fields.py --in data/processed/rules_and_fields_debug_v8.json --out data/processed/rules_and_fields_debug_v8_post.json --report data/processed/rules_and_fields_debug_v8_post_report.json
-```
-
-#### 3.3 Generate Core (Issuer + ComplianceRule) from postprocessed schema
-
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/gen_core_from_issuer_schema.py --schema data/processed/rules_and_fields_debug_v8_post.json --out Src/Core_auto_debug_v8.lean --namespace Src.Core_auto_debug_v8
-```
-
-#### 3.4 Generate Rules module from postprocessed JSON (deterministic)
-
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/gen_rules_lean.py --rules_fields data/processed/rules_and_fields_debug_v8_post.json --core Src.Core_auto_debug_v8 --tag debug_v8 --out Src/GeneratedRules_debug_v8.lean
-```
-
-#### 3.5 Generate a Main entrypoint module
-
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/gen_main_lean.py --core Src.Core_auto_debug_v8 --rules Src.GeneratedRules_debug_v8 --out Src/Main_v8.lean
-```
-
-#### 3.6 Compile gate
-
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; lake build
-```
-
----
-
-## 4) Issuer extraction from an RHP (LLM-assisted)
-
-Once you have `rules_and_fields_debug_v8_post.json`, you can extract issuer values from an RHP:
-
-```powershell
-cd "C:/Users/sauna/Dropbox/Compliance Project/compliance"; python scripts/extract_issuer_from_rhp.py --pdf <PATH_TO_RHP_PDF> --out data/processed/issuer_instance_debug_v8.json --questions-json data/processed/rules_and_fields_debug_v8_post.json --model llama3:8b --retrieval keyword --topk 3 --per-field --provenance
-```
-
----
-
-## 5) Run the Lean rules on an issuer instance (optional)
-
-After `lake build`, run the built executable/binary for your lake package (depends on your `lakefile.lean` setup). If you want, paste your `lakefile.lean` and I’ll give you the exact command for your build target.
-
+`extract_lean_to_json.py` is kept as a **library module** used internally by
+`llm_generate_lean.py` (via `--json-out`). Do not run it as a standalone step.

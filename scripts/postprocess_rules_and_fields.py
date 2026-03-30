@@ -28,6 +28,19 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+try:
+    from scripts.utils import (  # type: ignore[import-not-found]
+        normalize_question_type,
+        base_type_from_question_type,
+        build_issuer_schema_from_questions,
+    )
+except ImportError:
+    from utils import (  # type: ignore
+        normalize_question_type,
+        base_type_from_question_type,
+        build_issuer_schema_from_questions,
+    )
+
 
 def normalize_rule_id(rule_id: str) -> str:
     s = (rule_id or "").strip()
@@ -36,62 +49,8 @@ def normalize_rule_id(rule_id: str) -> str:
     if s.startswith("ICDR_"):
         return s
     if s.startswith("rule_"):
-        return "ICDR_" + s[len("rule_") :]
+        return "ICDR_" + s[len("rule_"):]
     return s
-
-
-def normalize_question_type(raw: str) -> str:
-    t = (raw or "").strip()
-    if not t:
-        return "String"
-    t = re.sub(r"\s+", " ", t)
-    mapping = {
-        "OptionBool": "Option Bool",
-        "OptionNat": "Option Nat",
-        "OptionString": "Option String",
-        "OptionListNat": "Option (List Nat)",
-        "ListNat": "List Nat",
-    }
-    return mapping.get(t, t)
-
-
-def base_type_from_question_type(norm: str) -> str:
-    t = (norm or "").strip()
-    if t.startswith("Option "):
-        inner = t[len("Option ") :].strip()
-        if inner.startswith("(") and inner.endswith(")"):
-            inner = inner[1:-1].strip()
-        return inner
-    return t
-
-
-def build_issuer_schema_from_questions(issuer_questions: List[Dict[str, str]]) -> List[Dict[str, str]]:
-    by_field: Dict[str, Dict[str, str]] = {}
-    for q in issuer_questions:
-        field = (q.get("field") or "").strip()
-        if not field:
-            continue
-        question = (q.get("question") or "").strip()
-        t_raw = q.get("type") or "String"
-        t_norm = normalize_question_type(t_raw)
-        base = base_type_from_question_type(t_norm)
-        cur = by_field.get(field)
-        if cur is None:
-            by_field[field] = {"field": field, "question": question, "type": base}
-        else:
-            if question and len(question) > len(cur.get("question", "")):
-                cur["question"] = question
-            # Deterministic precedence
-            precedence = ["List Nat", "List String", "String", "Nat", "Bool"]
-            cur_type = cur.get("type") or "String"
-            if base in precedence and cur_type in precedence:
-                if precedence.index(base) < precedence.index(cur_type):
-                    cur["type"] = base
-            elif base and cur_type != base:
-                cur["type"] = "String"
-    schema = [{"field": v["field"], "type": v["type"]} for v in by_field.values()]
-    schema.sort(key=lambda x: x["field"])
-    return schema
 
 
 def extract_issuer_field_refs(check_expr: str) -> List[str]:

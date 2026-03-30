@@ -416,31 +416,39 @@ def select_evidence_pages(pages: List[str], question: str, field: str, topk: int
         sel = [(1, pages[0])] if pages else []
     return sel
 
-def fallback_assert_booleans(full_text: str, casted: Dict[str, Any]) -> None:
+# Config-driven boolean assertion rules: field_name -> list of trigger phrases.
+# When any phrase is found in the document and the field is None/False, set to True.
+# Extend or override this dict in calling code; do not hardcode new fields below.
+BOOL_ASSERTION_RULES: Dict[str, List[str]] = {
+    "applied_to_stock_exchange": [
+        "regulation 7(1)", "regulation 7 (1)", "in-principle approval",
+        "in principle approval", "applied to stock exchange",
+    ],
+    "has_demat_agreement": [
+        "regulation 7(1)(b)", "depository agreement",
+        "dematerialisation of specified securities",
+    ],
+    "promoter_securities_demat": [
+        "regulation 7(1)(c)", "promoters", "dematerialis",
+    ],
+}
+
+
+def fallback_assert_booleans(
+    full_text: str,
+    casted: Dict[str, Any],
+    rules: Dict[str, List[str]] | None = None,
+) -> None:
     """
-    If some booleans are None/False but the document asserts compliance generically, flip to True.
-    This is heuristic; tuned for common assertions around 7(1) and 7(2).
+    If some boolean fields are None/False but the document contains trigger phrases,
+    flip them to True.  Driven by BOOL_ASSERTION_RULES (or an override passed in).
     """
+    assertion_rules = rules if rules is not None else BOOL_ASSERTION_RULES
     txt = full_text.lower()
-    def contains_any(*phrases: str) -> bool:
-        return any(p.lower() in txt for p in phrases)
-    # Regulation 7(1)(a): application to stock exchange (in-principle)
-    if casted.get("applied_to_stock_exchange") in (None, False):
-        if contains_any("regulation 7(1)", "regulation 7 (1)", "in-principle approval", "in principle approval", "applied to stock exchange"):
-            casted["applied_to_stock_exchange"] = True
-    # 7(1)(b): depository agreement
-    if casted.get("has_demat_agreement") in (None, False):
-        if contains_any("regulation 7(1)(b)", "depository agreement", "dematerialisation of specified securities"):
-            casted["has_demat_agreement"] = True
-    # 7(1)(c): promoter demat
-    if casted.get("promoter_securities_demat") in (None, False):
-        if contains_any("regulation 7(1)(c)", "promoters", "dematerialis"):
-            casted["promoter_securities_demat"] = True
-    # 7(2): general corporate purposes cap
-    if casted.get("general_corp_purpose_ratio") in (None, 0):
-        if contains_any("regulation 7(2)", "general corporate purposes", "not exceed twenty five"):
-            # leave ratio if unknown; don't set arbitrary number
-            pass
+    for field, phrases in assertion_rules.items():
+        if casted.get(field) in (None, False):
+            if any(p.lower() in txt for p in phrases):
+                casted[field] = True
 
 # -------------------- Deterministic numeric scaling (absolute rupees) --------------------
 _SCALE_PATTERNS = [
@@ -541,7 +549,11 @@ def main():
     ap.add_argument("--pdf", type=str, default="", help="Path to RHP PDF")
     ap.add_argument("--text", type=str, default="", help="Path to text file if not using PDF")
     ap.add_argument("--out", type=str, required=True, help="Output issuer instance JSON")
-    ap.add_argument("--questions-json", type=str, required=True, help="Path to rules_and_fields*.json")
+    ap.add_argument(
+        "--questions-json", type=str, default="",
+        help="Path to rules_and_fields*.json containing issuer_questions. "
+             "If omitted, only schema-based extraction is performed (no question list).",
+    )
     ap.add_argument("--schema", type=str, default="", help="Optional issuer_schema.json")
     ap.add_argument("--schema-reconciled", type=str, default="", help="issuer_schema_reconciled.json (array of {field,type})")
     ap.add_argument("--issuer-id", type=str, default="", help="Issuer identifier to store in output")
@@ -581,18 +593,25 @@ def main():
         print("Provide --pdf or --text", file=sys.stderr)
         sys.exit(1)
 
-    questions = load_questions(Path(args.questions_json))
+    questions: List[Dict[str, str]] = []
+    schema_types: Dict[str, str] = {}
+    rules_index: Dict[str, Dict[str, str]] = {}
+    if args.questions_json:
+        qpath = Path(args.questions_json)
+        if not qpath.exists():
+            print(f"[WARN] --questions-json path not found: {qpath}", file=sys.stderr)
+        else:
+            questions = load_questions(qpath)
+            schema_types = load_schema_from_questions(qpath)
+            rules_index = load_rules_index(qpath)
     if not questions:
-        print("No issuer questions found.", file=sys.stderr)
-        sys.exit(2)
+        print("[WARN] No issuer questions loaded; extraction will return empty fields.", file=sys.stderr)
 
     # Prefer schema from the rules_and_fields JSON; optionally overlay with --schema file if provided
-    schema_types = load_schema_from_questions(Path(args.questions_json))
     if args.schema_reconciled:
         schema_types.update(load_schema_from_reconciled(Path(args.schema_reconciled)))
     if args.schema:
         schema_types.update(load_schema(Path(args.schema)))
-    rules_index = load_rules_index(Path(args.questions_json))
     fields_for_schema: List[Tuple[str, str]] = []
     for q in questions:
         f = q["field"]
@@ -671,13 +690,22 @@ def main():
             if args.provenance:
                 provenance[field] = {"pages": used_pages}
     else:
-        # Batch mode (full text)
+        # Batch mode (full text) — truncate to avoid overflowing model context window
+        batch_text = source_text
+        if len(batch_text) > args.max_evidence_chars:
+            print(
+                f"[WARN] Batch mode: source text is {len(batch_text):,} chars; "
+                f"truncating to {args.max_evidence_chars:,} (--max-evidence-chars). "
+                "Use --per-field or --retrieval keyword for full coverage.",
+                file=sys.stderr,
+            )
+            batch_text = batch_text[: args.max_evidence_chars]
         qlines = []
         for q in questions:
             qlines.append(f"- {q['field']} ({q['type']}): {q['question']}")
         user = (
             "TEXT:\n"
-            f"{source_text}\n\n"
+            f"{batch_text}\n\n"
             "QUESTIONS (with expected types):\n" + "\n".join(qlines) + "\n\n"
             "Return JSON object with key 'fields' only. Example: {\"fields\": {\"is_debarred\": false, ...}}\n"
         )
@@ -686,17 +714,15 @@ def main():
         try:
             data = json.loads(raw)
         except Exception:
-            # try to extract first JSON object
             m = re.search(r"\{[\s\S]*\}", raw)
             data = json.loads(m.group(0)) if m else {"fields": {}}
-        fields = data.get("fields") or {}
+        fields_out = data.get("fields") or {}
         for fname, ftype in fields_for_schema:
-            val = fields.get(fname)
+            val = fields_out.get(fname)
             cast_val = cast_value(val, ftype)
             if args.scale_auto:
-                factor = detect_scale_multiplier(source_text)
-                # In batch mode, we only have the full text; pass an empty question to rely on currency context in text.
-                cast_val = apply_scale(cast_val, ftype, factor, "", source_text)
+                factor = detect_scale_multiplier(batch_text)
+                cast_val = apply_scale(cast_val, ftype, factor, "", batch_text)
             casted[fname] = cast_val
 
     # Heuristic fallback: assert some booleans if explicit compliance statements are present

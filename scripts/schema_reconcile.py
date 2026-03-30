@@ -23,30 +23,17 @@ try:
     from scripts import rule_anchored_extract as rae  # type: ignore[import-not-found]
     from scripts import type_infer as tinfer  # type: ignore[import-not-found]
     from scripts import pdf_tables as ptables  # type: ignore[import-not-found]
+    from scripts.utils import read_jsonl, extract_first_json_block  # type: ignore[import-not-found]
 except Exception:
     import rule_anchored_extract as rae  # type: ignore
     import type_infer as tinfer  # type: ignore
     import pdf_tables as ptables  # type: ignore
+    from utils import read_jsonl, extract_first_json_block  # type: ignore
 
 import requests
 
 
 ALLOWED_HINTS = {"Bool", "Nat", "List Nat", "String", "OptionBool", "OptionNat", "OptionListNat", "OptionString"}
-
-
-def read_jsonl(path: Path) -> List[dict]:
-    items: List[dict] = []
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except Exception:
-                continue
-            items.append(obj)
-    return items
 
 
 def provisional_type(field: str, rule_text: str, type_hint: str | None) -> str:
@@ -113,9 +100,14 @@ def ollama_judge(model: str, payload: dict, timeout: int = 120) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--rules", required=True)
-    ap.add_argument("--rhp", required=True)
+    # Primary arg names
+    ap.add_argument("--rules", dest="rules", default="")
+    ap.add_argument("--rhp", dest="rhp", default="")
+    # Documented aliases (used in run_flow.md)
+    ap.add_argument("--rules-jsonl", dest="rules")
+    ap.add_argument("--rhp-pdf", dest="rhp")
     ap.add_argument("--out-dir", required=True)
+    ap.add_argument("--issuer-schema", default="", help="Optional pre-built issuer schema JSON to merge into provisional schema")
     ap.add_argument("--extract-model", default="mistral:7b-instruct")
     ap.add_argument("--judge-model", default="qwen2.5:32b-instruct")
     ap.add_argument("--max-rules", type=int, default=0)
@@ -123,11 +115,32 @@ def main() -> None:
     ap.add_argument("--debug", action="store_true")
     args = ap.parse_args()
 
+    if not args.rules:
+        ap.error("--rules / --rules-jsonl is required")
+    if not args.rhp:
+        ap.error("--rhp / --rhp-pdf is required")
+
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     rules = read_jsonl(Path(args.rules))
     provisional_schema, field_links = build_provisional_schema(rules)
+
+    # If an external issuer schema is supplied, merge its types into the provisional schema as overrides
+    if args.issuer_schema and Path(args.issuer_schema).exists():
+        try:
+            ext = json.loads(Path(args.issuer_schema).read_text(encoding="utf-8"))
+            if isinstance(ext, list):
+                ext_map = {e["field"]: e["type"] for e in ext if isinstance(e, dict) and e.get("field")}
+            elif isinstance(ext, dict) and "issuer_schema" in ext:
+                ext_map = {e["field"]: e["type"] for e in ext["issuer_schema"] if isinstance(e, dict) and e.get("field")}
+            else:
+                ext_map = {}
+            for s in provisional_schema:
+                if s["field"] in ext_map:
+                    s["type"] = ext_map[s["field"]]
+        except Exception as exc:
+            print(f"[WARN] Could not load --issuer-schema: {exc}", file=__import__("sys").stderr)
     (out_dir / "provisional_schema.json").write_text(
         json.dumps(provisional_schema, ensure_ascii=False, indent=2), encoding="utf-8"
     )
@@ -144,33 +157,28 @@ def main() -> None:
     except Exception:
         tables_path.write_text(json.dumps([], ensure_ascii=False, indent=2), encoding="utf-8")
 
-    rae.main = rae.main  # silence linter
-    rae_args = [
-        "--rules", args.rules,
-        "--rhp", args.rhp,
-        "--out", str(evidence_path),
-        "--model", args.extract_model,
-        "--endpoint", "generate",
-        "--topk", "3",
-        "--timeout", "180",
-        "--tables-store", str(tables_path),
-    ]
-    if args.max_rules:
-        rae_args += ["--max-rules", str(args.max_rules)]
-    if args.debug:
-        rae_args += ["--debug"]
-    # run rule_anchored_extract as a module function by simulating argv
-    _old_argv = os.sys.argv
-    os.sys.argv = ["rule_anchored_extract.py"] + rae_args
-    rae.main()
-    os.sys.argv = _old_argv
+    # Run rule-anchored extraction directly (no argv mutation)
+    rae.run_extraction(
+        rules_path=Path(args.rules),
+        rhp_path=Path(args.rhp),
+        out_path=evidence_path,
+        model=args.extract_model,
+        endpoint="generate",
+        topk=3,
+        timeout=180,
+        tables_store_path=tables_path,
+        max_rules=args.max_rules,
+        debug=args.debug,
+    )
 
-    # infer types
+    # Run type inference directly (no argv mutation)
     infer_out = out_dir / "type_reconcile_report.json"
-    _old_argv = os.sys.argv
-    os.sys.argv = ["type_infer.py", "--evidence", str(evidence_path), "--out", str(infer_out)]
-    tinfer.main()
-    os.sys.argv = _old_argv
+    provisional_map = {s["field"]: s["type"] for s in provisional_schema if isinstance(s, dict) and s.get("field")}
+    tinfer.run_type_infer(
+        evidence_path=evidence_path,
+        out_path=infer_out,
+        provisional_map=provisional_map,
+    )
 
     # load inferred schema
     infer_obj = json.loads(infer_out.read_text(encoding="utf-8"))

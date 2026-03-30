@@ -13,20 +13,10 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-
-def read_jsonl(path: Path) -> List[dict]:
-    items: List[dict] = []
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except Exception:
-                continue
-            items.append(obj)
-    return items
+try:
+    from scripts.utils import read_jsonl  # type: ignore[import-not-found]
+except ImportError:
+    from utils import read_jsonl  # type: ignore
 
 
 BOOL_TOKENS = ("yes", "no", "true", "false", "complied", "not complied", "met", "not met")
@@ -43,6 +33,13 @@ def bool_indicator(raw: str, field: str) -> bool:
     return False
 
 
+_FINANCIAL_SERIES_SUFFIXES = (
+    "_years", "_profits", "_assets", "_worths", "_values", "_figures",
+    "_revenues", "_losses", "_incomes", "_networths",
+)
+_MULTI_PERIOD_KEYWORDS = ("preceding three years", "last three years", "three full years", "3 years")
+
+
 def list_indicator(raw: str, field: str) -> bool:
     s = (raw or "").lower()
     if any(t in s for t in LIST_TOKENS):
@@ -51,8 +48,11 @@ def list_indicator(raw: str, field: str) -> bool:
     nums = re.findall(r"\d+", s)
     if len(nums) >= 2:
         return True
-    # plural field name
-    if field.lower().endswith("s"):
+    # only treat plural suffix as list signal if the field ends with a known financial series suffix
+    lname = field.lower()
+    if any(lname.endswith(sfx) for sfx in _FINANCIAL_SERIES_SUFFIXES):
+        return True
+    if any(kw in s for kw in _MULTI_PERIOD_KEYWORDS):
         return True
     return False
 
@@ -93,13 +93,11 @@ def choose_type(metrics: Dict[str, float], bool_strong: bool, list_strong: bool)
     return "String"
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--evidence", required=True)
-    ap.add_argument("--out", required=True)
-    args = ap.parse_args()
-
-    records = read_jsonl(Path(args.evidence))
+def _process_evidence(
+    records: List[dict],
+    provisional_map: Dict[str, str] | None = None,
+) -> Tuple[List[Dict[str, str]], List[Dict[str, Any]]]:
+    """Core logic: group evidence by field and infer types. Returns (schema, report)."""
     by_field: Dict[str, List[dict]] = {}
     for r in records:
         field = r.get("field")
@@ -109,6 +107,7 @@ def main() -> None:
 
     report: List[Dict[str, Any]] = []
     schema: List[Dict[str, str]] = []
+    pmap = provisional_map or {}
 
     for field, items in sorted(by_field.items()):
         total = len(items)
@@ -158,6 +157,9 @@ def main() -> None:
             "missing_rate": round(missing / total, 3),
         }
 
+        # Actual provisional type from schema, not a hardcoded value
+        prov_type = pmap.get(field, "Option String")
+
         base = choose_type(metrics, bool_hint, list_hint)
         if table_evidence_count > 0 and metrics.get("ListNat_parse_rate", 0.0) > 0.0:
             base = "List Nat"
@@ -175,7 +177,7 @@ def main() -> None:
         schema.append({"field": field, "type": final})
         report.append({
             "field": field,
-            "provisional_type": "Option Nat",
+            "provisional_type": prov_type,
             "final_type": final,
             "metrics": metrics,
             "table_evidence_count": table_evidence_count,
@@ -185,12 +187,43 @@ def main() -> None:
             "inactive_field": inactive_field,
         })
 
-    out = {
-        "issuer_schema": sorted(schema, key=lambda x: x["field"]),
-        "type_reconcile_report": report,
-    }
-    Path(args.out).write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Wrote type inference report to {args.out}")
+    return sorted(schema, key=lambda x: x["field"]), report
+
+
+def run_type_infer(
+    evidence_path: Path,
+    out_path: Path,
+    provisional_map: Dict[str, str] | None = None,
+) -> None:
+    """Direct callable (no argv needed), used by schema_reconcile.py."""
+    records = read_jsonl(evidence_path)
+    schema, report = _process_evidence(records, provisional_map)
+    out = {"issuer_schema": schema, "type_reconcile_report": report}
+    out_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"Wrote type inference report to {out_path}")
+
+
+# Canonical short alias expected by Phase 1 spec.
+run = run_type_infer
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--evidence", required=True)
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--provisional-schema", default="", help="Optional provisional_schema.json (array of {field,type})")
+    args = ap.parse_args()
+
+    provisional_map: Dict[str, str] = {}
+    if args.provisional_schema and Path(args.provisional_schema).exists():
+        try:
+            ps = json.loads(Path(args.provisional_schema).read_text(encoding="utf-8"))
+            if isinstance(ps, list):
+                provisional_map = {e["field"]: e["type"] for e in ps if isinstance(e, dict) and e.get("field")}
+        except Exception:
+            pass
+
+    run_type_infer(Path(args.evidence), Path(args.out), provisional_map)
 
 
 if __name__ == "__main__":

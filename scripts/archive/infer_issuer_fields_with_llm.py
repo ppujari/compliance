@@ -33,6 +33,11 @@ from typing import Any, Dict, List, Tuple
 import requests
 import unicodedata
 
+try:
+    from scripts.utils import read_jsonl, extract_first_json_block  # type: ignore[import-not-found]
+except ImportError:
+    from utils import read_jsonl, extract_first_json_block  # type: ignore
+
 
 TYPE_HINT_VOCAB = {
     "Bool",
@@ -46,50 +51,6 @@ TYPE_HINT_VOCAB = {
 }
 
 GENERIC_PENALTY = {"conditions", "misc", "as_applicable", "other", "notes"}
-
-
-def extract_first_json_block(text: str) -> str:
-    if not isinstance(text, str):
-        return ""
-    s = text.strip()
-    if not s:
-        return ""
-    # strip fenced code
-    s = re.sub(r"^```(?:json)?\s*", "", s, flags=re.I).strip()
-    s = re.sub(r"\s*```$", "", s).strip()
-    start = None
-    opener = ""
-    for i, ch in enumerate(s):
-        if ch in "{[":
-            start = i
-            opener = ch
-            break
-    if start is None:
-        return ""
-    closer = "}" if opener == "{" else "]"
-    depth = 0
-    in_str = False
-    esc = False
-    for j in range(start, len(s)):
-        ch = s[j]
-        if in_str:
-            if esc:
-                esc = False
-            elif ch == "\\":
-                esc = True
-            elif ch == '"':
-                in_str = False
-            continue
-        if ch == '"':
-            in_str = True
-            continue
-        if ch == opener:
-            depth += 1
-        elif ch == closer:
-            depth -= 1
-            if depth == 0:
-                return s[start : j + 1]
-    return ""
 
 
 def normalize_field_token(token: str) -> Tuple[str, List[str]]:
@@ -166,19 +127,6 @@ def contains_span_hint_lenient(window_text: str, hint: str) -> bool:
     return True
 
 
-def read_jsonl(path: Path) -> List[dict]:
-    items: List[dict] = []
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except Exception:
-                continue
-            items.append(obj)
-    return items
 
 
 def read_pdf_pages(pdf_path: Path) -> List[str]:
