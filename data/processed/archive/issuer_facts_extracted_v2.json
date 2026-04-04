@@ -1,0 +1,32 @@
+{
+  "issuer_id": "POC_red_herring",
+  "source": "data/POC/POC_red_herring.pdf",
+  "fields": {
+    "net_tangible_assets": 144445300,
+    "operating_profits": [],
+    "net_worth": [
+      149365,
+      128027,
+      104360
+    ],
+    "promoter_specified_securities_dematerialised": true,
+    "fully_paid_up_equity_shares": null,
+    "general_corporate_purposes": null,
+    "other_unidentified_objects": null,
+    "holding_period": null,
+    "ConvertibleSecurities": null,
+    "holding_period_at_draft": true,
+    "credit_rating": null,
+    "eligible_for_cdi_without_equity_ipo": null,
+    "appointed_debenture_trustee": null,
+    "specified_securities_ineligible": null,
+    "conditions": "['our Company has net tangible assets of at least ₹30.0 million, calculated on a restated and consolidated basis, in each of the preceding three full years (of 12 months each); our Company has an average operating profit of at least ₹5.0 million for each of the three financial years immediately preceding the date of the Draft Red Herring Prospectus; our Company has a post-issue net worth of at least ₹100.0 million calculated on a restated and consolidated basis, as per the audited financial statements for the year ended March 31, 2024.']",
+    "securities_held_by_promoters": [],
+    "lock_in_period": null,
+    "exceptions": null,
+    "securities": [],
+    "lead_manager_appointment": null,
+    "applied_to_stock_exchange": true,
+    "promoter_securities_demat": true
+  }
+}

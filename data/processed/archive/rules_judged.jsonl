@@ -1,0 +1,16 @@
+{"maps_to": [], "status": "quarantined", "source": {"pdf": "ICDR_rules_4_22.pdf", "pages": [19], "span_hint": "The issuer shall appoint one or more merchant bankers", "reg": ""}, "confidence": 0.95, "domain": "SEBI_ICDR", "rule_id": "ICDR_23", "notes": "Appointment of lead managers, other intermediaries, and compliance officer.\n[QUARANTINED] hard=[] soft=[]", "text": "(1) The issuer shall appoint one or more merchant bankers, which are registered with the Board, as lead manager(s) to the issue. (2) Where the issue is managed by more than one lead manager, the rights, obligations and responsibilities, relating inter alia to disclosures, allotment, refund and underwriting obligations, if any, of each lead manager shall be predetermined and be disclosed in the draft offer document and the offer document as specified in Schedule I. (3) At least one lead manager to the issue shall not be an associate (as defined under the Securities and Exchange Board of India (Merchant Bankers) Regulations, 1992) of the issuer and if any of the lead manager is an associate of the issuer, it shall disclose itself as an associate of the issuer and its role shall be limited to marketing of the issue. (4) The issuer shall, in consultation with the lead manager(s), appoint other intermediaries which are registered with the Board after the lead manager(s) have independently assessed the capability of other intermediaries to carry out their obligations. (5) The issuer shall enter into an agreement with the lead manager(s) in the format specified in Schedule II and enter into agreements with other intermediaries as required under the respective regulations applicable to the intermediary concerned: Provided that such agreements may include such other clauses as the issuer and the intermediaries may deem fit without diminishing or limiting in any way the liabilities and obligations of the lead manager(s).", "lean_id": "rule_23", "title": "Appointment of lead manager(s)"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

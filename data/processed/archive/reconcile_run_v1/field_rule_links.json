@@ -1,0 +1,73 @@
+{
+  "net_tangible_assets": [
+    "ICDR_6_1_a"
+  ],
+  "operating_profits": [
+    "ICDR_6_1_b"
+  ],
+  "net_worth": [
+    "ICDR_6_1_c"
+  ],
+  "agreement_with_depository": [
+    "ICDR_7_1_b"
+  ],
+  "promoter_specified_securities_dematerialised": [
+    "ICDR_7_1_c"
+  ],
+  "fully_paid_up_equity_shares": [
+    "ICDR_7_1_d"
+  ],
+  "general_corporate_purposes": [
+    "ICDR_6_2"
+  ],
+  "other_unidentified_objects": [
+    "ICDR_6_3"
+  ],
+  "holding_period": [
+    "ICDR_6_8"
+  ],
+  "eligible_for_cdi_without_equity_ipo": [
+    "ICDR_9"
+  ],
+  "default_payment_or_repayments": [
+    "ICDR_9_6"
+  ],
+  "option_not_convert_if_conversion_price_not_determined": [
+    "ICDR_11_2"
+  ],
+  "warrant_tenure": [
+    "ICDR_13_a"
+  ],
+  "warrant_exercise_price": [
+    "ICDR_13_c"
+  ],
+  "upfront_payment": [
+    "ICDR_13_c"
+  ],
+  "warrant_non_exercise": [
+    "ICDR_13_d"
+  ],
+  "specified_securities_ineligible": [
+    "ICDR_15_1_a"
+  ],
+  "securities_held_by_promoters": [
+    "ICDR_16_1"
+  ],
+  "lock_in_period": [
+    "ICDR_17",
+    "ICDR_17_c"
+  ],
+  "exceptions": [
+    "ICDR_17_a"
+  ],
+  "securities": [
+    "ICDR_21"
+  ],
+  "conditions": [
+    "ICDR_21_a",
+    "ICDR_21_b"
+  ],
+  "lead_manager_appointment": [
+    "ICDR_23"
+  ]
+}

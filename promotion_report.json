@@ -1,0 +1,85 @@
+{
+  "threshold": 1,
+  "extended_mode": "all",
+  "out_core": "data/processed/promotion_report_debug_v5.json",
+  "out_extended": "data/processed/promotopn_report_debug_v5_extended.json",
+  "demoted_fields": [],
+  "kept_fields": [
+    "lock_in_period",
+    "locked_in_securities",
+    "net_tangible_assets",
+    "net_worth",
+    "operating_profits",
+    "specified_securities"
+  ],
+  "scores": [
+    {
+      "name": "lock_in_period",
+      "score": 2,
+      "occurrences": 4,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [
+        "reusable_2plus_rules"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "locked_in_securities",
+      "score": 4,
+      "occurrences": 3,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "reusable_2plus_rules",
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "net_tangible_assets",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "net_worth",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "operating_profits",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "specified_securities",
+      "score": 4,
+      "occurrences": 4,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "reusable_2plus_rules",
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    }
+  ]
+}

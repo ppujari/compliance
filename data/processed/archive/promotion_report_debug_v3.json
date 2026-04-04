@@ -1,0 +1,308 @@
+{
+  "threshold": 1,
+  "demoted_fields": [
+    "agreement_with_depository",
+    "consent_for_conversion",
+    "contribution_method",
+    "convertible_securities",
+    "credit_rating",
+    "credit_rating_required",
+    "debenture_redemption_reserve",
+    "debenture_trustee",
+    "default_payment_status",
+    "eligible_for_cdi_without_prior_ipo",
+    "finance_arrangements",
+    "fully_paid_up_equity_shares",
+    "in_principle_approval_application",
+    "lead_manager_roles",
+    "lock_in_period",
+    "locked_in_securities",
+    "max_sale_unidentified_targets",
+    "min_holding_period",
+    "net_tangible_assets",
+    "net_worth",
+    "operating_profits",
+    "option_not_convert",
+    "promoter_contribution",
+    "promoter_securities_dematerialised",
+    "securities_held_by_promoters",
+    "securities_ineligible",
+    "specified_securities",
+    "upfront_payment",
+    "warrant_exercise_price",
+    "warrant_tenure"
+  ],
+  "kept_fields": [],
+  "scores": [
+    {
+      "name": "agreement_with_depository",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "consent_for_conversion",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "contribution_method",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "convertible_securities",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "credit_rating",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "credit_rating_required",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "debenture_redemption_reserve",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "debenture_trustee",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "default_payment_status",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "eligible_for_cdi_without_prior_ipo",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "finance_arrangements",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "fully_paid_up_equity_shares",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "in_principle_approval_application",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lead_manager_roles",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lock_in_period",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "locked_in_securities",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "max_sale_unidentified_targets",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "min_holding_period",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "net_tangible_assets",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "net_worth",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "operating_profits",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "option_not_convert",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "promoter_contribution",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "promoter_securities_dematerialised",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "securities_held_by_promoters",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "securities_ineligible",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "specified_securities",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "upfront_payment",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "warrant_exercise_price",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "warrant_tenure",
+      "score": 0,
+      "occurrences": 0,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    }
+  ]
+}

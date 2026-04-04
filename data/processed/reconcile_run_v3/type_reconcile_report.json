@@ -1,0 +1,690 @@
+[
+  {
+    "field": "agreement_with_depository",
+    "provisional_type": "Option Nat",
+    "final_type": "Bool",
+    "metrics": {
+      "Bool_parse_rate": 1.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "yes",
+        "evidence": {
+          "page": 1,
+          "quote": "our Company has received in-principle approvals from BSE and NSE for the listing of the Equity Shares pursuant to letters both dated December 10, 2024.",
+          "span_hint": "listing approval",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "bool_indicator",
+    "inactive_field": false
+  },
+  {
+    "field": "conditions",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": "",
+          "source": "text"
+        }
+      },
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "None of our Company, our Promoter, which is also the Promoter Selling Shareholder, members of our Promoter Group or our Directors are debarred from accessing the capital market by SEBI;",
+          "span_hint": "debarred from accessing the capital market",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "default_payment_or_repayments",
+    "provisional_type": "Option Nat",
+    "final_type": "Option Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "not mentioned",
+        "evidence": {
+          "page": 1,
+          "quote": "our Company is not prohibited from accessing the capital market or debarred from buying, selling or dealing in securities under any order or direction passed by SEBI or any securities market regulator in any other jurisdiction or any other authority/court.",
+          "span_hint": "capital market",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": false,
+    "judge": {
+      "field": "default_payment_or_repayments",
+      "final_type": "Option Nat",
+      "confidence": 0.8,
+      "rationale": "The field 'default_payment_or_repayments' has a provisional type of Option Nat. The metrics show no parse rates for Nat, ListNat, or Bool, and a missing rate of 0.0. However, the evidence example indicates that the field is not mentioned in the text. Since the provisional type is Option Nat, and there's no evidence to change it, we maintain the provisional type as the final type with high confidence based on the lack of evidence for other types or missingness."
+    }
+  },
+  {
+    "field": "eligible_for_cdi_without_equity_ipo",
+    "provisional_type": "Option Nat",
+    "final_type": "Bool",
+    "metrics": {
+      "Bool_parse_rate": 1.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "yes",
+        "evidence": {
+          "page": 2,
+          "quote": "our Company confirms that it is also in compliance with the conditions specified in Regulation 7(1) of the SEBI ICDR Regulations, to the extent applicable.",
+          "span_hint": "compliance with Regulation 7(1) of SEBI ICDR",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "bool_indicator",
+    "inactive_field": false
+  },
+  {
+    "field": "exceptions",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 2,
+          "quote": "Eligibility for the Offer in accordance with Regulation 6(1) of the SEBI ICDR Regulations, which states as follows:",
+          "span_hint": "Regulation 6(1)",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "fully_paid_up_equity_shares",
+    "provisional_type": "Option Nat",
+    "final_type": "Option Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "All the Equity Shares are fully paid up",
+        "evidence": {
+          "page": 2,
+          "quote": "All the Equity Shares are fully paid up and there are no partly paid up Equity Shares as on the date of filing of this Red Herring Prospectus.",
+          "span_hint": "Equity Shares are fully paid up",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": false,
+    "judge": {
+      "field": "fully_paid_up_equity_shares",
+      "final_type": "Option Nat",
+      "confidence": 0.8,
+      "rationale": "The evidence example shows the text mentioning the number of fully paid up equity shares, but the parse rates for all types are low. The low parse rates indicate that the data might be qualitative rather than numerical, suggesting an Option Nat type where the value is a natural number or missing. The text mentions a specific condition, but no numerical value is provided in the example, so it's likely that the field expects a numerical value or is absent, hence Option Nat is appropriate."
+    }
+  },
+  {
+    "field": "general_corporate_purposes",
+    "provisional_type": "Option Nat",
+    "final_type": "Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "25",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": "",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": false
+  },
+  {
+    "field": "holding_period",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 2,
+          "quote": "All the Equity Shares are fully paid up and there are no partly paid up Equity Shares as on the date of filing of this Red Herring Prospectus.",
+          "span_hint": "date of filing",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "lead_manager_appointment",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "our Company has received in-principle approvals from BSE and NSE for the listing of the Equity Shares",
+          "span_hint": "BSE and NSE",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "lock_in_period",
+    "provisional_type": "Option Nat",
+    "final_type": "Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "6 months",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": "",
+          "source": "text"
+        }
+      },
+      {
+        "value_raw": "6 months",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": "",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": false
+  },
+  {
+    "field": "net_tangible_assets",
+    "provisional_type": "Option Nat",
+    "final_type": "Option List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 1.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 1,
+    "example_table_row": {
+      "page": 2,
+      "table_index": 1,
+      "label": "Net tangible assets (A) (₹ in\nmillion)(1)",
+      "values": [
+        "1,44,445.3",
+        "1,24,541.0",
+        "1,01,714.2"
+      ],
+      "unit": "million"
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "1,44,445.3, 1,24,541.0, 1,01,714.2",
+        "evidence": {
+          "page": 2,
+          "quote": "Net tangible assets (A) (₹ in\nmillion)(1): 1,44,445.3, 1,24,541.0, 1,01,714.2",
+          "span_hint": "Net tangible assets (A) (₹ in\nmillion)(1)",
+          "source": "table:p2_t1"
+        }
+      }
+    ],
+    "reason": "list_indicator",
+    "inactive_field": false,
+    "judge": {
+      "field": "net_tangible_assets",
+      "final_type": "Option List Nat",
+      "confidence": 0.9,
+      "rationale": "The field 'net_tangible_assets' has a provisional type of 'Option List Nat'. The metrics show a ListNat_parse_rate of 1.0, indicating that the value can be parsed as a list of natural numbers. The raw value '1,44,445.3, 1,24,1,541.0, 1,01,714.2' contains commas and a decimal point, but the parse_rate suggests it can be successfully parsed as a list of natural numbers with decimal points allowed. The evidence example shows multiple numeric values separated by commas, supporting the List type. There is a decimal point in some values, but since the parse_rate is 1.0, it is acceptable. Therefore, the final type is Option List Nat with high confidence."
+    }
+  },
+  {
+    "field": "net_worth",
+    "provisional_type": "Option Nat",
+    "final_type": "Option Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 1.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 1,
+    "example_table_row": {
+      "page": 2,
+      "table_index": 1,
+      "label": "Net worth (C) (₹ in million)(3)",
+      "values": [
+        "1,49,365.0",
+        "1,28,027.6",
+        "1,04,360.9"
+      ],
+      "unit": "million"
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "1,49,365.0, 1,28,027.6, 1,04,360.9",
+        "evidence": {
+          "page": 2,
+          "quote": "Net worth (C) (₹ in million)(3): 1,49,365.0, 1,28,027.6, 1,04,360.9",
+          "span_hint": "Net worth (C) (₹ in million)(3)",
+          "source": "table:p2_t1"
+        }
+      }
+    ],
+    "reason": "list_indicator",
+    "inactive_field": false,
+    "judge": {
+      "field": "net_worth",
+      "final_type": "Option Nat",
+      "confidence": 1.0,
+      "rationale": "The value is a list of numbers with commas, which can be parsed as a list of natural numbers. The parse rates for ListNat and Nat are both 1.0, indicating perfect parsing. The evidence example shows a string that is a list of numbers with commas, which is consistent with the ListNat type. There are no missing values or boolean indicators, so Option Nat is appropriate."
+    }
+  },
+  {
+    "field": "operating_profits",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 1.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 1,
+    "example_table_row": {
+      "page": 2,
+      "table_index": 1,
+      "label": "Average operating profit (B) (₹\nin million)(2)",
+      "values": [
+        "29,532.9",
+        "24,265.4",
+        "14,918.9"
+      ],
+      "unit": "million"
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "29,532.9, 24,265.4, 14,918.9",
+        "evidence": {
+          "page": 2,
+          "quote": "Average operating profit (B) (₹\nin million)(2): 29,532.9, 24,265.4, 14,918.9",
+          "span_hint": "Average operating profit (B) (₹\nin million)(2)",
+          "source": "table:p2_t1"
+        }
+      }
+    ],
+    "reason": "list_indicator",
+    "inactive_field": false,
+    "judge": {
+      "field": "operating_profits",
+      "final_type": "List Nat",
+      "confidence": 0.8,
+      "rationale": "The raw value is a comma-separated list of numbers with commas and decimal points, indicating multiple values. The provisional type was 'Option Nat', but the evidence shows multiple numeric values, so 'List Nat' is more appropriate. The parse rate for ListNat is 1.0, confirming that the type can be parsed correctly."
+    }
+  },
+  {
+    "field": "option_not_convert_if_conversion_price_not_determined",
+    "provisional_type": "Option Nat",
+    "final_type": "Option (List Nat)",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "None",
+        "evidence": {
+          "page": 1,
+          "quote": "Except employee stock options granted pursuant to ESOS 2014, ESOS 2017 and ESOS 2022, there are no outstanding warrants, options or rights to convert debentures, loans or other instruments convertible into, or which would entitle any person any option to receive Equity Shares, as on the date of this Red Herring Prospectus.",
+          "span_hint": "as on the date of this Red Herring Prospectus",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": false,
+    "judge": {
+      "field": "option_not_convert_if_conversion_price_not_determined",
+      "final_type": "Option (List Nat)",
+      "confidence": 0.8,
+      "rationale": "The evidence example indicates that there are no outstanding options, but the field name suggests it's about options that are not convertible if the conversion price is not determined. The parse rates for Bool and Nat are 0.0, but the field is likely a list of natural numbers representing counts or values. The low parse rates suggest uncertainty, but the context of the field and the example support the List Nat type with moderate confidence."
+    }
+  },
+  {
+    "field": "other_unidentified_objects",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": "",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "promoter_specified_securities_dematerialised",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 2,
+          "quote": "The Promoter Selling Shareholder confirms that the Offered Shares are eligible to be offered for sale in the Offer in accordance with Regulation 8 of the SEBI ICDR Regulations, as on the date of the Draft Red Herring Prospectus and this Red Herring Prospectus.",
+          "span_hint": "confirmation of eligibility under Regulation 8 of SEBI ICDR",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "securities",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "securities",
+        "evidence": {
+          "page": 2,
+          "quote": "",
+          "span_hint": "",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": false,
+    "judge": {
+      "field": "securities",
+      "final_type": "List Nat",
+      "confidence": 0.8,
+      "rationale": "The field 'securities' has only one example value 'securities'. This value does not parse as a Nat or List Nat because it is a string. However, considering the context of financial data, 'securities' might refer to a list of security identifiers, which could be natural numbers. The parse rates for all numeric types are 0, indicating no successful parsing. But the lack of missing values and the fact that it's a single string might suggest it's intended to be a list of Nats. Therefore, I assign a confidence of 0.8 for 'List Nat'."
+    }
+  },
+  {
+    "field": "securities_held_by_promoters",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 2,
+          "quote": "The Promoter Selling Shareholder confirms that the Offered Shares are eligible to be offered for sale in the Offer in accordance with Regulation 8 of the SEBI ICDR Regulations, as on the date of the Draft Red Herring Prospectus and this Red Herring Prospectus.",
+          "span_hint": "Regulation 8",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "specified_securities_ineligible",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "Prohibition by SEBI, RBI or other governmental authorities\nOur Company, Promoter, which is also the Promoter Selling Shareholder, Directors, members of our Promoter Group, the persons in control of our Promoter or our Company, as applicable, are not prohibited from accessing the capital market or debarred from buying, selling or dealing in securities under any order or direction passed by SEBI or any securities market regulator in any other jurisdiction or any other authority/court.",
+          "span_hint": "Prohibition",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "upfront_payment",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "Except employee stock options granted pursuant to ESOS 2014, ESOS 2017 and ESOS 2022, there are no outstanding warrants, options or rights to convert debentures, loans or other instruments convertible into, or which would entitle any person any option to receive Equity Shares, as on the date of this Red Herring Prospectus.",
+          "span_hint": "warrants",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "warrant_exercise_price",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "Except employee stock options granted pursuant to ESOS 2014, ESOS 2017 and ESOS 2022, there are no outstanding warrants, options or rights to convert debentures, loans or other instruments convertible into, or which would entitle any person any option to receive Equity Shares, as on the date of this Red Herring Prospectus.",
+          "span_hint": "warrants",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "warrant_non_exercise",
+    "provisional_type": "Option Nat",
+    "final_type": "Option String",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": "",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": true
+  },
+  {
+    "field": "warrant_tenure",
+    "provisional_type": "Option Nat",
+    "final_type": "Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "table_evidence_count": 0,
+    "example_table_row": null,
+    "evidence_examples": [
+      {
+        "value_raw": "18 months",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": "",
+          "source": "text"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "inactive_field": false
+  }
+]

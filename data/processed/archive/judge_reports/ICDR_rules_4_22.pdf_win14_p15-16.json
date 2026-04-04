@@ -1,0 +1,24 @@
+{
+  "pdf": "ICDR_rules_4_22.pdf",
+  "pages": [
+    15,
+    16
+  ],
+  "window_start": 14,
+  "validation": {
+    "ICDR_16_49a": {
+      "hard_fail_reasons": [
+        "bad_rule_id_format"
+      ],
+      "soft_fail_reasons": []
+    },
+    "ICDR_16_49b": {
+      "hard_fail_reasons": [
+        "bad_rule_id_format"
+      ],
+      "soft_fail_reasons": []
+    }
+  },
+  "judge_report": {},
+  "judge_error": null
+}

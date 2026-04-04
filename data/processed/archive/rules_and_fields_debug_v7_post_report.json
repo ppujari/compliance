@@ -1,0 +1,184 @@
+{
+  "input": "data/processed/rules_and_fields_debug_v7.json",
+  "output": "data/processed/rules_and_fields_debug_v7_post.json",
+  "rules_in": 40,
+  "rules_out": 40,
+  "issuer_questions_in": 31,
+  "issuer_questions_out": 23,
+  "fixes": [
+    {
+      "id": "ICDR_10_1a",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:credit_rating_required"
+      ]
+    },
+    {
+      "id": "ICDR_11_2",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:option_not_convert"
+      ]
+    },
+    {
+      "id": "ICDR_13_a",
+      "fixes": [
+        "normalized_rule_id"
+      ]
+    },
+    {
+      "id": "ICDR_13_c",
+      "fixes": [
+        "normalized_rule_id"
+      ]
+    },
+    {
+      "id": "ICDR_13_d",
+      "fixes": [
+        "normalized_rule_id",
+        "stubbed_check",
+        "missing_fields:option_not_convert"
+      ]
+    },
+    {
+      "id": "ICDR_14_1",
+      "fixes": [
+        "normalized_rule_id"
+      ]
+    },
+    {
+      "id": "ICDR_14_1_a",
+      "fixes": [
+        "normalized_rule_id"
+      ]
+    },
+    {
+      "id": "ICDR_14_1_b",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_6_3",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_6_4",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_12_a",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_12_a_ii",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_4_13_a",
+      "fixes": [
+        "normalized_rule_id"
+      ]
+    },
+    {
+      "id": "ICDR_4_13_b",
+      "fixes": [
+        "normalized_rule_id"
+      ]
+    },
+    {
+      "id": "ICDR_4_13_c",
+      "fixes": [
+        "normalized_rule_id"
+      ]
+    },
+    {
+      "id": "ICDR_4_13_d",
+      "fixes": [
+        "normalized_rule_id",
+        "stubbed_check",
+        "suspected_function_field_usage"
+      ]
+    },
+    {
+      "id": "ICDR_16_1",
+      "fixes": [
+        "normalized_rule_id",
+        "stubbed_check",
+        "suspected_function_field_usage"
+      ]
+    },
+    {
+      "id": "ICDR_16_49a",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_16_49b",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_17",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_17_a",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_17_c",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_21_a",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:lead_manager_roles,locked_in_securities"
+      ]
+    },
+    {
+      "id": "ICDR_21_b",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:locked_in_securities"
+      ]
+    },
+    {
+      "id": "ICDR_21",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:locked_in_securities"
+      ]
+    },
+    {
+      "id": "ICDR_22",
+      "fixes": [
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_23",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:lead_manager_roles"
+      ]
+    }
+  ]
+}

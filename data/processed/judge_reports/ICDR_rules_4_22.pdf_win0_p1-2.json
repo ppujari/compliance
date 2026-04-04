@@ -1,0 +1,16 @@
+{
+  "pdf": "ICDR_rules_4_22.pdf",
+  "pages": [
+    1,
+    2
+  ],
+  "window_start": 0,
+  "validation": {
+    "ICDR_6_1_c": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    }
+  },
+  "judge_report": {},
+  "judge_error": "ValueError: Judge returned invalid JSON shape."
+}

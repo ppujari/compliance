@@ -1,0 +1,75 @@
+[
+  {
+    "page": 2,
+    "table_index": 1,
+    "header": [
+      "",
+      "",
+      "March 31, 2025",
+      "",
+      "",
+      "March 31, 2024",
+      "",
+      "",
+      "March 31, 2023",
+      ""
+    ],
+    "fy_cols": [
+      2,
+      5,
+      8
+    ],
+    "value_cols": [
+      1,
+      4,
+      7
+    ],
+    "rows": [
+      {
+        "label": "Net tangible assets (A) (₹ in\nmillion)(1)",
+        "values": [
+          "1,44,445.3",
+          "1,24,541.0",
+          "1,01,714.2"
+        ],
+        "unit": "million"
+      },
+      {
+        "label": "Average operating profit (B) (₹\nin million)(2)",
+        "values": [
+          "29,532.9",
+          "24,265.4",
+          "14,918.9"
+        ],
+        "unit": "million"
+      },
+      {
+        "label": "Net worth (C) (₹ in million)(3)",
+        "values": [
+          "1,49,365.0",
+          "1,28,027.6",
+          "1,04,360.9"
+        ],
+        "unit": "million"
+      },
+      {
+        "label": "Total monetary assets, as\nrestated (D) (₹ in million)(4)",
+        "values": [
+          "9,533.0",
+          "6,502.3",
+          "4,984.8"
+        ],
+        "unit": "million"
+      },
+      {
+        "label": "Percentage of monetary assets\nto restated net tangible assets\n(E) = (D)/(A) (in %)",
+        "values": [
+          "6.60%",
+          "5.22%",
+          "4.90%"
+        ],
+        "unit": "%"
+      }
+    ]
+  }
+]

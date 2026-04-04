@@ -255,6 +255,37 @@ def validate_source(rule: dict, chunk_text: str, span_mode: str = "lenient") -> 
     return reasons
 
 
+def validate_reg_anchoring(rule: dict, visible_regs: set[str]) -> List[str]:
+    """
+    Soft validation: check that the rule's regulation number was actually visible
+    on the pages of the window it came from.
+
+    Returns a list of warning strings (empty → clean).  Never causes a hard drop;
+    callers should lower confidence by 0.2 and append to repair_notes.
+
+    Args:
+        rule:         The rule dict (must have 'rule_id' key).
+        visible_regs: Set of regulation number strings produced by
+                      pre_identify_regulations() for each page in the window.
+    """
+    reasons: List[str] = []
+    if not visible_regs:
+        return reasons  # no anchoring data available; skip
+    rid = rule.get("rule_id", "") or ""
+    m = re.match(r"ICDR_(\d+[A-Z]?)", rid, re.I)
+    if not m:
+        return reasons  # can't parse reg number; skip
+    rule_reg = m.group(1).upper()
+    # Normalise visible set to upper-case for comparison (e.g. '8a' → '8A')
+    visible_upper = {r.upper() for r in visible_regs}
+    if rule_reg not in visible_upper:
+        reasons.append(
+            f"reg_anchoring_mismatch:rule_says_{rule_reg}"
+            f"_but_page_shows_{sorted(visible_upper)}"
+        )
+    return reasons
+
+
 def detect_duplicates(rules: List[dict]) -> Dict[str, int]:
     """
     Return dict of rule_id -> count (only for duplicates).
@@ -423,6 +454,8 @@ def coerce_rules_from_parsed(obj: Any) -> list[dict]:
     Supported:
       - [ {...}, ... ]
       - {"rules":[...]} or {"items":[...]}
+      - bare rule dict  (has "rule_id")   ← Pass 2 single-object response
+      - bare clause dict (has "reg_number") ← Pass 1 identification response
       - dict-of-rule_* -> values list
     """
     if isinstance(obj, list):
@@ -432,6 +465,13 @@ def coerce_rules_from_parsed(obj: Any) -> list[dict]:
             return [x for x in obj["rules"] if isinstance(x, dict)]
         if "items" in obj and isinstance(obj["items"], list):
             return [x for x in obj["items"] if isinstance(x, dict)]
+        if "clauses" in obj and isinstance(obj["clauses"], list):
+            return [x for x in obj["clauses"] if isinstance(x, dict)]
+        if "regulations" in obj and isinstance(obj["regulations"], list):
+            return [x for x in obj["regulations"] if isinstance(x, dict)]
+        # Bare rule dict (Pass 2) or bare clause identification dict (Pass 1)
+        if obj.get("rule_id") or obj.get("reg_number"):
+            return [obj]
         # dict-of-rule_* (values might be dicts; strings are ignored here)
         vals = list(obj.values())
         if vals and all(isinstance(v, dict) for v in vals):
@@ -511,6 +551,36 @@ Your output MUST be STRICT JSON (UTF-8, no comments) matching this array schema:
   }
 ]
 
+MAPS_TO REASONING — apply these three steps BEFORE emitting maps_to for each rule:
+
+Step 1 - Identify the constraint type from the clause text:
+  - Numeric threshold (e.g. 'at least three crore', '25 per cent')? -> Nat or List Nat
+  - Yes/no compliance check ('shall have entered into', 'shall not be eligible',
+    'has been debarred', 'fully paid up')? -> Bool
+  - Time period or duration ('for a period of 18 months')? -> Nat
+  - Multi-year series ('in each of the preceding three years',
+    'during the preceding three years')? -> List Nat (length = N years)
+  - Percentage or ratio? -> Nat
+  - Text identifier or category (name, type, CIN, ISIN)? -> String
+  - Procedural / cannot be checked from issuer data alone? -> maps_to: []
+
+Step 2 - Choose a SPECIFIC field name (must be unique across ALL regulations):
+  BAD:  'conditions', 'exceptions', 'securities', 'lock_in_period', 'amount'
+  GOOD: 'is_debarred', 'promoter_min_contribution_pct', 'net_tangible_assets_3yr',
+        'ofs_holding_period_years', 'has_depository_agreement',
+        'promoter_shares_dematerialised'
+  - Bool flags: prefix with 'is_' or 'has_' or 'no_'
+  - Durations: suffix with '_months' or '_years'
+  - Multi-year series: suffix with '_3yr' or '_Nyr'
+  - Never use bare nouns that appear in multiple regulations.
+
+Step 3 - Assign type_hint (NEVER leave blank for checkable rules):
+  Bool     -> yes/no, has/has not, complied/not complied
+  Nat      -> single numeric value, percentage, duration, threshold
+  List Nat -> multi-year series, list of values across periods
+  String   -> text identifiers, names, categories
+  If uncertain between Nat and List Nat, prefer List Nat (reconciliation corrects later).
+
 Rules:
 - Extract only clauses that are within the *visible* pages provided.
 - Produce ATOMIC items: split by (1)(2)… and (a)(b)… where semantically distinct.
@@ -550,6 +620,38 @@ FEWSHOT_OUTPUT = [
     "source": {"pdf":"<PDF>", "pages":[0], "reg":"Regulation 6(1)(b)", "span_hint":"average operating profit of at least"},
     "confidence": 0.95
   }
+]
+
+FEWSHOT_BOOL_INPUT = (
+    "Regulation 7(1)(b): it has entered into an agreement with a depository for "
+    "dematerialisation of the specified securities already issued and proposed to be issued."
+)
+FEWSHOT_BOOL_OUTPUT = [
+    {
+        "rule_id": "ICDR_7_1_b",
+        "domain": "SEBI_ICDR",
+        "title": "Agreement with depository for dematerialisation",
+        "text": (
+            "it has entered into an agreement with a depository for dematerialisation "
+            "of the specified securities already issued and proposed to be issued."
+        ),
+        "lean_id": "rule_7_1_b",
+        "maps_to": [
+            {
+                "field": "has_depository_agreement",
+                "type_hint": "Bool",
+                "constraints_text": "must have entered agreement with a depository",
+            }
+        ],
+        "notes": "Binary compliance check -- agreement either exists or it does not.",
+        "source": {
+            "pdf": "<PDF>",
+            "pages": [0],
+            "reg": "Regulation 7(1)(b)",
+            "span_hint": "entered into an agreement with a depository",
+        },
+        "confidence": 0.95,
+    }
 ]
 
 FEWSHOT_BAD_INPUT = """Regulation 6(1)(a) appears once in the excerpt below. Do not create multiple objects for the same clause:
@@ -621,12 +723,16 @@ def ollama_generate_json(model: str, system: str, user: str, timeout: int = 120,
     Fallback for older Ollama: use /api/generate with a single prompt and JSON format.
     """
     url = "http://localhost:11434/api/generate"
-    # Build few-shot sections (default demo + optional extras)
+    # Build few-shot sections: List Nat example + Bool example (built-in), then caller extras
     fewshot_sections: list[str] = [
         (
             f"Example input:\n{FEWSHOT_INPUT}\n\n"
             f"Example output (JSON array):\n{json.dumps(FEWSHOT_OUTPUT, ensure_ascii=False)}\n"
-        )
+        ),
+        (
+            f"Example input:\n{FEWSHOT_BOOL_INPUT}\n\n"
+            f"Example output (JSON array):\n{json.dumps(FEWSHOT_BOOL_OUTPUT, ensure_ascii=False)}\n"
+        ),
     ]
     if fewshots:
         for ex_input, ex_output in fewshots:
@@ -718,10 +824,13 @@ def ollama_chat_json(model: str, system: str, user: str, timeout: int = 120, deb
     Falls back to /api/generate if /api/chat is not available (404).
     """
     url = "http://localhost:11434/api/chat"
+    # Start with two built-in examples: List Nat (Reg 6) + Bool (Reg 7)
     messages = [
         {"role": "system", "content": system},
         {"role": "user", "content": f"Example:\n{FEWSHOT_INPUT}"},
         {"role": "assistant", "content": json.dumps(FEWSHOT_OUTPUT, ensure_ascii=False)},
+        {"role": "user", "content": f"Example:\n{FEWSHOT_BOOL_INPUT}"},
+        {"role": "assistant", "content": json.dumps(FEWSHOT_BOOL_OUTPUT, ensure_ascii=False)},
     ]
     if fewshots:
         for ex_input, ex_output in fewshots:
@@ -874,6 +983,72 @@ RULE_ID_PREFIX_RE = re.compile(r"^ICDR[_\-\s]*(.+)$", re.I)
 CLAUSE_TOKEN_SPLIT_RE = re.compile(r"[_\s]+")
 SOURCE_NUM_RE = re.compile(r"(\d+)")
 SOURCE_CLAUSE_RE = re.compile(r"\((\d+|[A-Za-z])\)")
+
+# Pre-identification: matches ICDR regulation headings like "4.", "8A.", "22. (1) A…"
+# at the very start of a line or after a newline, followed by whitespace + a capital letter.
+# This exploits the consistent printed structure of the ICDR document.
+REG_HEADER_RE = re.compile(
+    r"(?:^|\n)\s*"          # line start / after newline
+    r"(\d+[A-Z]?)"          # regulation number, e.g. 8, 8A
+    r"\."                   # literal dot
+    r"\s+"                  # whitespace after dot
+    r"(?:\(\d+\)\s*)?"      # optional sub-reg like (1)
+    r"([A-Z])",             # clause text starts with capital letter
+    re.MULTILINE,
+)
+
+# Footnote amendment markers to exclude (e.g. "25[Substituted by …]")
+FOOTNOTE_RE = re.compile(r"\d+\[(?:Substituted|Inserted|Re-?numbered)", re.I)
+
+
+def strip_page_numbers(page_text: str) -> str:
+    """
+    Remove bare page numbers from the top of a PDF page.
+
+    PyMuPDF often extracts the printed page number as the first non-blank line
+    (e.g. "14\n\n5. Conditions...").  Stripping it prevents the LLM from
+    misidentifying "14" or "15" as regulation numbers in Pass 1.
+    """
+    lines = page_text.split("\n")
+    # Skip leading blank lines
+    while lines and not lines[0].strip():
+        lines.pop(0)
+    # If the first non-blank line is a bare 1-3 digit number, it is a page number
+    if lines and re.match(r"^\s*\d{1,3}\s*$", lines[0]):
+        lines.pop(0)
+    return "\n".join(lines)
+
+
+def pre_identify_regulations(page_text: str) -> List[str]:
+    """
+    Deterministically identify ICDR regulation numbers visible on a single page.
+
+    Uses the consistent printed structure of the ICDR document (heading format
+    "N." or "N. (1)" at line start followed by a capital letter) rather than
+    relying on the LLM.  Returns a sorted list of regulation number strings,
+    e.g. ['5', '6', '8A'].
+
+    Excludes:
+    - Footnote amendment references (e.g. "25[Substituted …]")
+    - Page numbers / table numbers > 100
+    """
+    found: set[str] = set()
+    for m in REG_HEADER_RE.finditer(page_text):
+        reg_num = m.group(1)
+        # Check surrounding context for footnote markers
+        ctx_start = max(0, m.start() - 5)
+        context = page_text[ctx_start : m.end() + 20]
+        if FOOTNOTE_RE.search(context):
+            continue
+        # Exclude anything that looks like a page/table number (> 100)
+        try:
+            if int(re.match(r"\d+", reg_num).group()) > 100:
+                continue
+        except Exception:
+            continue
+        found.add(reg_num)
+    return sorted(found, key=lambda x: (int(re.match(r"\d+", x).group()), x))
+
 
 def detect_allowed_regs(window_text: str) -> set[int]:
     """
@@ -1077,6 +1252,147 @@ def normalize_rule_identifier(item: dict) -> int | None:
         item.setdefault("repair_notes", []).extend(repair_notes)
     return reg_no
 
+# ---------- Two-pass extraction helpers ----------
+
+# Pass-1 system prompt: identification only, no typing, no maps_to
+_PASS1_SYSTEM = (
+    "You are a legal document analyst. Your ONLY task is to identify and list "
+    "all numbered regulation clauses visible in the text provided. "
+    "Do NOT extract rules, do NOT assign field types, do NOT add maps_to. "
+    "Return a JSON array of clause objects."
+)
+
+_PASS1_USER_TEMPLATE = """\
+Identify ALL numbered regulation clauses visible in the text below.
+
+For each clause return a JSON object with these exact keys:
+  "reg_number"  : the clause number as it appears (e.g. "5(1)(a)", "14(1)", "8A")
+  "clause_text" : verbatim text of the clause, max 500 chars
+  "span_hint"   : first 10 words of the clause text
+  "is_proviso"  : true if this is a Provided/Explanation clause, else false
+
+Rules:
+- Look for patterns like "N. (1)" or "(a)" at line starts.
+- The regulation number is the FIRST number before (1), (2), etc.
+  e.g. "8. Only such fully paid-up..." means Regulation 8.
+- Ignore footnote superscripts like 25[], 26[Substituted...].
+- Include provisos and explanations as separate entries with is_proviso=true.
+- If no clauses are found, return [].
+
+TEXT:
+{page_text}
+"""
+
+
+def identify_regulations(
+    model: str,
+    page_text: str,
+    page_nums: list[int],
+    visible_regs: set[str] | None = None,
+    timeout: int = 120,
+    debug: bool = False,
+) -> list[dict]:
+    """
+    Pass 1: Identify which regulation clauses appear in this text window.
+
+    Returns a list of dicts: {reg_number, clause_text, span_hint, is_proviso}.
+    No maps_to, no typing — just identification.  Uses a short, focused prompt
+    so even small models handle it reliably.
+
+    visible_regs: regex-detected top-level regulation numbers (e.g. {'6', '7'}).
+    Injected as context so the LLM can prefix bare sub-clauses like (3)(ii)
+    with the correct parent regulation number.
+    """
+    # Build anchoring context from regex-detected regulation numbers so the LLM
+    # can correctly prefix sub-clauses that appear mid-regulation across pages.
+    reg_context = ""
+    if visible_regs:
+        reg_list = ", ".join(
+            sorted(visible_regs, key=lambda x: (int(re.match(r"\d+", x).group()), x))
+        )
+        reg_context = (
+            f"IMPORTANT CONTEXT: The following top-level regulation numbers are "
+            f"structurally visible on these pages: {reg_list}\n"
+            f"Sub-clauses like (1)(a), (2), (3)(ii) belong to one of these parent "
+            f"regulations. Always prefix with the parent number.\n"
+            f"Example — if Regulation 6 and 7 are visible:\n"
+            f"  (3)(ii) under Reg 6  ->  reg_number: '6(3)(ii)'\n"
+            f"  (1)(a) under Reg 7   ->  reg_number: '7(1)(a)'\n"
+            f"Never output a bare '(1)' or '(3)(ii)' without its parent number.\n\n"
+        )
+
+    user = reg_context + _PASS1_USER_TEMPLATE.format(page_text=page_text[:8000])
+    if debug:
+        print(f"[Pass1] Sending {len(user)} chars to model", file=sys.stderr)
+    try:
+        result = ollama_chat_json_any(model, _PASS1_SYSTEM, user, timeout=timeout, debug=debug, debug_raw=debug)
+    except Exception as e:
+        if debug:
+            print(f"[Pass1] model call failed: {e}", file=sys.stderr)
+        return []
+    if debug:
+        print(f"[Pass1] raw result type={type(result).__name__} value={json.dumps(result, default=str)[:500]}", file=sys.stderr)
+    if not result:
+        return []
+    items = coerce_rules_from_parsed(result) if isinstance(result, (dict, list)) else []
+    if debug:
+        regs = [r.get("reg_number") for r in items if isinstance(r, dict)]
+        print(f"[Pass1] pages={page_nums} identified: {regs}", file=sys.stderr)
+    return [r for r in items if isinstance(r, dict) and r.get("reg_number")]
+
+
+# Regex for converting "5(1)(a)" -> tokens ["5","1","a"]
+_REG_NUM_TOKEN_RE = re.compile(r"(\d+[A-Z]?|[a-z]+)")
+
+
+def build_targeted_extraction_prompt(
+    reg_number: str,
+    clause_text: str,
+    page_nums: list[int],
+    pdf_name: str = "<PDF>",
+) -> str:
+    """
+    Pass 2: Build an extraction prompt for a single pre-identified clause.
+
+    The regulation number is pre-validated from Pass 1, so the LLM cannot
+    misattribute it.  The prompt is focused on ONE clause, dramatically
+    reducing context noise compared to sending the full page window.
+    """
+    # Convert reg_number to ICDR rule_id format
+    # e.g. "5(1)(a)" -> tokens=["5","1","a"] -> ICDR_5_1_a
+    tokens = _REG_NUM_TOKEN_RE.findall(reg_number)
+    rule_id = "ICDR_" + "_".join(t.lower() for t in tokens) if tokens else "ICDR_unknown"
+    lean_id = "rule_" + "_".join(t.lower() for t in tokens) if tokens else "rule_unknown"
+
+    return (
+        f"Extract ONE atomic compliance rule from this regulation clause.\n"
+        f"\n"
+        f"REGULATION NUMBER (pre-validated — DO NOT change): {reg_number}\n"
+        f"RULE_ID to use: {rule_id}\n"
+        f"LEAN_ID to use: {lean_id}\n"
+        f"SOURCE PAGES: {page_nums}\n"
+        f"SOURCE PDF: {pdf_name}\n"
+        f"\n"
+        f"Before emitting maps_to, decompose the clause:\n"
+        f"  1. SUBJECT   - Who must comply? (issuer, promoter, director, etc.)\n"
+        f"  2. CONDITION - What triggers the requirement?\n"
+        f"  3. CONSTRAINT- What is the measurable check?\n"
+        f"  4. CONTEXT   - Exceptions, provisos, explanations\n"
+        f"\n"
+        f"Derive maps_to from the CONSTRAINT only:\n"
+        f"  - Numeric threshold? -> Nat (single) or List Nat (multi-year)\n"
+        f"  - Yes/no compliance flag? -> Bool\n"
+        f"  - 'in each of the preceding N years'? -> List Nat (length=N)\n"
+        f"  - Field name must be UNIQUE across all regulations:\n"
+        f"    BAD:  'conditions', 'exceptions', 'securities'\n"
+        f"    GOOD: 'promoter_min_contribution_pct', 'is_debarred', 'ofs_holding_years'\n"
+        f"\n"
+        f"Output a single JSON object (NOT an array) matching the rule schema.\n"
+        f"\n"
+        f"CLAUSE TEXT:\n{clause_text[:1500]}\n"
+    )
+
+
 # ---------- Main pipeline ----------
 def main():
     ap = argparse.ArgumentParser()
@@ -1098,7 +1414,7 @@ def main():
     ap.add_argument("--debug-raw", action="store_true")
     ap.add_argument("--debug", action="store_true")
     ap.add_argument("--endpoint", choices=["auto","chat","generate"], default="auto",
-                    help="Which Ollama endpoint to use (default auto: chat→generate fallback)")
+                    help="Which Ollama endpoint to use (default auto: chat->generate fallback)")
     ap.add_argument("--no-format", action="store_true",
                     help="Do not set format=json; rely on prompt to request JSON")
     ap.add_argument("--fewshot", type=str, default=None,
@@ -1116,6 +1432,15 @@ def main():
     ap.add_argument("--judge-overall-threshold", type=float, default=0.75)
     ap.add_argument("--judge-fidelity-threshold", type=float, default=0.70)
     ap.add_argument("--judge-report-out", type=str, default="", help="Optional JSONL path to write judge reports per window.")
+    ap.add_argument(
+        "--no-two-pass", action="store_true",
+        help=(
+            "Disable two-pass extraction and use legacy single-pass mode. "
+            "Two-pass (default) runs a lightweight identification call first "
+            "(Pass 1), then a focused extraction call per clause (Pass 2), "
+            "which reduces regulation-number misattribution."
+        ),
+    )
     args = ap.parse_args()
 
     pdf = Path(args.pdf)
@@ -1142,38 +1467,116 @@ def main():
     signature_to_key: dict[str, str] = {}
 
     for start_idx, chunk in windowed(pages, args.window, args.overlap):
-        # Build user prompt for this chunk
-        visible = "\n\n--- PAGE BREAK ---\n\n".join(chunk)
+        # Strip bare page numbers from the top of each page before any processing.
+        # PyMuPDF extracts the printed page number as the first line (e.g. "14\n\n5. …"),
+        # which causes Pass 1 to misidentify it as a regulation number.
+        chunk_cleaned = [strip_page_numbers(p) for p in chunk]
+        visible = "\n\n--- PAGE BREAK ---\n\n".join(chunk_cleaned)
         if args.debug:
             print(f"[DEBUG] window start={start_idx} chars={len(visible)}", file=sys.stderr)
             if len(visible.strip()) < 200:
                 print("[WARN] window text is tiny; PDF text extraction likely failed for this window", file=sys.stderr)
         page_nums = list(range(start_idx+1, start_idx+1+len(chunk)))  # 1-based
-        # Detect allowed regulations for anchoring
+        # Detect allowed regulations for anchoring (int-based, used later for ±1 tolerance)
         allowed_regs = detect_allowed_regs(visible)
+
+        # Pre-identify regulation numbers from document structure (string-based, no LLM).
+        # Use chunk_cleaned so bare page numbers don't pollute the regex matches.
+        visible_regs: set[str] = set()
+        for page_text in chunk_cleaned:
+            visible_regs.update(pre_identify_regulations(page_text))
+
+        # Build a ground-truth anchoring hint for the prompt so the LLM uses
+        # only regulation numbers that are structurally visible on these pages.
+        anchoring_context = ""
+        if visible_regs:
+            reg_list = ", ".join(
+                sorted(visible_regs, key=lambda x: (int(re.match(r"\d+", x).group()), x))
+            )
+            anchoring_context = (
+                f"REGULATION NUMBERS VISIBLE ON THESE PAGES: {reg_list}\n"
+                f"Use ONLY these regulation numbers in your rule_id fields.\n"
+                f"Do NOT use regulation numbers from adjacent pages.\n\n"
+            )
+
         user = (
-            f"PDF: {pdf.name}\n"
-            f"PAGES: {page_nums}\n\n"
-            f"TEXT:\n{visible}\n\n"
-            "Extract atomic SEBI ICDR rules ONLY from these pages."
+            anchoring_context
+            + f"PDF: {pdf.name}\n"
+            + f"PAGES: {page_nums}\n\n"
+            + f"TEXT:\n{visible}\n\n"
+            + "Extract atomic SEBI ICDR rules ONLY from these pages."
         )
 
-        try:
-            format_json = not args.no_format
-            fewshots = load_fewshot_examples(args.fewshot)
+        format_json = not args.no_format
+        fewshots = load_fewshot_examples(args.fewshot)
+
+        def _single_pass() -> list[dict]:
+            """Run one LLM call over the full visible window (legacy path)."""
             endpoint = args.endpoint
-            if endpoint == "chat":
-                items = ollama_chat_json(args.model, SYSTEM_PROMPT, user, timeout=args.timeout, debug=args.debug, debug_raw=args.debug_raw, format_json=format_json, fewshots=fewshots)
-            elif endpoint == "generate":
-                items = ollama_generate_json(args.model, SYSTEM_PROMPT, user, timeout=args.timeout, debug=args.debug, debug_raw=args.debug_raw, format_json=format_json, fewshots=fewshots)
-            else:  # auto
-                items = ollama_chat_json(args.model, SYSTEM_PROMPT, user, timeout=args.timeout, debug=args.debug, debug_raw=args.debug_raw, format_json=format_json, fewshots=fewshots)
-                if not items:
+            try:
+                if endpoint == "chat":
+                    return ollama_chat_json(args.model, SYSTEM_PROMPT, user, timeout=args.timeout, debug=args.debug, debug_raw=args.debug_raw, format_json=format_json, fewshots=fewshots)
+                elif endpoint == "generate":
+                    return ollama_generate_json(args.model, SYSTEM_PROMPT, user, timeout=args.timeout, debug=args.debug, debug_raw=args.debug_raw, format_json=format_json, fewshots=fewshots)
+                else:  # auto
+                    result = ollama_chat_json(args.model, SYSTEM_PROMPT, user, timeout=args.timeout, debug=args.debug, debug_raw=args.debug_raw, format_json=format_json, fewshots=fewshots)
+                    if not result:
+                        if args.debug:
+                            print("[DEBUG] chat returned no items -> trying /api/generate", file=sys.stderr)
+                        result = ollama_generate_json(args.model, SYSTEM_PROMPT, user, timeout=args.timeout, debug=args.debug, debug_raw=args.debug_raw, format_json=format_json, fewshots=fewshots)
+                    return result
+            except Exception as e:
+                print(f"[WARN] model call failed at pages {page_nums}: {e}", file=sys.stderr)
+                return []
+
+        # ── Two-pass extraction ──────────────────────────────────────────────
+        # Pass 1: lightweight identification (no maps_to, no typing).
+        # Pass 2: focused extraction per identified clause (pre-validates reg number).
+        # Falls back to single-pass if Pass 1 returns nothing.
+        items: list[dict] = []
+        if not args.no_two_pass:
+            reg_inventory = identify_regulations(
+                args.model, visible, page_nums,
+                visible_regs=visible_regs,   # regex-anchored parent reg numbers
+                timeout=args.timeout, debug=args.debug,
+            )
+            if reg_inventory:
+                for reg_info in reg_inventory:
+                    reg_num = (reg_info.get("reg_number") or "").strip()
+                    clause_text = (reg_info.get("clause_text") or "").strip()
+                    if not reg_num or not clause_text:
+                        continue
+                    p2_prompt = build_targeted_extraction_prompt(
+                        reg_num, clause_text, page_nums, pdf_name=pdf.name
+                    )
                     if args.debug:
-                        print("[DEBUG] chat returned no items → trying /api/generate", file=sys.stderr)
-                    items = ollama_generate_json(args.model, SYSTEM_PROMPT, user, timeout=args.timeout, debug=args.debug, debug_raw=args.debug_raw, format_json=format_json, fewshots=fewshots)
-        except Exception as e:
-            print(f"[WARN] model call failed at pages {page_nums}: {e}", file=sys.stderr)
+                        print(f"[Pass2] extracting reg {reg_num} ({len(clause_text)} chars)", file=sys.stderr)
+                    try:
+                        raw = ollama_chat_json_any(
+                            args.model, SYSTEM_PROMPT, p2_prompt,
+                            timeout=args.timeout, debug=args.debug,
+                        )
+                    except Exception as e:
+                        print(f"[WARN] Pass 2 call failed for reg {reg_num}: {e}", file=sys.stderr)
+                        continue
+                    if raw is None:
+                        continue
+                    extracted = coerce_rules_from_parsed(raw)
+                    if not extracted and isinstance(raw, dict) and raw:
+                        extracted = [raw]
+                    items.extend(extracted)
+                if args.debug:
+                    print(f"[TwoPass] pages={page_nums}: {len(reg_inventory)} clauses -> {len(items)} raw items", file=sys.stderr)
+            else:
+                # Pass 1 found nothing; fall back to single-pass for this window
+                if args.debug:
+                    print(f"[TwoPass] Pass 1 empty for pages={page_nums}; falling back to single-pass", file=sys.stderr)
+                items = _single_pass()
+        else:
+            # Legacy single-pass mode
+            items = _single_pass()
+
+        if not items:
             continue
 
         # Salvage: flatten common "subrules" shape into valid rule objects
@@ -1217,6 +1620,16 @@ def main():
                     hard.append("bad_rule_id_format")
                 soft.extend(validate_maps_to(r))
                 hard.extend(validate_source(r, visible, span_mode=args.span_mode))
+                # Reg-anchoring: soft check — lower confidence but never drop
+                anchoring_warnings = validate_reg_anchoring(r, visible_regs)
+                if anchoring_warnings:
+                    soft.extend(anchoring_warnings)
+                    try:
+                        conf = float(r.get("confidence", 0.9))
+                    except Exception:
+                        conf = 0.9
+                    r["confidence"] = max(0.0, round(conf - 0.2, 3))
+                    r.setdefault("repair_notes", []).extend(anchoring_warnings)
                 validation[rid] = {"hard_fail_reasons": sorted(set(hard)), "soft_fail_reasons": sorted(set(soft))}
 
             # Refine via RuleRefiner (judge + selective regen). Only pass rules that are not hard-failing.
@@ -1329,6 +1742,24 @@ def main():
                     print("[DEBUG] dropping item without normalizable rule_id:", it.get("rule_id"), file=sys.stderr)
                 continue
 
+            # Soft reg-anchoring check (structure-based): warn and lower confidence if
+            # the rule's regulation number was not detected on any page in this window.
+            # This runs for ALL items (judge and non-judge paths).
+            if visible_regs and not args.no_anchoring:
+                anchoring_warns = validate_reg_anchoring(it, visible_regs)
+                if anchoring_warns:
+                    it.setdefault("repair_notes", []).extend(anchoring_warns)
+                    try:
+                        conf = float(it.get("confidence", 0.9))
+                    except Exception:
+                        conf = 0.9
+                    it["confidence"] = max(0.0, round(conf - 0.2, 3))
+                    if args.debug:
+                        print(
+                            f"[WARN] {it.get('rule_id')} anchoring mismatch: {anchoring_warns}",
+                            file=sys.stderr,
+                        )
+
             # Regulation anchoring: drop if normalized regulation not visible (with ±1 tolerance) unless disabled
             if not args.no_anchoring and allowed_regs:
                 nearest = min((abs(reg_no - r) for r in allowed_regs), default=None)
@@ -1436,7 +1867,7 @@ def main():
                 pages = (to_write.get("source", {}) or {}).get("pages") if isinstance(to_write, dict) else None
                 print(f"[WRITE] {rid} pages={pages}", file=sys.stderr)
 
-    print(f"✅ Wrote {total_written} unique rules → {out}")
+    print(f"[DONE] Wrote {total_written} unique rules -> {out}")
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,114 @@
+{
+  "net_tangible_assets": {
+    "value": [
+      144445,
+      124541,
+      101714
+    ],
+    "final_type": "Option List Nat",
+    "evidence": {
+      "page": 2,
+      "quote": "Net tangible assets (A) (₹ in\nmillion)(1): 1,44,445.3, 1,24,541.0, 1,01,714.2",
+      "span_hint": "Net tangible assets (A) (₹ in\nmillion)(1)",
+      "source": "table:p2_t1"
+    },
+    "rule_id": "ICDR_6_1_a",
+    "extract_confidence": 0.9,
+    "source_priority": 0
+  },
+  "operating_profits": {
+    "value": [
+      29532,
+      24265,
+      14918
+    ],
+    "final_type": "List Nat",
+    "evidence": {
+      "page": 2,
+      "quote": "Average operating profit (B) (₹\nin million)(2): 29,532.9, 24,265.4, 14,918.9",
+      "span_hint": "Average operating profit (B) (₹\nin million)(2)",
+      "source": "table:p2_t1"
+    },
+    "rule_id": "ICDR_6_1_b",
+    "extract_confidence": 0.9,
+    "source_priority": 0
+  },
+  "net_worth": {
+    "value": [149365, 128027, 104360],
+    "final_type": "List Nat",
+    "evidence": {
+      "page": 2,
+      "quote": "Net worth (C) (₹ in million)(3): 1,49,365.0, 1,28,027.6, 1,04,360.9",
+      "span_hint": "Net worth (C) (₹ in million)(3)",
+      "source": "table:p2_t1"
+    },
+    "rule_id": "ICDR_6_1_c",
+    "extract_confidence": 0.9,
+    "source_priority": 0
+  },
+  "agreement_with_depository": {
+    "value": true,
+    "final_type": "Bool",
+    "evidence": {
+      "page": 1,
+      "quote": "our Company has received in-principle approvals from BSE and NSE for the listing of the Equity Shares pursuant to letters both dated December 10, 2024.",
+      "span_hint": "listing approval",
+      "source": "text"
+    },
+    "rule_id": "ICDR_7_1_b",
+    "extract_confidence": 0.4,
+    "source_priority": 1
+  },
+  "general_corporate_purposes": {
+    "value": 25,
+    "final_type": "Nat",
+    "evidence": {
+      "page": 1,
+      "quote": "",
+      "span_hint": "",
+      "source": "text"
+    },
+    "rule_id": "ICDR_6_2",
+    "extract_confidence": 0.2,
+    "source_priority": 1
+  },
+  "eligible_for_cdi_without_equity_ipo": {
+    "value": true,
+    "final_type": "Bool",
+    "evidence": {
+      "page": 2,
+      "quote": "our Company confirms that it is also in compliance with the conditions specified in Regulation 7(1) of the SEBI ICDR Regulations, to the extent applicable.",
+      "span_hint": "compliance with Regulation 7(1) of SEBI ICDR",
+      "source": "text"
+    },
+    "rule_id": "ICDR_9",
+    "extract_confidence": 0.4,
+    "source_priority": 1
+  },
+  "warrant_tenure": {
+    "value": 18,
+    "final_type": "Nat",
+    "evidence": {
+      "page": 1,
+      "quote": "",
+      "span_hint": "",
+      "source": "text"
+    },
+    "rule_id": "ICDR_13_a",
+    "extract_confidence": 0.2,
+    "source_priority": 1
+  },
+  "lock_in_period": {
+    "value": 6,
+    "final_type": "Nat",
+    "evidence": {
+      "page": 1,
+      "quote": "",
+      "span_hint": "",
+      "source": "text"
+    },
+    "rule_id": "ICDR_17",
+    "extract_confidence": 0.2,
+    "source_priority": 1
+  }
+}

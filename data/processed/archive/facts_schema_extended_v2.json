@@ -1,0 +1,450 @@
+{
+  "issuer_facts": [
+    {
+      "name": "agreement_with_depository",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Boolean compliance flag for agreement with depository (name-based inference).",
+      "from_rules": [
+        "ICDR_7_1_b"
+      ],
+      "raw_tokens_seen": [
+        "agreement_with_depository"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "conditions",
+      "lean_type": "List Nat",
+      "python_type": "List[int]",
+      "description": "Field for conditions (from rule type_hint).",
+      "from_rules": [
+        "ICDR_21_a",
+        "ICDR_21_b"
+      ],
+      "raw_tokens_seen": [
+        "conditions"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "List Nat"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "default_payment_or_repayments",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Field for default payment or repayments (from rule type_hint).",
+      "from_rules": [
+        "ICDR_9_6"
+      ],
+      "raw_tokens_seen": [
+        "default_payment_or_repayments"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Bool"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "eligible_for_cdi_without_equity_ipo",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Field for eligible for cdi without equity ipo (from rule type_hint).",
+      "from_rules": [
+        "ICDR_9"
+      ],
+      "raw_tokens_seen": [
+        "eligible_for_cdi_without_equity_ipo"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Bool"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "exceptions",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Boolean flag: exceptions.",
+      "from_rules": [
+        "ICDR_17_a"
+      ],
+      "raw_tokens_seen": [
+        "exceptions"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "List OptionBool"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "fully_paid_up_equity_shares",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Boolean compliance flag for fully paid up equity shares (name-based inference).",
+      "from_rules": [
+        "ICDR_7_1_d"
+      ],
+      "raw_tokens_seen": [
+        "fully_paid_up_equity_shares"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "general_corporate_purposes",
+      "lean_type": "Nat",
+      "python_type": "int",
+      "description": "Field for general corporate purposes (from rule type_hint).",
+      "from_rules": [
+        "ICDR_6_2"
+      ],
+      "raw_tokens_seen": [
+        "general_corporate_purposes"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Nat"
+      ],
+      "constraints_text_samples": [
+        "≤25% of amount raised"
+      ]
+    },
+    {
+      "name": "holding_period",
+      "lean_type": "Nat",
+      "python_type": "int",
+      "description": "Field for holding period (from rule type_hint).",
+      "from_rules": [
+        "ICDR_6_8"
+      ],
+      "raw_tokens_seen": [
+        "holding_period"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Nat"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "lead_manager_appointment",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Field for lead manager appointment (from rule type_hint).",
+      "from_rules": [
+        "ICDR_23"
+      ],
+      "raw_tokens_seen": [
+        "lead_manager_appointment"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Bool"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "lock_in_period",
+      "lean_type": "Nat",
+      "python_type": "int",
+      "description": "Field for lock in period (from rule type_hint).",
+      "from_rules": [
+        "ICDR_17",
+        "ICDR_17_c"
+      ],
+      "raw_tokens_seen": [
+        "lock_in_period"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Nat"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "net_tangible_assets",
+      "lean_type": "Nat",
+      "python_type": "int",
+      "description": "Field for net tangible assets (from rule type_hint).",
+      "from_rules": [
+        "ICDR_6_1_a"
+      ],
+      "raw_tokens_seen": [
+        "net_tangible_assets"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Nat"
+      ],
+      "constraints_text_samples": [
+        "≥ ₹3 cr; basis=restated, consolidated"
+      ]
+    },
+    {
+      "name": "net_worth",
+      "lean_type": "List Nat",
+      "python_type": "List[int]",
+      "description": "Field for net worth (from rule type_hint).",
+      "from_rules": [
+        "ICDR_6_1_c"
+      ],
+      "raw_tokens_seen": [
+        "net_worth"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "List Nat"
+      ],
+      "constraints_text_samples": [
+        "length=3; each ≥ ₹1 cr; basis=restated, consolidated"
+      ]
+    },
+    {
+      "name": "operating_profits",
+      "lean_type": "List Nat",
+      "python_type": "List[int]",
+      "description": "Field for operating profits (from rule type_hint).",
+      "from_rules": [
+        "ICDR_6_1_b"
+      ],
+      "raw_tokens_seen": [
+        "operating_profits"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "List Nat"
+      ],
+      "constraints_text_samples": [
+        "length=3; each ≥ ₹15 cr; basis=restated, consolidated"
+      ]
+    },
+    {
+      "name": "option_not_convert_if_conversion_price_not_determined",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Field for option not convert if conversion price not determined (from rule type_hint).",
+      "from_rules": [
+        "ICDR_11_2"
+      ],
+      "raw_tokens_seen": [
+        "option_not_convert_if_conversion_price_not_determined"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Bool"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "other_unidentified_objects",
+      "lean_type": "Nat",
+      "python_type": "int",
+      "description": "Field for other unidentified objects (from rule type_hint).",
+      "from_rules": [
+        "ICDR_6_3"
+      ],
+      "raw_tokens_seen": [
+        "other_unidentified_objects"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Nat"
+      ],
+      "constraints_text_samples": [
+        "≤25% of amount raised; None if acquisition or investment target identified"
+      ]
+    },
+    {
+      "name": "promoter_specified_securities_dematerialised",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Boolean compliance flag for promoter specified securities dematerialised (name-based inference).",
+      "from_rules": [
+        "ICDR_7_1_c"
+      ],
+      "raw_tokens_seen": [
+        "promoter_specified_securities_dematerialised"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "securities",
+      "lean_type": "List Nat",
+      "python_type": "List[int]",
+      "description": "Field for securities (from rule type_hint).",
+      "from_rules": [
+        "ICDR_21"
+      ],
+      "raw_tokens_seen": [
+        "securities"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "List Nat"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "securities_held_by_promoters",
+      "lean_type": "List Nat",
+      "python_type": "List[int]",
+      "description": "Field for securities held by promoters (from rule type_hint).",
+      "from_rules": [
+        "ICDR_16_1"
+      ],
+      "raw_tokens_seen": [
+        "securities_held_by_promoters"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "List Nat"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "specified_securities_ineligible",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Boolean compliance flag for specified securities ineligible (name-based inference).",
+      "from_rules": [
+        "ICDR_15_1_a"
+      ],
+      "raw_tokens_seen": [
+        "specified_securities_ineligible"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "List"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "upfront_payment",
+      "lean_type": "Nat",
+      "python_type": "int",
+      "description": "Field for upfront payment (from rule type_hint).",
+      "from_rules": [
+        "ICDR_13_c"
+      ],
+      "raw_tokens_seen": [
+        "upfront_payment"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Nat"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "warrant_exercise_price",
+      "lean_type": "String",
+      "python_type": "str",
+      "description": "Field for warrant exercise price (from rule type_hint).",
+      "from_rules": [
+        "ICDR_13_c"
+      ],
+      "raw_tokens_seen": [
+        "warrant_exercise_price"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "String"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "warrant_non_exercise",
+      "lean_type": "Bool",
+      "python_type": "bool",
+      "description": "Field for warrant non exercise (from rule type_hint).",
+      "from_rules": [
+        "ICDR_13_d"
+      ],
+      "raw_tokens_seen": [
+        "warrant_non_exercise"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Bool"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "warrant_tenure",
+      "lean_type": "Nat",
+      "python_type": "int",
+      "description": "Field for warrant tenure (from rule type_hint).",
+      "from_rules": [
+        "ICDR_13_a"
+      ],
+      "raw_tokens_seen": [
+        "warrant_tenure"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Nat"
+      ],
+      "constraints_text_samples": [
+        "≤ 18 months"
+      ]
+    }
+  ],
+  "offer_facts": []
+}

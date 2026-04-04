@@ -1,0 +1,155 @@
+[
+  {
+    "name": "has_demat_agreement",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: has demat agreement.",
+    "from_rules": [
+      "ICDR_7_1_b"
+    ]
+  },
+  {
+    "name": "has_dematerialized_promoter_securities",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: has dematerialized promoter securities.",
+    "from_rules": [
+      "ICDR_7_1_c"
+    ]
+  },
+  {
+    "name": "has_firm_arrangements_of_finance",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: has firm arrangements of finance.",
+    "from_rules": [
+      "ICDR_7_1_e"
+    ]
+  },
+  {
+    "name": "has_fully_paid_or_forfeited_partly_paid_equity",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: has fully paid or forfeited partly paid equity.",
+    "from_rules": [
+      "ICDR_7_1_d"
+    ]
+  },
+  {
+    "name": "has_held_equity_shares_for_1_year",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: has held equity shares for 1 year.",
+    "from_rules": [
+      "ICDR_8_core"
+    ]
+  },
+  {
+    "name": "has_in_principle_approval",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: has in principle approval.",
+    "from_rules": [
+      "ICDR_7_1_a"
+    ]
+  },
+  {
+    "name": "lead_manager_appointment",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer duration (months/years) for lead manager appointment.",
+    "from_rules": [
+      "ICDR_23"
+    ]
+  },
+  {
+    "name": "lock_in_period",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer duration (months/years) for lock in period.",
+    "from_rules": [
+      "ICDR_22"
+    ]
+  },
+  {
+    "name": "lock_in_period_excess_contribution",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer duration (months/years) for lock in period excess contribution.",
+    "from_rules": [
+      "ICDR_16_1b"
+    ]
+  },
+  {
+    "name": "lock_in_period_minimum_contribution",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer duration (months/years) for lock in period minimum contribution.",
+    "from_rules": [
+      "ICDR_16_1a"
+    ]
+  },
+  {
+    "name": "promoter_contribution",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for promoter contribution.",
+    "from_rules": [
+      "ICDR_14_1"
+    ]
+  },
+  {
+    "name": "return_date",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer field for return date.",
+    "from_rules": [
+      "ICDR_22"
+    ]
+  },
+  {
+    "name": "securities_acquired_by_certain_entities_at_lower_price",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer field for securities acquired by certain entities at lower price.",
+    "from_rules": [
+      "ICDR_15_15_b"
+    ]
+  },
+  {
+    "name": "securities_acquired_non_cash_revaluation_capitalization",
+    "lean_type": "List Nat",
+    "python_type": "List[int]",
+    "description": "Series of non-negative integers over multiple years for securities acquired non cash revaluation capitalization.",
+    "from_rules": [
+      "ICDR_15_15_a_i"
+    ]
+  },
+  {
+    "name": "securities_resulting_from_ineligible_bonus_issue",
+    "lean_type": "String",
+    "python_type": "str",
+    "description": "Text/identifier field for securities resulting from ineligible bonus issue.",
+    "from_rules": [
+      "ICDR_15_15_a_ii"
+    ]
+  },
+  {
+    "name": "upfront_exercise_price",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for upfront exercise price.",
+    "from_rules": [
+      "ICDR_13_1c"
+    ]
+  },
+  {
+    "name": "warrant_tenure",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: warrant tenure.",
+    "from_rules": [
+      "ICDR_13_1a"
+    ]
+  }
+]

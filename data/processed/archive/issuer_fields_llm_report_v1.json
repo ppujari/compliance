@@ -1,0 +1,84 @@
+{
+  "pdf": "ICDR_rules_4_22.pdf",
+  "rules_jsonl": "data\\processed\\rules_judged_v2.jsonl",
+  "total_suggested": 0,
+  "total_dropped": 19,
+  "dropped_samples": [
+    {
+      "window_start": 0,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 1,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 2,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 3,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 4,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 5,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 6,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 7,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 8,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 9,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 10,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 11,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 12,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 13,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 14,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 15,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 16,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 17,
+      "reason": "bad_json_shape"
+    },
+    {
+      "window_start": 18,
+      "reason": "bad_json_shape"
+    }
+  ]
+}

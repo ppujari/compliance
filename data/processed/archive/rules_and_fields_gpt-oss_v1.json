@@ -1,0 +1,659 @@
+{
+  "rules": [
+    {
+      "id": "ICDR_3_scope",
+      "title": "Applicability: IPO, FPO, rights, QIP, etc.",
+      "reference": "ICDR_3_scope",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Scope check not implemented; assume issuer is in scope.\""
+    },
+    {
+      "id": "ICDR_4_reference_date",
+      "title": "Reference date for meeting eligibility",
+      "reference": "ICDR_4_reference_date",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Reference date checks not modeled; assume eligibility.\""
+    },
+    {
+      "id": "ICDR_5_1_a",
+      "title": "Disqualification: issuer/promoters/directors debarred",
+      "reference": "ICDR_5_1_a",
+      "remedy": null,
+      "check": "fun i => !(i.is_debarred ∨ i.has_debarred_directors)",
+      "failReason": "fun i =>\n      if i.is_debarred then \"Issuer is debarred from capital markets.\"\n      else if i.has_debarred_directors then \"A director or promoter is debarred.\"\n      else \"Unknown debarment status.\",\n    remedy? := some \"Remove debarment or wait until it expires.\""
+    },
+    {
+      "id": "ICDR_5_1_b",
+      "title": "Disqualification: promoter/director of another debarred company",
+      "reference": "ICDR_5_1_b",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Cross‑company debarment check not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_5_1_c",
+      "title": "Disqualification: fraudulent borrower",
+      "reference": "ICDR_5_1_c",
+      "remedy": null,
+      "check": "fun i => !i.is_fraudulent",
+      "failReason": "fun i => if i.is_fraudulent then \"Issuer or promoter is a fraudulent borrower.\" else \"\",\n    remedy? := some \"Cease fraudulent activities and rectify records.\""
+    },
+    {
+      "id": "ICDR_5_1_d",
+      "title": "Disqualification: fugitive economic offender",
+      "reference": "ICDR_5_1_d",
+      "remedy": null,
+      "check": "fun i => !i.is_fugitive",
+      "failReason": "fun i => if i.is_fugitive then \"Promoter or director is a fugitive economic offender.\" else \"\",\n    remedy? := some \"Resolve fugitive status before filing.\""
+    },
+    {
+      "id": "ICDR_5_2_core",
+      "title": "No outstanding convertibles/rights (pre‑IPO)",
+      "reference": "ICDR_5_2_core",
+      "remedy": null,
+      "check": "fun i =>\n      !(i.has_outstanding_convertibles ∧\n        !(i.has_esop_exemption ∨ i.has_sar_exemption ∨ i.has_mandatory_convertibles))",
+      "failReason": "fun i =>\n      if i.has_outstanding_convertibles && !(i.has_esop_exemption ∨ i.has_sar_exemption ∨ i.has_mandatory_convertibles) then\n        \"Outstanding convertibles/rights present without ESOP/SAR/mandatory conversion carve‑out.\"\n      else \"\",\n    remedy? := some \"Resolve outstanding convertibles/rights or obtain relevant exemptions.\""
+    },
+    {
+      "id": "ICDR_6_1_a_nta",
+      "title": "NTA ≥ ₹3 cr in each of the last 3 years",
+      "reference": "ICDR_6_1_a_nta",
+      "remedy": null,
+      "check": "fun i =>\n      lengthIs i.net_tangible_assets 3 ∧ allGeNat i.net_tangible_assets 30000000",
+      "failReason": "fun i =>\n      if !lengthIs i.net_tangible_assets 3 then\n        \"Need NTA figures for 3 full years.\"\n      else if !allGeNat i.net_tangible_assets 30000000 then\n        \"One or more NTA figures are below ₹3 cr.\"\n      else \"\",\n    remedy? := some \"Provide NTA ≥ ₹3 cr for each of the last 3 full years.\""
+    },
+    {
+      "id": "ICDR_6_1_a_monetary",
+      "title": "Monetary assets ≤ 50 % of NTA (or committed/used; OSF carve‑out)",
+      "reference": "ICDR_6_1_a_monetary",
+      "remedy": null,
+      "check": "fun i =>\n      i.is_offer_for_sale_only ∨\n      (i.monetary_asset_ratio ≤ 50 ∨ i.used_monetary_assets)",
+      "failReason": "fun i =>\n      if i.is_offer_for_sale_only then \"\"\n      else if i.monetary_asset_ratio > 50 && !i.used_monetary_assets then\n        \"Monetary assets exceed 50 % of NTA without evidence of use or commitment.\"\n      else \"\",\n    remedy? := some \"Use or commit excess monetary assets, or restructure to OSF‑only.\""
+    },
+    {
+      "id": "ICDR_6_1_b",
+      "title": "Operating profit ≥ ₹15 cr in each of the last 3 years",
+      "reference": "ICDR_6_1_b",
+      "remedy": null,
+      "check": "fun i =>\n      lengthIs i.operating_profits 3 ∧ allGeNat i.operating_profits 150000000",
+      "failReason": "fun i =>\n      if !lengthIs i.operating_profits 3 then\n        \"Need operating profit figures for 3 full years.\"\n      else if !allGeNat i.operating_profits 150000000 then\n        \"One or more operating profit figures are below ₹15 cr.\"\n      else \"\",\n    remedy? := some \"Demonstrate ≥ ₹15 cr operating profit in each of the last 3 full years.\""
+    },
+    {
+      "id": "ICDR_6_1_c",
+      "title": "Net worth ≥ ₹1 cr in each of the last 3 years",
+      "reference": "ICDR_6_1_c",
+      "remedy": null,
+      "check": "fun i =>\n      lengthIs i.net_worths 3 ∧ allGeNat i.net_worths 10000000",
+      "failReason": "fun i =>\n      if !lengthIs i.net_worths 3 then\n        \"Need net worth figures for 3 full years.\"\n      else if !allGeNat i.net_worths 10000000 then\n        \"One or more net worth figures are below ₹1 cr.\"\n      else \"\",\n    remedy? := some \"Increase equity/retained earnings to meet ≥ ₹1 cr in each of the last 3 full years.\""
+    },
+    {
+      "id": "ICDR_6_1_d",
+      "title": "Name change → ≥50 % revenue from new activity",
+      "reference": "ICDR_6_1_d",
+      "remedy": null,
+      "check": "fun i => !i.changed_name_recently ∨ i.percent_revenue_from_new_name ≥ 50",
+      "failReason": "fun i =>\n      if i.changed_name_recently && i.percent_revenue_from_new_name < 50 then\n        \"Changed name within 1 year but <50 % revenue from new‑name activity.\"\n      else \"\",\n    remedy? := some \"Demonstrate ≥50 % revenue from the activity indicated by the new name.\""
+    },
+    {
+      "id": "ICDR_6_2_qib",
+      "title": "QIB fallback when 6(1) not met",
+      "reference": "ICDR_6_2_qib",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"6(1) satisfaction not modeled; assume QIB fallback not required.\""
+    },
+    {
+      "id": "ICDR_SR_core",
+      "title": "SR equity shares conditions",
+      "reference": "ICDR_SR_core",
+      "remedy": null,
+      "check": "fun i =>\n      (i.sr_net_worth == 0) ∨\n      (i.is_tech_firm ∧ i.sr_holder_exec ∧\n        (i.sr_voting_ratio ≥ 2 ∧ i.sr_voting_ratio ≤ 10) ∧\n        i.sr_class_count == 1 ∧ i.sr_same_face_value ∧ i.sr_issued_3mo_prior)",
+      "failReason": "fun i =>\n      if i.sr_net_worth == 0 then \"\"\n      else\n        let msgs := [\n          if !i.is_tech_firm then \"SR issuer is not a technology‑intensive firm.\" else \"\",\n          if !i.sr_holder_exec then \"SR holder is not an executive of the issuer.\" else \"\",\n          if !(i.sr_voting_ratio ≥ 2 ∧ i.sr_voting_ratio ≤ 10) then \"SR voting ratio not in 2:1–10:1 range.\" else \"\",\n          if i.sr_class_count != 1 then \"More than one SR class issued.\" else \"\",\n          if !i.sr_same_face_value then \"SR shares do not have same face value as ordinary shares.\" else \"\",\n          if !i.sr_issued_3mo_prior then \"SR shares not issued at least 3 months before DRHP.\" else \"\"\n        ]\n        String.intercalate \" \" (msgs.filter (· ≠ \"\")),\n    remedy? := some \"Ensure all SR conditions are satisfied.\""
+    },
+    {
+      "id": "ICDR_7_1_a",
+      "title": "Apply to stock exchange (in‑principle)",
+      "reference": "ICDR_7_1_a",
+      "remedy": null,
+      "check": "fun i => i.applied_to_stock_exchange",
+      "failReason": "fun i => if !i.applied_to_stock_exchange then \"Issuer has not applied to a stock exchange.\" else \"\",\n    remedy? := some \"Apply to a stock exchange and designate one.\""
+    },
+    {
+      "id": "ICDR_7_1_b",
+      "title": "Depository agreement executed",
+      "reference": "ICDR_7_1_b",
+      "remedy": null,
+      "check": "fun i => i.has_demat_agreement",
+      "failReason": "fun i => if !i.has_demat_agreement then \"Depository agreement not executed.\" else \"\",\n    remedy? := some \"Execute a depository agreement.\""
+    },
+    {
+      "id": "ICDR_7_1_c",
+      "title": "Promoters’ holdings fully in demat",
+      "reference": "ICDR_7_1_c",
+      "remedy": null,
+      "check": "fun i => i.promoter_securities_demat",
+      "failReason": "fun i => if !i.promoter_securities_demat then \"Promoter‑held securities not fully dematerialised.\" else \"\",\n    remedy? := some \"Dematerialise all promoter‑held securities.\""
+    },
+    {
+      "id": "ICDR_7_1_d",
+      "title": "No partly‑paid equity outstanding",
+      "reference": "ICDR_7_1_d",
+      "remedy": null,
+      "check": "fun i => i.no_partly_paid_shares",
+      "failReason": "fun i => if !i.no_partly_paid_shares then \"Partly‑paid equity shares are outstanding.\" else \"\",\n    remedy? := some \"Fully pay or forfeit all partly‑paid equity shares.\""
+    },
+    {
+      "id": "ICDR_7_1_e_finance",
+      "title": "75 % means of finance tied up (verifiable)",
+      "reference": "ICDR_7_1_e_finance",
+      "remedy": null,
+      "check": "fun i => i.finance_75_percent_done",
+      "failReason": "fun i => if !i.finance_75_percent_done then \"Less than 75 % of finance is tied up via verifiable means.\" else \"\",\n    remedy? := some \"Tie up 75 % of finance through verifiable means.\""
+    },
+    {
+      "id": "ICDR_7_2_gcp_cap",
+      "title": "General corporate purposes cap ≤ 25 %",
+      "reference": "ICDR_7_2_gcp_cap",
+      "remedy": null,
+      "check": "fun i => i.general_corp_purpose_ratio ≤ 25",
+      "failReason": "fun i => if i.general_corp_purpose_ratio > 25 then \"General corporate purposes exceed 25 % of the issue amount.\" else \"\",\n    remedy? := some \"Reduce general corporate purposes to ≤ 25 %.\""
+    },
+    {
+      "id": "ICDR_8_holding_period",
+      "title": "OFS shares must be held ≥ 1 year pre‑DRHP (with carve‑outs)",
+      "reference": "ICDR_8_holding_period",
+      "remedy": null,
+      "check": "fun i =>\n      i.shares_held_duration_months ≥ 12 ∨\n      i.is_govt_entity ∨\n      i.via_merger_scheme ∨\n      (i.is_bonus_from_free_reserve ∧ i.bonus_not_from_revaluation)",
+      "failReason": "fun i =>\n      if i.shares_held_duration_months ≥ 12 then \"\"\n      else if i.is_govt_entity then \"\"\n      else if i.via_merger_scheme then \"\"\n      else if i.is_bonus_from_free_reserve ∧ i.bonus_not_from_revaluation then \"\"\n      else \"OFS shares not held for ≥ 1 year before DRHP and no applicable carve‑out.\",\n    remedy? := some \"Hold OFS shares for ≥ 1 year before DRHP or satisfy a carve‑out.\""
+    },
+    {
+      "id": "ICDR_8A_ofs_caps",
+      "title": "Additional OFS caps when using 6(2) route",
+      "reference": "ICDR_8A_ofs_caps",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"6(2) route not modeled; assume no additional caps.\""
+    },
+    {
+      "id": "ICDR_14_1_min_promoter_20pct",
+      "title": "Minimum promoters’ contribution ≥ 20 % of post‑issue capital",
+      "reference": "ICDR_14_1_min_promoter_20pct",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Promoter contribution fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_14_2_a_form_of_contribution",
+      "title": "Form of promoters’ contribution and pricing constraints",
+      "reference": "ICDR_14_2_a_form_of_contribution",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Contribution form fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_14_2_b_weighted_avg_price",
+      "title": "Weighted‑average price floor for staggered convertibles",
+      "reference": "ICDR_14_2_b_weighted_avg_price",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Weighted‑average price fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_14_2_c_project_cost_case",
+      "title": "Convertible‑debt only IPO: promoter equity contribution",
+      "reference": "ICDR_14_2_c_project_cost_case",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Project cost and equity fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_14_3_timing",
+      "title": "Promoters’ contribution timing",
+      "reference": "ICDR_14_3_timing",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Contribution timing fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_15_ineligible_for_MPC",
+      "title": "Securities ineligible for minimum promoters’ contribution",
+      "reference": "ICDR_15_ineligible_for_MPC",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Ineligible securities fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_16_1_a_lockin_MPC",
+      "title": "Lock‑in of minimum promoters’ contribution",
+      "reference": "ICDR_16_1_a_lockin_MPC",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Lock‑in fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_16_1_b_lockin_excess",
+      "title": "Lock‑in of promoters’ holding in excess of MPC",
+      "reference": "ICDR_16_1_b_lockin_excess",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Lock‑in excess fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_16_explanations",
+      "title": "Computation explanations (post‑issue base, ESOP/SAR, weighted average)",
+      "reference": "ICDR_16_explanations",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"\""
+    },
+    {
+      "id": "ICDR_17_lockin_non_promoters",
+      "title": "Lock‑in for pre‑issue capital held by non‑promoters",
+      "reference": "ICDR_17_lockin_non_promoters",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Non‑promoter lock‑in fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_18_green_shoe_lending",
+      "title": "Green shoe lending: lock‑in not applicable during lending period",
+      "reference": "ICDR_18_green_shoe_lending",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Green shoe lending fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_19_partly_paid_lockin",
+      "title": "Lock‑in of partly‑paid specified securities",
+      "reference": "ICDR_19_partly_paid_lockin",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Partly‑paid lock‑in fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_20_non_transferable_marking",
+      "title": "Inscription/recording of non‑transferability",
+      "reference": "ICDR_20_non_transferable_marking",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Non‑transferable marking fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_21_pledge_lockedin",
+      "title": "Pledge of locked‑in specified securities by promoters",
+      "reference": "ICDR_21_pledge_lockedin",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Pledge fields not modeled; assume compliant.\""
+    },
+    {
+      "id": "ICDR_22_transfer_lockedin",
+      "title": "Transfer of locked‑in specified securities",
+      "reference": "ICDR_22_transfer_lockedin",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Transfer lock‑in fields not modeled; assume compliant.\""
+    }
+  ],
+  "issuer_questions": [
+    {
+      "field": "is_debarred",
+      "question": "Is the issuer debarred from capital markets?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_debarred_directors",
+      "question": "Do any directors or promoters have a debarment?",
+      "type": "Bool"
+    },
+    {
+      "field": "is_fraudulent",
+      "question": "Is the issuer or any promoter/director a fraudulent borrower?",
+      "type": "Bool"
+    },
+    {
+      "field": "is_fugitive",
+      "question": "Is any promoter or director a fugitive economic offender?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_outstanding_convertibles",
+      "question": "Are there outstanding convertibles or rights before filing?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_esop_exemption",
+      "question": "Is there an ESOP exemption for outstanding convertibles?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_sar_exemption",
+      "question": "Is there a SAR exemption for outstanding convertibles?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_mandatory_convertibles",
+      "question": "Are there mandatory convertibles fully paid and converted?",
+      "type": "Bool"
+    },
+    {
+      "field": "net_tangible_assets",
+      "question": "Provide NTA for each of the last 3 full years (in paise).",
+      "type": "List Nat"
+    },
+    {
+      "field": "monetary_asset_ratio",
+      "question": "What % of NTA is held in monetary assets?",
+      "type": "Nat"
+    },
+    {
+      "field": "used_monetary_assets",
+      "question": "Have excess monetary assets been used or firmly committed?",
+      "type": "Bool"
+    },
+    {
+      "field": "is_offer_for_sale_only",
+      "question": "Is the IPO entirely an offer for sale (no fresh issue)?",
+      "type": "Bool"
+    },
+    {
+      "field": "operating_profits",
+      "question": "Provide operating profit for each of the last 3 full years (in paise).",
+      "type": "List Nat"
+    },
+    {
+      "field": "net_worths",
+      "question": "Provide net worth for each of the last 3 full years (in paise).",
+      "type": "List Nat"
+    },
+    {
+      "field": "changed_name_recently",
+      "question": "Has the company changed its name within the last 1 year?",
+      "type": "Bool"
+    },
+    {
+      "field": "percent_revenue_from_new_name",
+      "question": "What % of last year’s revenue came from the new‑name activity?",
+      "type": "Nat"
+    },
+    {
+      "field": "uses_book_building",
+      "question": "Is the issuer using book‑building for the offer?",
+      "type": "Bool"
+    },
+    {
+      "field": "qib_allocation_done",
+      "question": "Has QIB allocation been completed?",
+      "type": "Bool"
+    },
+    {
+      "field": "sr_net_worth",
+      "question": "Provide SR net worth (in paise).",
+      "type": "Nat"
+    },
+    {
+      "field": "is_tech_firm",
+      "question": "Is the issuer a technology‑intensive firm?",
+      "type": "Bool"
+    },
+    {
+      "field": "sr_holder_exec",
+      "question": "Is the SR holder an executive of the issuer?",
+      "type": "Bool"
+    },
+    {
+      "field": "sr_voting_ratio",
+      "question": "What is the SR voting ratio (e.g., 2:1)?",
+      "type": "Nat"
+    },
+    {
+      "field": "sr_class_count",
+      "question": "How many SR classes are issued?",
+      "type": "Nat"
+    },
+    {
+      "field": "sr_same_face_value",
+      "question": "Do SR shares have the same face value as ordinary shares?",
+      "type": "Bool"
+    },
+    {
+      "field": "sr_issued_3mo_prior",
+      "question": "Were SR shares issued at least 3 months before DRHP?",
+      "type": "Bool"
+    },
+    {
+      "field": "applied_to_stock_exchange",
+      "question": "Has the issuer applied to a stock exchange?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_demat_agreement",
+      "question": "Has the issuer executed a depository agreement?",
+      "type": "Bool"
+    },
+    {
+      "field": "promoter_securities_demat",
+      "question": "Are promoter‑held securities dematerialised?",
+      "type": "Bool"
+    },
+    {
+      "field": "no_partly_paid_shares",
+      "question": "Are there any partly‑paid equity shares outstanding?",
+      "type": "Bool"
+    },
+    {
+      "field": "finance_75_percent_done",
+      "question": "Is 75 % of finance tied up via verifiable means?",
+      "type": "Bool"
+    },
+    {
+      "field": "general_corp_purpose_ratio",
+      "question": "What % of the issue amount is for general corporate purposes?",
+      "type": "Nat"
+    },
+    {
+      "field": "shares_held_duration_months",
+      "question": "How many months have fully paid shares been held before filing?",
+      "type": "Nat"
+    },
+    {
+      "field": "is_govt_entity",
+      "question": "Is the issuer a government entity?",
+      "type": "Bool"
+    },
+    {
+      "field": "via_merger_scheme",
+      "question": "Is the issuer part of a merger scheme?",
+      "type": "Bool"
+    },
+    {
+      "field": "is_bonus_from_free_reserve",
+      "question": "Is the OFS share a bonus from free reserves?",
+      "type": "Bool"
+    },
+    {
+      "field": "bonus_not_from_revaluation",
+      "question": "Is the bonus not from revaluation?",
+      "type": "Bool"
+    }
+  ],
+  "issuer_schema": [
+    {
+      "field": "is_debarred",
+      "type": "Bool"
+    },
+    {
+      "field": "has_debarred_directors",
+      "type": "Bool"
+    },
+    {
+      "field": "is_fraudulent",
+      "type": "Bool"
+    },
+    {
+      "field": "is_fugitive",
+      "type": "Bool"
+    },
+    {
+      "field": "has_outstanding_convertibles",
+      "type": "Bool"
+    },
+    {
+      "field": "has_esop_exemption",
+      "type": "Bool"
+    },
+    {
+      "field": "has_sar_exemption",
+      "type": "Bool"
+    },
+    {
+      "field": "has_mandatory_convertibles",
+      "type": "Bool"
+    },
+    {
+      "field": "net_tangible_assets",
+      "type": "List Nat"
+    },
+    {
+      "field": "monetary_asset_ratio",
+      "type": "Nat",
+      "required_by": ["ICDR_6_1_a_monetary"]
+    },
+    {
+      "field": "used_monetary_assets",
+      "type": "Bool",
+      "required_by": ["ICDR_6_1_a_monetary"]
+    },
+    {
+      "field": "is_offer_for_sale_only",
+      "type": "Bool",
+      "required_by": ["ICDR_6_1_a_monetary"]
+    },
+    {
+      "field": "operating_profits",
+      "type": "List Nat",
+      "required_by": ["ICDR_6_1_b"]
+    },
+    {
+      "field": "net_worths",
+      "type": "List Nat",
+      "required_by": ["ICDR_6_1_c"]
+    },
+    {
+      "field": "changed_name_recently",
+      "type": "Bool",
+      "required_by": ["ICDR_6_1_d"]
+    },
+    {
+      "field": "percent_revenue_from_new_name",
+      "type": "Nat",
+      "required_by": ["ICDR_6_1_d"]
+    },
+    {
+      "field": "uses_book_building",
+      "type": "Bool",
+      "required_by": ["ICDR_6_2_qib"]
+    },
+    {
+      "field": "qib_allocation_done",
+      "type": "Bool",
+      "required_by": ["ICDR_6_2_qib"]
+    },
+    {
+      "field": "is_tech_firm",
+      "type": "Bool",
+      "required_by": ["ICDR_SR_core"]
+    },
+    {
+      "field": "sr_net_worth",
+      "type": "Nat",
+      "required_by": ["ICDR_SR_core"]
+    },
+    {
+      "field": "sr_holder_exec",
+      "type": "Bool",
+      "required_by": ["ICDR_SR_core"]
+    },
+    {
+      "field": "sr_voting_ratio",
+      "type": "Nat",
+      "required_by": ["ICDR_SR_core"]
+    },
+    {
+      "field": "sr_class_count",
+      "type": "Nat",
+      "required_by": ["ICDR_SR_core"]
+    },
+    {
+      "field": "sr_same_face_value",
+      "type": "Bool",
+      "required_by": ["ICDR_SR_core"]
+    },
+    {
+      "field": "sr_issued_3mo_prior",
+      "type": "Bool",
+      "required_by": ["ICDR_SR_core"]
+    },
+    {
+      "field": "applied_to_stock_exchange",
+      "type": "Bool",
+      "required_by": ["ICDR_7_1_a"]
+    },
+    {
+      "field": "has_demat_agreement",
+      "type": "Bool",
+      "required_by": ["ICDR_7_1_b"]
+    },
+    {
+      "field": "promoter_securities_demat",
+      "type": "Bool",
+      "required_by": ["ICDR_7_1_c"]
+    },
+    {
+      "field": "no_partly_paid_shares",
+      "type": "Bool",
+      "required_by": ["ICDR_7_1_d"]
+    },
+    {
+      "field": "finance_75_percent_done",
+      "type": "Bool",
+      "required_by": ["ICDR_7_1_e_finance"]
+    },
+    {
+      "field": "general_corp_purpose_ratio",
+      "type": "Nat",
+      "required_by": ["ICDR_7_2_gcp_cap"]
+    },
+    {
+      "field": "shares_fully_paid",
+      "type": "Bool",
+      "required_by": ["ICDR_19_partly_paid_lockin"]
+    },
+    {
+      "field": "shares_held_duration_months",
+      "type": "Nat"
+    },
+    {
+      "field": "is_govt_entity",
+      "type": "Bool"
+    },
+    {
+      "field": "via_merger_scheme",
+      "type": "Bool"
+    },
+    {
+      "field": "is_bonus_from_free_reserve",
+      "type": "Bool"
+    },
+    {
+      "field": "underlying_held_1y",
+      "type": "Bool"
+    },
+    {
+      "field": "bonus_not_from_revaluation",
+      "type": "Bool"
+    }
+  ]
+}
