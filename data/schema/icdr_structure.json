@@ -1,0 +1,1740 @@
+{
+  "chapters": [
+    {
+      "number": "I",
+      "title": "PRELIMINARY",
+      "parts": [],
+      "regulations": [
+        {
+          "number": "1",
+          "title_hint": "These regulations may be called the Securities and Exchange Board of India (Issu"
+        },
+        {
+          "number": "2",
+          "title_hint": "In these regulations, unless the context otherwise requires:"
+        },
+        {
+          "number": "3",
+          "title_hint": "Unless otherwise provided, these regulations shall apply to the following:"
+        }
+      ]
+    },
+    {
+      "number": "II",
+      "title": "INITIAL PUBLIC OFFER ON MAIN BOARD",
+      "parts": [
+        {
+          "number": "I",
+          "title": "ELIGIBILITY REQUIREMENTS",
+          "regulations": [
+            {
+              "number": "4",
+              "title_hint": "Unless otherwise provided in this Chapter, an issuer making an initial public of"
+            },
+            {
+              "number": "5",
+              "title_hint": "An issuer shall not be eligible to make an initial public offer (a) if the issue"
+            },
+            {
+              "number": "6",
+              "title_hint": "An issuer shall be eligible to make an initial public offer only if:"
+            },
+            {
+              "number": "7",
+              "title_hint": "An issuer making an initial public offer shall ensure that:"
+            },
+            {
+              "number": "8",
+              "title_hint": "Only such fully paid-up equity shares may be offered for sale to the public, whi"
+            }
+          ]
+        },
+        {
+          "number": "II",
+          "title": "ISSUE OF CONVERTIBLE DEBT INSTRUMENTS AND WARRANTS",
+          "regulations": [
+            {
+              "number": "9",
+              "title_hint": "An issuer shall be eligible to make an initial public offer of convertible debt "
+            },
+            {
+              "number": "10",
+              "title_hint": "In addition to other requirements laid down in these regulations, an issuer maki"
+            },
+            {
+              "number": "11",
+              "title_hint": "The issuer shall not convert its optionally convertible debt instruments into eq"
+            },
+            {
+              "number": "12",
+              "title_hint": "An issuer shall not issue convertible debt instruments for financing or for prov"
+            },
+            {
+              "number": "13",
+              "title_hint": "An issuer shall be eligible to issue warrants in an initial public offer subject"
+            }
+          ]
+        },
+        {
+          "number": "III",
+          "title": "PROMOTERS’ CONTRIBUTION",
+          "regulations": [
+            {
+              "number": "14",
+              "title_hint": "The promoters of the issuer shall hold at least twenty per cent. of the post-iss"
+            },
+            {
+              "number": "15",
+              "title_hint": "For the computation of minimum promoters’ contribution, the following specified"
+            }
+          ]
+        },
+        {
+          "number": "IV",
+          "title": "LOCK-IN AND RESTRICTIONS ON TRANSFERABILITY",
+          "regulations": [
+            {
+              "number": "16",
+              "title_hint": "The specified securities held by the promoters shall not be transferable (herein"
+            },
+            {
+              "number": "17",
+              "title_hint": "The entire pre-issue capital held by persons other than the promoters shall be l"
+            },
+            {
+              "number": "18",
+              "title_hint": "The lock-in provisions shall not apply with respect to the specified securities "
+            },
+            {
+              "number": "19",
+              "title_hint": "If the specified securities which are subject to lock-in are partly paid-up and "
+            },
+            {
+              "number": "20",
+              "title_hint": "The certificates of specified securities which are subject to lock-in shall cont"
+            },
+            {
+              "number": "21",
+              "title_hint": "Specified securities held by the promoters and locked-in may be pledged as a col"
+            },
+            {
+              "number": "22",
+              "title_hint": "Subject to the provisions of Securities and Exchange Board of India (Substantial"
+            }
+          ]
+        },
+        {
+          "number": "V",
+          "title": "APPOINTMENT OF LEAD MANAGERS, OTHER INTERMEDIARIES AND",
+          "regulations": [
+            {
+              "number": "23",
+              "title_hint": "The issuer shall appoint one or more merchant bankers, which are registered with"
+            }
+          ]
+        },
+        {
+          "number": "VI",
+          "title": "DISCLOSURES IN AND FILING OF OFFER DOCUMENTS",
+          "regulations": [
+            {
+              "number": "24",
+              "title_hint": "The draft offer document and offer document shall contain all material disclosur"
+            },
+            {
+              "number": "25",
+              "title_hint": "Prior to making an initial public offer, the issuer shall file three copies of t"
+            },
+            {
+              "number": "26",
+              "title_hint": "The draft offer document filed with the Board shall be made public for comments,"
+            }
+          ]
+        },
+        {
+          "number": "VII",
+          "title": "PRICING",
+          "regulations": [
+            {
+              "number": "27",
+              "title_hint": "The disclosure about the face value of equity shares shall be made in the draft "
+            },
+            {
+              "number": "28",
+              "title_hint": "The issuer may determine the price of equity shares, and in case of convertible "
+            },
+            {
+              "number": "29",
+              "title_hint": "The issuer may mention a price or a price band in the offer document (in case of"
+            },
+            {
+              "number": "30",
+              "title_hint": "The issuer may offer its specified securities at different prices, subject to th"
+            }
+          ]
+        },
+        {
+          "number": "VIII",
+          "title": "ISSUANCE CONDITIONS AND PROCEDURE",
+          "regulations": [
+            {
+              "number": "31",
+              "title_hint": "The minimum offer to the public shall be subject to the provisions of clause (b)"
+            },
+            {
+              "number": "32",
+              "title_hint": "In an issue made through the book building process under sub-regulation (1) of r"
+            },
+            {
+              "number": "33",
+              "title_hint": "The issuer may make reservations on a competitive basis out of the issue size ex"
+            },
+            {
+              "number": "34",
+              "title_hint": "The abridged prospectus shall contain the disclosures as specified in Part E of "
+            },
+            {
+              "number": "35",
+              "title_hint": "The issuer shall accept bids using only the ASBA facility in the manner specifie"
+            },
+            {
+              "number": "36",
+              "title_hint": "The lead manager(s) shall ensure availability of the offer document and other is"
+            },
+            {
+              "number": "37",
+              "title_hint": "Any person connected with the issue shall not offer any incentive, whether direc"
+            },
+            {
+              "number": "38",
+              "title_hint": "The issuer shall, before the opening of the subscription list, deposit with the "
+            },
+            {
+              "number": "39",
+              "title_hint": "The issuer may obtain grading for its initial public offer from one or more cred"
+            },
+            {
+              "number": "40",
+              "title_hint": "If the issuer making an initial public offer, other than through the book buildi"
+            },
+            {
+              "number": "41",
+              "title_hint": "If the issue size, excluding the size of offer for sale by selling shareholders,"
+            },
+            {
+              "number": "42",
+              "title_hint": "All public communication, publicity materials, advertisements and research repor"
+            },
+            {
+              "number": "43",
+              "title_hint": "Subject to the provisions of the Companies Act, 2013, the issuer shall, after re"
+            },
+            {
+              "number": "45",
+              "title_hint": "The minimum subscription to be received in the issue shall be at least ninety pe"
+            },
+            {
+              "number": "46",
+              "title_hint": "Except as otherwise provided in these regulations, an initial public offer shall"
+            },
+            {
+              "number": "47",
+              "title_hint": "A person shall not make an application in the net offer category for a number of"
+            },
+            {
+              "number": "48",
+              "title_hint": "If the issuer proposes to receive subscription monies in calls, it shall ensure "
+            },
+            {
+              "number": "49",
+              "title_hint": "The issuer shall not make an allotment pursuant to a public issue if the number "
+            },
+            {
+              "number": "50",
+              "title_hint": "The issuer and lead manager(s) shall ensure that the specified securities are al"
+            },
+            {
+              "number": "51",
+              "title_hint": "The lead manager(s) shall ensure that an advertisement giving details relating t"
+            },
+            {
+              "number": "52",
+              "title_hint": "The responsibility of the lead manager(s) shall continue until completion of the"
+            },
+            {
+              "number": "53",
+              "title_hint": "The lead manager(s) shall confirm to the bankers to the issue by way of copies o"
+            },
+            {
+              "number": "54",
+              "title_hint": "The issuer shall ensure that all transactions in securities by the promoter and "
+            },
+            {
+              "number": "55",
+              "title_hint": "The lead manager(s) shall submit a final post-issue report as specified in Part "
+            }
+          ]
+        },
+        {
+          "number": "IX",
+          "title": "MISCELLANEOUS",
+          "regulations": [
+            {
+              "number": "56",
+              "title_hint": "An issuer shall not make any further issue of specified securities in any manner"
+            },
+            {
+              "number": "57",
+              "title_hint": "An issuer may provide a green shoe option for stabilising the post listing price"
+            },
+            {
+              "number": "58",
+              "title_hint": "The issuer shall not alter the terms including the terms of issue of specified s"
+            },
+            {
+              "number": "59",
+              "title_hint": "The promoters, or shareholders in control of an issuer, shall provide an exit of"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": "III",
+      "title": "RIGHTS ISSUE",
+      "parts": [
+        {
+          "number": "I",
+          "title": "ELIGIBILITY REQUIREMENTS",
+          "regulations": [
+            {
+              "number": "60",
+              "title_hint": "Unless otherwise provided in this Chapter, an issuer offering specified securiti"
+            },
+            {
+              "number": "61",
+              "title_hint": "An issuer shall not be eligible to make a rights issue of specified securities:"
+            },
+            {
+              "number": "62",
+              "title_hint": "The issuer making a rights issue of specified securities shall ensure that:"
+            }
+          ]
+        },
+        {
+          "number": "II",
+          "title": "ISSUE OF CONVERTIBLE DEBT INSTRUMENTS AND WARRANTS",
+          "regulations": [
+            {
+              "number": "63",
+              "title_hint": "In addition to other requirements laid down in these regulations, an issuer maki"
+            },
+            {
+              "number": "64",
+              "title_hint": "The non-convertible portion of partly convertible debt instruments issued by a l"
+            },
+            {
+              "number": "65",
+              "title_hint": "An issuer shall not convert its optionally convertible debt instruments into equ"
+            },
+            {
+              "number": "66",
+              "title_hint": "An issuer shall not issue convertible debt instruments for financing or for prov"
+            },
+            {
+              "number": "67",
+              "title_hint": "An issuer shall be eligible to issue warrants subject to the following:"
+            }
+          ]
+        },
+        {
+          "number": "III",
+          "title": "RECORD DATE",
+          "regulations": [
+            {
+              "number": "68",
+              "title_hint": "The issuer shall announce a record date for the purpose of determining the share"
+            }
+          ]
+        },
+        {
+          "number": "IV",
+          "title": "APPOINTMENT OF LEAD MANAGERS, OTHER INTERMEDIARIES AND",
+          "regulations": [
+            {
+              "number": "69",
+              "title_hint": "The issuer shall appoint one or more merchant bankers, which are registered with"
+            }
+          ]
+        },
+        {
+          "number": "V",
+          "title": "DISCLOSURES IN AND FILING OF LETTERS OF OFFER",
+          "regulations": [
+            {
+              "number": "70",
+              "title_hint": "The draft letter of offer and letter of offer shall contain all material disclos"
+            },
+            {
+              "number": "71",
+              "title_hint": "Prior to making a rights issue, the issuer shall, except in case of a fast track"
+            },
+            {
+              "number": "72",
+              "title_hint": "The draft letter of offer filed with the Board shall be made public for comments"
+            }
+          ]
+        },
+        {
+          "number": "VI",
+          "title": "PRICING",
+          "regulations": [
+            {
+              "number": "73",
+              "title_hint": "The issuer shall decide the issue price, in consultation with the lead manager(s"
+            }
+          ]
+        },
+        {
+          "number": "VII",
+          "title": "ISSUANCE CONDITIONS AND PROCEDURE",
+          "regulations": [
+            {
+              "number": "74",
+              "title_hint": "The issuer shall make a rights issue of equity shares only if it has made reserv"
+            },
+            {
+              "number": "75",
+              "title_hint": "The abridged letter of offer shall contain the disclosures as specified by the B"
+            },
+            {
+              "number": "76",
+              "title_hint": "The issuer shall provide the ASBA facility in the manner specified by the Board "
+            },
+            {
+              "number": "77",
+              "title_hint": "The lead manager(s) shall ensure availability of the letter of offer and other i"
+            },
+            {
+              "number": "78",
+              "title_hint": "Shareholders who have not received the application form may make an application "
+            },
+            {
+              "number": "79",
+              "title_hint": "Any person connected with the issue, shall not offer any incentive, whether dire"
+            },
+            {
+              "number": "80",
+              "title_hint": "The issuer shall, before the opening of the subscription list, deposit with the "
+            },
+            {
+              "number": "81",
+              "title_hint": "If the issuer desires to have the issue underwritten, it shall appoint underwrit"
+            },
+            {
+              "number": "82",
+              "title_hint": "If the issue size exceeds one hundred crore rupees, the issuer shall make arrang"
+            },
+            {
+              "number": "83",
+              "title_hint": "All public communication, publicity materials, advertisements and research repor"
+            },
+            {
+              "number": "84",
+              "title_hint": "The issuer shall issue an advertisement in at least one English national daily n"
+            },
+            {
+              "number": "85",
+              "title_hint": "Subject to the compliance with the provisions of the Companies Act, 2013, a righ"
+            },
+            {
+              "number": "86",
+              "title_hint": "The minimum subscription to be received in the issue shall be at least ninety pe"
+            },
+            {
+              "number": "87",
+              "title_hint": "The rights issue shall be kept open for subscription for a minimum period of fif"
+            },
+            {
+              "number": "88",
+              "title_hint": "The issuer shall give one of the following payment options to all the shareholde"
+            },
+            {
+              "number": "89",
+              "title_hint": "If the issuer proposes to receive subscription monies in calls, it shall ensure "
+            },
+            {
+              "number": "90",
+              "title_hint": "The issuer shall not make any allotment in excess of the specified securities of"
+            },
+            {
+              "number": "91",
+              "title_hint": "The issuer and lead manager(s) shall ensure that the specified securities are al"
+            },
+            {
+              "number": "92",
+              "title_hint": "The lead manager(s) shall ensure that an advertisement giving details relating t"
+            },
+            {
+              "number": "93",
+              "title_hint": "The responsibility of the lead manager(s) shall continue until completion of the"
+            },
+            {
+              "number": "94",
+              "title_hint": "The lead manager(s) shall confirm to the bankers to the issue by way of copies o"
+            },
+            {
+              "number": "95",
+              "title_hint": "The issuer shall ensure that all transactions in securities by the promoters and"
+            },
+            {
+              "number": "96",
+              "title_hint": "The lead manager(s) shall submit post-issue reports as follows:"
+            }
+          ]
+        },
+        {
+          "number": "VIII",
+          "title": "MISCELLEANEOUS",
+          "regulations": [
+            {
+              "number": "97",
+              "title_hint": "An issuer shall not make any further issue of specified securities in any manner"
+            },
+            {
+              "number": "98",
+              "title_hint": "The issuer shall not alter the terms (including the terms of issue) of specified"
+            }
+          ]
+        },
+        {
+          "number": "IX",
+          "title": "FAST TRACK RIGHTS ISSUE",
+          "regulations": [
+            {
+              "number": "99",
+              "title_hint": "Unless otherwise specified, nothing contained in sub-regulations (1), (2), (4) a"
+            },
+            {
+              "number": "100",
+              "title_hint": "The issuer shall file the letter of offer in accordance with sub-regulation 8 an"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": "IV",
+      "title": "FURTHER PUBLIC OFFER",
+      "parts": [
+        {
+          "number": "I",
+          "title": "ELIGIBILITY REQUIREMENTS",
+          "regulations": [
+            {
+              "number": "101",
+              "title_hint": "Unless otherwise provided in this Chapter, an issuer making a further public off"
+            },
+            {
+              "number": "102",
+              "title_hint": "An issuer shall not be eligible to make a further public offer:"
+            },
+            {
+              "number": "103",
+              "title_hint": "An issuer may make a further public offer, if it has changed its name within the"
+            },
+            {
+              "number": "104",
+              "title_hint": "An issuer making a further public offer shall ensure that (a) it has made an app"
+            },
+            {
+              "number": "105",
+              "title_hint": "Only such fully paid-up equity shares may be offered for sale to public which ha"
+            }
+          ]
+        },
+        {
+          "number": "II",
+          "title": "ISSUE OF CONVERTIBLE DEBT INSTRUMENTS AND WARRANTS",
+          "regulations": [
+            {
+              "number": "106",
+              "title_hint": "An issuer shall be eligible to make a further public offer of convertible debt i"
+            },
+            {
+              "number": "107",
+              "title_hint": "In addition to other requirements laid down in these regulations, an issuer maki"
+            },
+            {
+              "number": "108",
+              "title_hint": "The non-convertible portion of partly convertible debt instruments issued by a l"
+            },
+            {
+              "number": "109",
+              "title_hint": "The issuer shall not convert its optionally convertible debt instruments into eq"
+            },
+            {
+              "number": "110",
+              "title_hint": "An issuer shall not issue convertible debt instruments for financing or for prov"
+            },
+            {
+              "number": "111",
+              "title_hint": "An issuer shall be eligible to issue warrants in a further public offer subject "
+            }
+          ]
+        },
+        {
+          "number": "III",
+          "title": "PROMOTERS’ CONTRIBUTION",
+          "regulations": [
+            {
+              "number": "112",
+              "title_hint": "The requirements of minimum promoters’ contribution shall not apply in case of:"
+            },
+            {
+              "number": "113",
+              "title_hint": "The promoters shall contribute in the public issue as follows:"
+            },
+            {
+              "number": "114",
+              "title_hint": "For the computation of minimum promoters’ contribution, the following specified"
+            }
+          ]
+        },
+        {
+          "number": "IV",
+          "title": "LOCK-IN AND RESTRICTIONS ON TRANSFERABILITY",
+          "regulations": [
+            {
+              "number": "115",
+              "title_hint": "The specified securities held by the promoters shall not be transferable (herein"
+            },
+            {
+              "number": "116",
+              "title_hint": "The lock-in provisions of this part shall not apply with respect to the specifie"
+            },
+            {
+              "number": "117",
+              "title_hint": "Where the specified securities which are subject to lock-in are partly paid-up a"
+            },
+            {
+              "number": "118",
+              "title_hint": "The certificates of specified securities which are subject to lock-in shall cont"
+            },
+            {
+              "number": "119",
+              "title_hint": "Specified securities held by the promoters and locked in may be pledged as colla"
+            },
+            {
+              "number": "120",
+              "title_hint": "Subject to the provisions of the Securities and Exchange Board of India (Substan"
+            }
+          ]
+        },
+        {
+          "number": "V",
+          "title": "APPOINTMENT OF LEAD MANAGERS, OTHER INTERMEDIARIES AND",
+          "regulations": [
+            {
+              "number": "121",
+              "title_hint": "The issuer shall appoint one or more merchant bankers, which are registered with"
+            }
+          ]
+        },
+        {
+          "number": "VI",
+          "title": "DISCLOSURES IN AND FILING OF OFFER DOCUMENTS",
+          "regulations": [
+            {
+              "number": "122",
+              "title_hint": "The draft offer document and the offer document shall contain all material discl"
+            },
+            {
+              "number": "123",
+              "title_hint": "Prior to making a further public offer, the issuer shall file three copies of th"
+            },
+            {
+              "number": "124",
+              "title_hint": "The draft offer document filed with the Board shall be made public for comments,"
+            }
+          ]
+        },
+        {
+          "number": "VII",
+          "title": "PRICING",
+          "regulations": [
+            {
+              "number": "125",
+              "title_hint": "The disclosure about the face value of equity shares shall be made in the draft "
+            },
+            {
+              "number": "126",
+              "title_hint": "The issuer may determine the price of equity shares, and in case of convertible "
+            },
+            {
+              "number": "127",
+              "title_hint": "The issuer may mention a price or a price band in the offer document (in case of"
+            },
+            {
+              "number": "128",
+              "title_hint": "The issuer may offer its specified securities at different prices, subject to th"
+            }
+          ]
+        },
+        {
+          "number": "VIII",
+          "title": "ISSUANCE CONDITIONS AND PROCEDURE",
+          "regulations": [
+            {
+              "number": "129",
+              "title_hint": "In an issue made through the book building process under sub-regulation (1) of r"
+            },
+            {
+              "number": "130",
+              "title_hint": "The issuer may make reservations on a competitive basis out of the issue size ex"
+            },
+            {
+              "number": "131",
+              "title_hint": "The abridged prospectus shall contain the disclosures as specified in Part E of "
+            },
+            {
+              "number": "132",
+              "title_hint": "The issuer shall accept bids using only the ASBA facility in the manner specifie"
+            },
+            {
+              "number": "133",
+              "title_hint": "The lead manager(s) shall ensure availability of the offer document and other is"
+            },
+            {
+              "number": "134",
+              "title_hint": "Any person connected with the issue, shall not offer any incentive, whether dire"
+            },
+            {
+              "number": "135",
+              "title_hint": "The issuer shall, before the opening of the subscription list, deposit with the "
+            },
+            {
+              "number": "136",
+              "title_hint": "If the issuer making a further public offer, other than through the book buildin"
+            },
+            {
+              "number": "137",
+              "title_hint": "If the issue size, excluding the size of offer for sale by selling shareholders,"
+            },
+            {
+              "number": "138",
+              "title_hint": "All public communication, publicity materials, advertisements and research repor"
+            },
+            {
+              "number": "139",
+              "title_hint": "Subject to the provisions of the Companies Act, 2013, the issuer shall, after re"
+            },
+            {
+              "number": "140",
+              "title_hint": "Subject to the compliance with the provisions of the Companies Act, 2013, a publ"
+            },
+            {
+              "number": "141",
+              "title_hint": "The minimum subscription to be received in the issue shall be at least ninety pe"
+            },
+            {
+              "number": "142",
+              "title_hint": "Except as otherwise provided in these regulations, a further public issue shall "
+            },
+            {
+              "number": "143",
+              "title_hint": "A person shall not make an application in the net offer category for a number of"
+            },
+            {
+              "number": "144",
+              "title_hint": "If the issuer proposes to receive subscription monies in calls, it shall ensure "
+            },
+            {
+              "number": "145",
+              "title_hint": "The issuer shall not make an allotment pursuant to a public issue if the number "
+            },
+            {
+              "number": "146",
+              "title_hint": "The issuer and lead manager(s) shall ensure that specified securities are allott"
+            },
+            {
+              "number": "147",
+              "title_hint": "The lead manager(s) shall ensure that advertisement giving details relating to"
+            },
+            {
+              "number": "148",
+              "title_hint": "The responsibility of the lead manager(s) shall continue until completion of iss"
+            },
+            {
+              "number": "149",
+              "title_hint": "The lead manager(s) shall confirm to the bankers to the issue by way of copies o"
+            },
+            {
+              "number": "150",
+              "title_hint": "The issuer shall ensure that all transactions in securities by the promoters and"
+            },
+            {
+              "number": "151",
+              "title_hint": "The lead manager(s) shall submit a final post-issue report as specified in Part "
+            }
+          ]
+        },
+        {
+          "number": "IX",
+          "title": "MISCELLANEOUS",
+          "regulations": [
+            {
+              "number": "152",
+              "title_hint": "An issuer shall not make any further issue of specified securities in any manner"
+            },
+            {
+              "number": "153",
+              "title_hint": "An issuer may provide green shoe option for stabilising the post listing price o"
+            },
+            {
+              "number": "154",
+              "title_hint": "An issuer shall not alter the terms, including the terms of issue, of specified "
+            }
+          ]
+        },
+        {
+          "number": "X",
+          "title": "FAST TRACK FURTHER PUBLIC OFFER",
+          "regulations": [
+            {
+              "number": "155",
+              "title_hint": "Sub-regulations (1), (2), (3), ( 4) and ( 5) and (9) of regulation 123 shall not"
+            },
+            {
+              "number": "156",
+              "title_hint": "The issuer shall file the offer document with the Board and the stock exchanges "
+            },
+            {
+              "number": "157",
+              "title_hint": "In case of further public offers, including under the fast track route, the prom"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": "V",
+      "title": "PREFERENTIAL ISSUE",
+      "parts": [
+        {
+          "number": "I",
+          "title": "ISSUERS INELIGIBLE TO MAKE A PREFERENTIAL ISSUE",
+          "regulations": [
+            {
+              "number": "159",
+              "title_hint": "Preferential issue of specified securities shall not be made to any person who h"
+            }
+          ]
+        },
+        {
+          "number": "II",
+          "title": "CONDITIONS FOR PREFERENTIAL ISSUE",
+          "regulations": [
+            {
+              "number": "160",
+              "title_hint": "A listed issuer making a preferential issue of specified securities shall ensure"
+            },
+            {
+              "number": "161",
+              "title_hint": "For the purpose of this Chapter, \"relevant date\" means:"
+            },
+            {
+              "number": "162",
+              "title_hint": "The tenure of the convertible securities of the issuer shall not exceed eighteen"
+            }
+          ]
+        },
+        {
+          "number": "III",
+          "title": "DISCLOSURES TO SHAREHOLDERS",
+          "regulations": [
+            {
+              "number": "163",
+              "title_hint": "The issuer shall, in addition to the disclosures required under the Companies Ac"
+            }
+          ]
+        },
+        {
+          "number": "IV",
+          "title": "PRICING",
+          "regulations": [
+            {
+              "number": "164",
+              "title_hint": "If the equity shares of the issuer have been listed on a recognised stock exchan"
+            },
+            {
+              "number": "165",
+              "title_hint": "Where the shares of an issuer are not frequently traded, the price determined by"
+            },
+            {
+              "number": "166",
+              "title_hint": "The price determined for a preferential issue in accordance with regulation 164 "
+            }
+          ]
+        },
+        {
+          "number": "V",
+          "title": "LOCK-IN AND RESTRICTIONS ON TRANSFERABILITY",
+          "regulations": [
+            {
+              "number": "167",
+              "title_hint": "The specified securities, allotted on a preferential basis to the promoters or p"
+            },
+            {
+              "number": "168",
+              "title_hint": "Subject to the provisions of Securities and Exchange Board of India (Substantial"
+            }
+          ]
+        },
+        {
+          "number": "VI",
+          "title": "CONSIDERATION AND ALLOTMENT",
+          "regulations": [
+            {
+              "number": "169",
+              "title_hint": "Full consideration of specified securities other than warrants, shall be paid by"
+            },
+            {
+              "number": "170",
+              "title_hint": "Allotment pursuant to the special resolution shall be completed within a period "
+            }
+          ]
+        }
+      ],
+      "regulations": [
+        {
+          "number": "158",
+          "title_hint": "The provisions of this Chapter shall not apply where the preferential issue of e"
+        }
+      ]
+    },
+    {
+      "number": "VI",
+      "title": "QUALIFIED INSTITUTIONS PLACEMENT",
+      "parts": [
+        {
+          "number": "I",
+          "title": "CONDITIONS FOR QUALIFIED INSTITUTIONS PLACEMENT",
+          "regulations": [
+            {
+              "number": "172",
+              "title_hint": "A listed issuer may make a qualified institutions placement of eligible securiti"
+            },
+            {
+              "number": "173",
+              "title_hint": "The promoters and members of the promoter group may make an offer for sale of fu"
+            }
+          ]
+        },
+        {
+          "number": "II",
+          "title": "APPOINTMENT OF LEAD MANAGERS",
+          "regulations": [
+            {
+              "number": "174",
+              "title_hint": "An issuer shall appoint one or more merchant bankers, which are registered with "
+            }
+          ]
+        },
+        {
+          "number": "III",
+          "title": "PLACEMENT DOCUMENT",
+          "regulations": [
+            {
+              "number": "175",
+              "title_hint": "The lead manager(s) shall exercise due diligence and shall satisfy themselves wi"
+            }
+          ]
+        },
+        {
+          "number": "IV",
+          "title": "PRICING",
+          "regulations": [
+            {
+              "number": "176",
+              "title_hint": "The qualified institutions placement shall be made at a price not less than the "
+            }
+          ]
+        },
+        {
+          "number": "V",
+          "title": "TENURE OF CONVERTIBLE SECURITIES",
+          "regulations": [
+            {
+              "number": "177",
+              "title_hint": "The tenure of the convertible or exchangeable eligible securities issued through"
+            }
+          ]
+        },
+        {
+          "number": "VI",
+          "title": "TRANSFERABILITY",
+          "regulations": [
+            {
+              "number": "178",
+              "title_hint": "The eligible securities allotted under the qualified institutions placement shal"
+            }
+          ]
+        },
+        {
+          "number": "VII",
+          "title": "APPLICATION AND ALLOTMENT",
+          "regulations": [
+            {
+              "number": "179",
+              "title_hint": "The applicants in qualified institutions placement shall not withdraw or revise "
+            },
+            {
+              "number": "180",
+              "title_hint": "The minimum number of allottees for each placement of eligible securities made u"
+            }
+          ]
+        }
+      ],
+      "regulations": [
+        {
+          "number": "171",
+          "title_hint": "For the purpose of this Chapter:"
+        }
+      ]
+    },
+    {
+      "number": "VII",
+      "title": "INITIAL PUBLIC OFFER OF INDIAN DEPOSITORY RECEIPTS",
+      "parts": [
+        {
+          "number": "I",
+          "title": "ELIGIBILITY REQUIREMENTS",
+          "regulations": [
+            {
+              "number": "182",
+              "title_hint": "Unless otherwise provided in this Chapter, an issuer making a public issue of ID"
+            },
+            {
+              "number": "183",
+              "title_hint": "An issuer shall be eligible to make an issue of IDRs only if:"
+            }
+          ]
+        },
+        {
+          "number": "II",
+          "title": "APPOINTMENT OF LEAD MANAGERS, OTHER INTERMEDIARIES AND",
+          "regulations": [
+            {
+              "number": "184",
+              "title_hint": "The issuer shall appoint one or more merchant bankers, which are registered with"
+            }
+          ]
+        },
+        {
+          "number": "IV",
+          "title": "DISCLOSURES IN AND FILING OF OFFER DOCUMENTS",
+          "regulations": [
+            {
+              "number": "185",
+              "title_hint": "The offer document shall contain all material disclosures which are true, correc"
+            },
+            {
+              "number": "186",
+              "title_hint": "Prior to making an initial public offer, the issuer shall file three copies of t"
+            },
+            {
+              "number": "187",
+              "title_hint": "The draft offer document filed with the Board shall be made public for comments,"
+            }
+          ]
+        },
+        {
+          "number": "V",
+          "title": "PRICING",
+          "regulations": [
+            {
+              "number": "188",
+              "title_hint": "The issuer may determine the price of the IDRs in consultation with the lead man"
+            },
+            {
+              "number": "189",
+              "title_hint": "The issuer may mention a price or a price band in the offer document (in case of"
+            },
+            {
+              "number": "190",
+              "title_hint": "The issuer may offer its IDRs at different prices, subject to the following:"
+            }
+          ]
+        },
+        {
+          "number": "VI",
+          "title": "ISSUANCE CONDITIONS AND PROCEDURE",
+          "regulations": [
+            {
+              "number": "191",
+              "title_hint": "The procedure to be followed by each class of applicant shall be mentioned in th"
+            },
+            {
+              "number": "192",
+              "title_hint": "The allocation in the issue shall be as follows:"
+            },
+            {
+              "number": "193",
+              "title_hint": "The abridged prospectus shall contain the disclosures as specified in Part B of "
+            },
+            {
+              "number": "194",
+              "title_hint": "The issuer shall accept bids using only the ASBA facility in the manner specifie"
+            },
+            {
+              "number": "195",
+              "title_hint": "The lead manager(s) shall ensure availability of the offer document and other is"
+            },
+            {
+              "number": "196",
+              "title_hint": "Any person connected with the issue shall not offer any incentive, whether direc"
+            },
+            {
+              "number": "197",
+              "title_hint": "The issuer shall, before the opening of subscription list, deposit with the desi"
+            },
+            {
+              "number": "198",
+              "title_hint": "If the issuer making an initial public offer of IDRs, other than through the boo"
+            },
+            {
+              "number": "199",
+              "title_hint": "All public communication, publicity materials, advertisements and research repor"
+            },
+            {
+              "number": "200",
+              "title_hint": "The issuer may release advertisements for issue opening and issue closing, which"
+            },
+            {
+              "number": "201",
+              "title_hint": "Subject to the compliance with the provisions of the Companies Act, 2013, a publ"
+            },
+            {
+              "number": "202",
+              "title_hint": "The minimum subscription to be received in the issue shall be at least ninety pe"
+            },
+            {
+              "number": "203",
+              "title_hint": "Except as otherwise provided in these regulations, an initial public offer of ID"
+            },
+            {
+              "number": "204",
+              "title_hint": "The issuer shall not make any allotment in excess of the specified securities of"
+            },
+            {
+              "number": "205",
+              "title_hint": "The issuer shall ensure that the letters of allotment for the IDRs are issued si"
+            },
+            {
+              "number": "206",
+              "title_hint": "The lead manager(s) shall ensure that advertisement giving details relating to"
+            },
+            {
+              "number": "207",
+              "title_hint": "The responsibility of the lead manager(s) shall continue until completion of the"
+            },
+            {
+              "number": "208",
+              "title_hint": "The lead manager(s) shall confirm to the bankers to the issue by way of copies o"
+            },
+            {
+              "number": "209",
+              "title_hint": "The issuer shall ensure that transactions in securities by the promoters and pro"
+            },
+            {
+              "number": "210",
+              "title_hint": "The lead manager(s) shall submit a final post-issue report on the lines of Parts"
+            },
+            {
+              "number": "211",
+              "title_hint": "The IDRs shall be fungible into the underlying equity shares of the issuer in th"
+            }
+          ]
+        }
+      ],
+      "regulations": [
+        {
+          "number": "181",
+          "title_hint": "The provisions of this Chapter shall apply to an issue of Indian Depository Rece"
+        }
+      ]
+    },
+    {
+      "number": "VIII",
+      "title": "RIGHTS ISSUE OF INDIAN DEPOSITORY RECEIPTS",
+      "parts": [],
+      "regulations": [
+        {
+          "number": "212",
+          "title_hint": "In addition to compliance with Chapter VII, wherever applicable, a listed issuer"
+        },
+        {
+          "number": "213",
+          "title_hint": "An issuer shall not be eligible to make a rights issue of IDRs if –"
+        },
+        {
+          "number": "214",
+          "title_hint": "The issuer shall ensure that it has made an application to all the stock exchang"
+        },
+        {
+          "number": "215",
+          "title_hint": "Unless the laws of the home jurisdiction of the issuer otherwise provide, the ri"
+        },
+        {
+          "number": "216",
+          "title_hint": "The domestic depository shall, in accordance with the depository agreement execu"
+        },
+        {
+          "number": "217",
+          "title_hint": "An issuer making a rights issue of IDRs shall, in accordance with the provisions"
+        },
+        {
+          "number": "218",
+          "title_hint": "The offer document for the rights offering shall contain disclosures as required"
+        },
+        {
+          "number": "219",
+          "title_hint": "The issuer shall appoint one or more merchant bankers, which are registered with"
+        },
+        {
+          "number": "220",
+          "title_hint": "The issuer shall, through the lead manager(s), file the draft offer document pre"
+        },
+        {
+          "number": "221",
+          "title_hint": "The issue price and the ratio shall be decided simultaneously with record date i"
+        },
+        {
+          "number": "222",
+          "title_hint": "The abridged letter of offer, containing disclosures as specified in Part B of S"
+        },
+        {
+          "number": "223",
+          "title_hint": "The issuer shall issue an advertisement for the rights issue disclosing the foll"
+        },
+        {
+          "number": "224",
+          "title_hint": "A rights issue shall be open for subscription in India for a period as applicabl"
+        },
+        {
+          "number": "225",
+          "title_hint": "The issuer shall utilise funds raised in relation to the IDRs pursuant to the ri"
+        },
+        {
+          "number": "226",
+          "title_hint": "Nothing contained in sub-regulations (1) of regulation 221, (1), (2) and (3) of "
+        }
+      ]
+    },
+    {
+      "number": "IX",
+      "title": "INITIAL PUBLIC OFFER BY SMALL AND MEDIUM ENTERPRISES",
+      "parts": [
+        {
+          "number": "I",
+          "title": "ELIGIBILITY REQUIREMENTS",
+          "regulations": [
+            {
+              "number": "228",
+              "title_hint": "An issuer shall not be eligible to make an initial public offer:"
+            },
+            {
+              "number": "229",
+              "title_hint": "An issuer shall be eligible to make an initial public offer only if its post-iss"
+            },
+            {
+              "number": "230",
+              "title_hint": "An issuer making an initial public offer shall ensure that:"
+            }
+          ]
+        },
+        {
+          "number": "II",
+          "title": "ISSUE OF CONVERTIBLE DEBT INSTRUMENTS AND WARRANTS",
+          "regulations": [
+            {
+              "number": "231",
+              "title_hint": "An issuer shall be eligible to make an initial public offer of convertible debt "
+            },
+            {
+              "number": "232",
+              "title_hint": "In addition to other requirements laid down in these regulations, an issuer maki"
+            },
+            {
+              "number": "233",
+              "title_hint": "The issuer shall not convert its optionally convertible debt instruments into eq"
+            },
+            {
+              "number": "234",
+              "title_hint": "An issuer shall not issue convertible debt instruments for financing or for prov"
+            },
+            {
+              "number": "235",
+              "title_hint": "An issuer shall be eligible to issue warrants in an initial public offer subject"
+            }
+          ]
+        },
+        {
+          "number": "III",
+          "title": "PROMOTERS’ CONTRIBUTION",
+          "regulations": [
+            {
+              "number": "236",
+              "title_hint": "The promoters of the issuer shall hold at least twenty per cent. of the post-iss"
+            },
+            {
+              "number": "237",
+              "title_hint": "For the computation of minimum promoters’ contribution, the following specified"
+            }
+          ]
+        },
+        {
+          "number": "IV",
+          "title": "LOCK-IN AND RESTRICTIONS ON TRANSFERRABILITY",
+          "regulations": [
+            {
+              "number": "238",
+              "title_hint": "The specified securities held by the promoters shall not be transferable (herein"
+            },
+            {
+              "number": "239",
+              "title_hint": "The entire pre-issue capital held by persons other than the promoters shall be l"
+            },
+            {
+              "number": "240",
+              "title_hint": "The lock-in provisions shall not apply with respect to the specified securities "
+            },
+            {
+              "number": "241",
+              "title_hint": "The certificates of specified securities which are subject to lock-in shall cont"
+            },
+            {
+              "number": "242",
+              "title_hint": "Specified securities held by the promoters and locked-in may be pledged as a col"
+            },
+            {
+              "number": "243",
+              "title_hint": "Subject to the provisions of Securities and Exchange Board of India (Substantial"
+            }
+          ]
+        },
+        {
+          "number": "V",
+          "title": "APPOINTMENT OF LEAD MANAGERS, OTHER INTERMEDIARIES AND",
+          "regulations": [
+            {
+              "number": "244",
+              "title_hint": "The issuer shall appoint one or more merchant bankers, which are registered with"
+            }
+          ]
+        },
+        {
+          "number": "VI",
+          "title": "DISCLOSURES IN AND FILING OF OFFER DOCUMENTS",
+          "regulations": [
+            {
+              "number": "245",
+              "title_hint": "The offer document shall contain all material disclosures which are true and ade"
+            },
+            {
+              "number": "246",
+              "title_hint": "The issuer shall file a copy of the offer document with the Board through the le"
+            },
+            {
+              "number": "247",
+              "title_hint": "The issuer and the lead manager(s) shall ensure that the offer documents are hos"
+            }
+          ]
+        },
+        {
+          "number": "VII",
+          "title": "PRICING",
+          "regulations": [
+            {
+              "number": "248",
+              "title_hint": "The disclosure about the face value of equity shares shall be made in the draft "
+            },
+            {
+              "number": "249",
+              "title_hint": "The issuer may determine the price of equity shares, and in case of convertible "
+            },
+            {
+              "number": "250",
+              "title_hint": "The issuer may mention a price or a price band in the offer document (in case of"
+            },
+            {
+              "number": "251",
+              "title_hint": "The issuer may offer its specified securities at different prices, subject to th"
+            }
+          ]
+        },
+        {
+          "number": "VIII",
+          "title": "ISSUANCE CONDITIONS AND PROCEDURE",
+          "regulations": [
+            {
+              "number": "252",
+              "title_hint": "The minimum offer to the public shall be as per the provisions of clause (b) of "
+            },
+            {
+              "number": "253",
+              "title_hint": "The allocation in the net offer category shall be as follows:"
+            },
+            {
+              "number": "254",
+              "title_hint": "The issuer may make reservations on a competitive basis out of the issue size ex"
+            },
+            {
+              "number": "255",
+              "title_hint": "The abridged prospectus shall contain the disclosures as specified in Part E of "
+            },
+            {
+              "number": "256",
+              "title_hint": "The issuer shall accept bids using only the ASBA facility in the manner specifie"
+            },
+            {
+              "number": "257",
+              "title_hint": "The lead manager(s) shall ensure availability of the offer document and other is"
+            },
+            {
+              "number": "258",
+              "title_hint": "Any person connected with the distribution of the issue, shall not offer any inc"
+            },
+            {
+              "number": "259",
+              "title_hint": "The issuer shall, before the opening of subscription list, deposit with the desi"
+            },
+            {
+              "number": "260",
+              "title_hint": "The initial public offer shall be underwritten for hundred per cent of the offer"
+            },
+            {
+              "number": "261",
+              "title_hint": "The lead manager(s) shall ensure compulsory market making through the stock brok"
+            },
+            {
+              "number": "262",
+              "title_hint": "If the issue size, excluding the size of offer for sale by selling shareholders,"
+            },
+            {
+              "number": "263",
+              "title_hint": "All public communications, publicity materials, advertisements and research repo"
+            },
+            {
+              "number": "264",
+              "title_hint": "Subject to the provisions of the Companies Act, 2013, the issuer shall, after re"
+            },
+            {
+              "number": "265",
+              "title_hint": "The issue shall be opened after at least three working days from the date of reg"
+            },
+            {
+              "number": "266",
+              "title_hint": "Except as otherwise provided in these regulations, a public issue shall be kept "
+            },
+            {
+              "number": "267",
+              "title_hint": "A person shall not make an application in the net offer category for a number of"
+            },
+            {
+              "number": "268",
+              "title_hint": "The issuer shall not make an allotment pursuant to a public issue if the number "
+            },
+            {
+              "number": "269",
+              "title_hint": "The registrars to the issue, in consultation with the issuer and lead manager(s)"
+            },
+            {
+              "number": "270",
+              "title_hint": "The lead manager(s) shall ensure that advertisement giving details relating to"
+            },
+            {
+              "number": "271",
+              "title_hint": "The responsibility of the lead manager(s) shall continue until completion of the"
+            },
+            {
+              "number": "272",
+              "title_hint": "The lead manager(s) shall confirm to the bankers to the issue by way of copies o"
+            },
+            {
+              "number": "273",
+              "title_hint": "The lead manager(s) shall submit a final post-issue report as specified in Part "
+            },
+            {
+              "number": "274",
+              "title_hint": "The issuer shall ensure that all transactions in securities by the promoters and"
+            },
+            {
+              "number": "275",
+              "title_hint": "Where any listed issuer issues specified securities in accordance with provision"
+            },
+            {
+              "number": "276",
+              "title_hint": "A listed issuer whose post-issue face value capital is less than twenty five cro"
+            },
+            {
+              "number": "277",
+              "title_hint": "An issuer, whose specified securities are listed on a SME Exchange and whose pos"
+            }
+          ]
+        },
+        {
+          "number": "IX",
+          "title": "MISCELLANEOUS",
+          "regulations": [
+            {
+              "number": "278",
+              "title_hint": "An issuer shall not make any further issue of specified securities in any manner"
+            },
+            {
+              "number": "279",
+              "title_hint": "The issuer may provide green shoe option for stabilising the post listing price "
+            },
+            {
+              "number": "280",
+              "title_hint": "The issuer shall not alter the terms (including the terms of issue) of specified"
+            },
+            {
+              "number": "281",
+              "title_hint": "An issuer listed on a SME exchange making a further issue of capital by way of a"
+            }
+          ]
+        }
+      ],
+      "regulations": [
+        {
+          "number": "227",
+          "title_hint": "Unless otherwise provided in this Chapter, an issuer making an initial public of"
+        }
+      ]
+    },
+    {
+      "number": "X",
+      "title": "INSTITUTIONAL TRADING PLATFORM",
+      "parts": [
+        {
+          "number": "I",
+          "title": "APPLICABILITY",
+          "regulations": [
+            {
+              "number": "282",
+              "title_hint": "The provisions of this Chapter shall apply to issuers seeking listing of their s"
+            },
+            {
+              "number": "283",
+              "title_hint": "The following issuers shall be eligible for listing on the institutional trading"
+            }
+          ]
+        },
+        {
+          "number": "II",
+          "title": "LISTING WITHOUT A PUBLIC ISSUE",
+          "regulations": [
+            {
+              "number": "284",
+              "title_hint": "An issuer seeking listing of its specified securities without making a public of"
+            }
+          ]
+        },
+        {
+          "number": "III",
+          "title": "LISTING PURSUANT TO AN INITIAL PUBLIC OFFER",
+          "regulations": [
+            {
+              "number": "285",
+              "title_hint": "An issuer seeking to issue and list its specified securities shall file a draft "
+            },
+            {
+              "number": "286",
+              "title_hint": "The minimum application size shall be ten lakh rupees."
+            },
+            {
+              "number": "287",
+              "title_hint": "The number of allottees in the initial public offer shall at least be two hundre"
+            }
+          ]
+        },
+        {
+          "number": "IV",
+          "title": "GENERAL CONDITIONS",
+          "regulations": [
+            {
+              "number": "288",
+              "title_hint": "The entire pre-issue capital of the shareholders shall be locked-in for a period"
+            },
+            {
+              "number": "289",
+              "title_hint": "The minimum trading lot on the stock exchange shall be ten lakh rupees."
+            },
+            {
+              "number": "290",
+              "title_hint": "An issuer whose specified securities are traded on the institutional trading pla"
+            },
+            {
+              "number": "291",
+              "title_hint": "The recognised stock exchange may delist the specified securities of an issuer l"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": "XI",
+      "title": "BONUS ISSUE",
+      "parts": [],
+      "regulations": [
+        {
+          "number": "293",
+          "title_hint": "Subject to the provisions of the Companies Act, 2013 or any other applicable law"
+        },
+        {
+          "number": "294",
+          "title_hint": "An issuer shall make a bonus issue of equity shares only if it has made reservat"
+        },
+        {
+          "number": "295",
+          "title_hint": "An issuer, announcing a bonus issue after approval by its board of directors and"
+        }
+      ]
+    },
+    {
+      "number": "XII",
+      "title": "MISCELLANEOUS",
+      "parts": [],
+      "regulations": [
+        {
+          "number": "296",
+          "title_hint": "Without prejudice to the power under sections 11, 11A, 11B, 11D, sub-section (3)"
+        },
+        {
+          "number": "297",
+          "title_hint": "The listed issuer or any other person thereof who contravenes any of the provisi"
+        },
+        {
+          "number": "298",
+          "title_hint": "If the listed issuer fails to pay any fine imposed upon it by the recognised sto"
+        },
+        {
+          "number": "299",
+          "title_hint": "In order to remove any difficulties in the application or interpretation of thes"
+        },
+        {
+          "number": "300",
+          "title_hint": "The Board may, in the interest of investors or for the development of the securi"
+        },
+        {
+          "number": "301",
+          "title_hint": "On and from the commencement of these regulations, the Securities and Exchange B"
+        },
+        {
+          "number": "156",
+          "title_hint": "In case there are less than five listed group companies, the financial informati"
+        },
+        {
+          "number": "5",
+          "title_hint": "In case the 30th/60th/90th calendar day is a holiday, data from previous trading"
+        },
+        {
+          "number": "1",
+          "title_hint": "The information to be provided under each of the heads specified below shall be "
+        },
+        {
+          "number": "2",
+          "title_hint": "The abridged prospectus shall be printed in a font size which shall not be visua"
+        },
+        {
+          "number": "3",
+          "title_hint": "The application form shall be so positioned that on the tearing-off of the appli"
+        }
+      ]
+    }
+  ],
+  "schedules": [
+    {
+      "number": "I",
+      "title": "LEAD MANAGERS’ INTER-SE ALLOCATION OF"
+    },
+    {
+      "number": "II",
+      "title": "CONTENTS OF AGREEMENT BETWEEN LEAD MANAGER(S) AND"
+    },
+    {
+      "number": "III",
+      "title": "FEES TO BE PAID ALONG WITH DRAFT OFFER DOCUMENT/"
+    },
+    {
+      "number": "IV",
+      "title": "FILING OF OFFER DOCUMENTS WITH THE BOARD"
+    },
+    {
+      "number": "V",
+      "title": "FORMATS OF DUE DILIGENCE CERTIFICATES"
+    },
+    {
+      "number": "VI",
+      "title": "DISCLOSURES IN THE OFFER DOCUMENT, ABRIDGED"
+    },
+    {
+      "number": "VII",
+      "title": "DISCLOSURES IN A PLACEMENT DOCUMENT"
+    },
+    {
+      "number": "VIII",
+      "title": "DISCLOSURES IN OFFER DOCUMENT AND ABRIDGED"
+    },
+    {
+      "number": "IX",
+      "title": "PUBLIC COMMUNICATIONS AND PUBLICITY MATERIALS"
+    },
+    {
+      "number": "X",
+      "title": "FORMATS OF ADVERTISEMENTS FOR A PUBLIC ISSUE"
+    },
+    {
+      "number": "XI",
+      "title": "FORMAT OF REPORT TO BE SUBMITTED BY THE MONITORING"
+    },
+    {
+      "number": "XII",
+      "title": "MANDATORY COLLECTION CENTRES"
+    },
+    {
+      "number": "XIII",
+      "title": "BOOK BUILDING PROCESS"
+    },
+    {
+      "number": "XIV",
+      "title": "ILLUSTRATION EXPLAINING THE PROCEDURE OF"
+    },
+    {
+      "number": "XV",
+      "title": "FORMAT OF REPORT FOR GREEN SHOE OPTION"
+    },
+    {
+      "number": "XVI",
+      "title": "NATURE OF CHANGES IN THE OFFER DOCUMENT REQUIRING"
+    },
+    {
+      "number": "XVII",
+      "title": "FORMATS OF POST-ISSUE REPORTS"
+    },
+    {
+      "number": "XVIII",
+      "title": "FORMAT OF UNDERWRITING DEVOLVEMENT STATEMENT"
+    },
+    {
+      "number": "XIX",
+      "title": "LISTING OF SECURITIES ON STOCK EXCHANGES"
+    },
+    {
+      "number": "XX",
+      "title": "CONDITIONS/ MANNER OF PROVIDING EXIT OPPORTUNITY TO"
+    }
+  ]
+}
