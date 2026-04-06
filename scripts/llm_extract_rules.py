@@ -155,6 +155,7 @@ def main():
     selected_items: dict[str, dict] = {}
     item_order: list[str] = []
     signature_to_key: dict[str, str] = {}
+    prev_visible_regs: set[str] = set()  # carry forward from previous window
 
     for start_idx, chunk in windowed(pages, args.window, args.overlap):
         chunk_cleaned = [strip_page_numbers(p) for p in chunk]
@@ -173,11 +174,16 @@ def main():
         for page_text in chunk_cleaned:
             visible_regs.update(pre_identify_regulations(page_text))
 
+        # Carry forward previous window's regs so continuation pages (where a
+        # regulation starts on page N but sub-clauses continue on page N+1
+        # without a visible header) still get correct parent reg context.
+        visible_regs_with_prev = visible_regs | prev_visible_regs
+
         # Build anchoring context for single-pass
         anchoring_context = ""
-        if visible_regs:
+        if visible_regs_with_prev:
             reg_list = ", ".join(
-                sorted(visible_regs, key=lambda x: (int(re.match(r"\d+", x).group()), x))
+                sorted(visible_regs_with_prev, key=lambda x: (int(re.match(r"\d+", x).group()), x))
             )
             anchoring_context = (
                 f"REGULATION NUMBERS VISIBLE ON THESE PAGES: {reg_list}\n"
@@ -202,7 +208,7 @@ def main():
         if not args.no_two_pass:
             items = extract_rules_two_pass(
                 client, args.model, visible, page_nums,
-                visible_regs=visible_regs,
+                visible_regs=visible_regs_with_prev,
                 pdf_name=pdf.name,
                 timeout=args.timeout, debug=args.debug,
             )
@@ -211,7 +217,7 @@ def main():
                 from rule_extraction.regulation_identifier import identify_regulations
                 reg_inventory = identify_regulations(
                     client, args.model, visible, page_nums,
-                    visible_regs=visible_regs,
+                    visible_regs=visible_regs_with_prev,
                     timeout=args.timeout, debug=False,
                 ) if not items else []
                 # Note: extract_rules_two_pass already called identify_regulations internally.
@@ -297,7 +303,7 @@ def main():
                 soft.extend(validate_maps_to(r))
                 hard.extend(validate_source(r, visible, span_mode=args.span_mode))
                 # Bug fix: reg anchoring only runs here (removed from general loop to fix double penalty)
-                anchoring_warnings = validate_reg_anchoring(r, visible_regs)
+                anchoring_warnings = validate_reg_anchoring(r, visible_regs_with_prev)
                 if anchoring_warnings:
                     soft.extend(anchoring_warnings)
                     try:
@@ -417,9 +423,9 @@ def main():
 
             # Soft reg-anchoring check — only for non-judge path (judge path already handled above)
             # Bug fix: removed double anchoring. Only run here if NOT in judge mode.
-            if not args.judge and visible_regs and not args.no_anchoring:
+            if not args.judge and visible_regs_with_prev and not args.no_anchoring:
                 from rule_extraction.rule_validator import validate_reg_anchoring as _vra
-                anchoring_warns = _vra(it, visible_regs)
+                anchoring_warns = _vra(it, visible_regs_with_prev)
                 if anchoring_warns:
                     it.setdefault("repair_notes", []).extend(anchoring_warns)
                     try:
@@ -509,6 +515,10 @@ def main():
                     if args.debug:
                         src_pages = (best.get("source") or {}).get("pages") if isinstance(best.get("source"), dict) else None
                         print(f"[ACCEPT] updated {best.get('rule_id')} pages={src_pages}", file=sys.stderr)
+
+        # Update carry-forward regs for next window (current window's own regs only,
+        # not the union — prevents stale regs from propagating indefinitely)
+        prev_visible_regs = visible_regs
 
         # small pause to be gentle on local model
         time.sleep(0.1)

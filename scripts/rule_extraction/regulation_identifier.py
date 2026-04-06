@@ -51,8 +51,9 @@ def canonicalize_proviso_markers(reg_number: str) -> str:
     """
     s = reg_number
     # Order matters: match "Provided further" before bare "Provided"
-    s = re.sub(r"Provided\s+further", "proviso2", s, flags=re.I)
-    s = re.sub(r"Provided\s+that", "proviso", s, flags=re.I)
+    # Use \s* (not \s+) to also catch "ProvidedFurther" with no space
+    s = re.sub(r"Provided\s*further", "proviso2", s, flags=re.I)
+    s = re.sub(r"Provided\s*that", "proviso", s, flags=re.I)
     s = re.sub(r"Provided", "proviso", s, flags=re.I)
     s = re.sub(r"Explanation", "explanation", s, flags=re.I)
     s = re.sub(r"Category", "category", s, flags=re.I)
