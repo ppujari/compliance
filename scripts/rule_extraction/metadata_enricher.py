@@ -192,6 +192,7 @@ def enrich_rule(
     gazette_notification: str = "SEBI/LAD-NRO/GN/2018/31",
     original_effective_date: str = "2018-11-10",
     pipeline_version: str = "0.3.0",
+    pdf_footnote_definitions: list[dict] | None = None,
 ) -> dict:
     """
     Enrich a raw extracted rule with full regulatory metadata.
@@ -244,7 +245,27 @@ def enrich_rule(
     # Amendment tracking
     rule["original_effective_date"] = original_effective_date
     rule["last_amended_date"] = None
-    rule["amendment_history"] = []
+    if pdf_footnote_definitions:
+        reg_num = str(rule.get("regulation_number", "") or "")
+        relevant = []
+        for fn in pdf_footnote_definitions:
+            citations = fn.get("citations", []) if isinstance(fn, dict) else []
+            matches = any(
+                (
+                    (cit.get("reg_context") or "").strip()
+                    and (
+                        reg_num.startswith((cit.get("reg_context") or "").strip())
+                        or (cit.get("reg_context") or "").strip().startswith(reg_num)
+                    )
+                )
+                for cit in citations
+                if isinstance(cit, dict)
+            )
+            if matches:
+                relevant.append(dict(fn))
+        rule["amendment_history"] = relevant if relevant else []
+    else:
+        rule["amendment_history"] = []
     rule["gazette_notification"] = gazette_notification
     rule["is_current"] = True
 
@@ -277,10 +298,17 @@ def enrich_rule(
 def enrich_batch(
     rules: list[dict],
     structure_lookup: ICDRStructureLookup,
+    pdf_footnote_definitions: list[dict] | None = None,
     **kwargs,
 ) -> list[dict]:
     """Enrich a batch of rules, passing all_rule_ids for proviso linking."""
     all_ids = [r.get("rule_id", "") for r in rules]
     for rule in rules:
-        enrich_rule(rule, structure_lookup, all_rule_ids=all_ids, **kwargs)
+        enrich_rule(
+            rule,
+            structure_lookup,
+            all_rule_ids=all_ids,
+            pdf_footnote_definitions=pdf_footnote_definitions,
+            **kwargs,
+        )
     return rules

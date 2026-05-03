@@ -364,7 +364,7 @@ def flatten_subrules(rule_obj: dict) -> list[dict]:
 
 # ---------- Dedup/scoring helpers ----------
 
-MIN_TEXT_CHARS = 90
+MIN_TEXT_CHARS = 40
 TEXT_SIGNATURE_SLICE = 160
 
 
@@ -438,19 +438,26 @@ def extract_rules_two_pass(
     window_text: str,
     page_nums: list[int],
     visible_regs: set[str] | None = None,
+    carryover_hint: str = "",
+    system_prefix: str = "",
     pdf_name: str = "<PDF>",
     timeout: int = 120,
     debug: bool = False,
-) -> list[dict]:
-    """Two-pass extraction: identify clauses, then extract per clause."""
+) -> tuple[list[dict], list[dict]]:
+    """Two-pass extraction: identify clauses, then extract per clause.
+
+    Returns (extracted_rule_dicts, pass1_reg_inventory).
+    """
     import sys
     reg_inventory = identify_regulations(
         client, model, window_text, page_nums,
         visible_regs=visible_regs,
+        carryover_hint=carryover_hint,
+        system_prefix=system_prefix,
         timeout=timeout, debug=debug,
     )
     if not reg_inventory:
-        return []
+        return [], []
 
     items: list[dict] = []
     for reg_info in reg_inventory:
@@ -465,7 +472,7 @@ def extract_rules_two_pass(
             print(f"[Pass2] extracting reg {reg_num} ({len(clause_text)} chars)", file=sys.stderr)
         try:
             raw = client.chat_json_any(
-                model, SYSTEM_PROMPT, p2_prompt,
+                model, f"{system_prefix or ''}{SYSTEM_PROMPT}", p2_prompt,
                 timeout=timeout, debug=debug,
             )
         except Exception as e:
@@ -480,7 +487,7 @@ def extract_rules_two_pass(
 
     if debug:
         print(f"[TwoPass] pages={page_nums}: {len(reg_inventory)} clauses -> {len(items)} raw items", file=sys.stderr)
-    return items
+    return items, reg_inventory
 
 
 def extract_rules_single_pass(

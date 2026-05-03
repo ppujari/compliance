@@ -75,12 +75,12 @@ def coerce_rules_from_parsed(obj: Any) -> list[dict]:
     if isinstance(obj, list):
         return [x for x in obj if isinstance(x, dict)]
     if isinstance(obj, dict):
+        if "clauses" in obj and isinstance(obj["clauses"], list):
+            return [x for x in obj["clauses"] if isinstance(x, dict)]
         if "rules" in obj and isinstance(obj["rules"], list):
             return [x for x in obj["rules"] if isinstance(x, dict)]
         if "items" in obj and isinstance(obj["items"], list):
             return [x for x in obj["items"] if isinstance(x, dict)]
-        if "clauses" in obj and isinstance(obj["clauses"], list):
-            return [x for x in obj["clauses"] if isinstance(x, dict)]
         if "regulations" in obj and isinstance(obj["regulations"], list):
             return [x for x in obj["regulations"] if isinstance(x, dict)]
         # Bare rule dict (Pass 2) or bare clause identification dict (Pass 1)
