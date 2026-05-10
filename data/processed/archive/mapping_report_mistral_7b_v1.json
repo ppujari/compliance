@@ -1,0 +1,67 @@
+{
+  "total_rules": 40,
+  "map_to_rules_count": 20,
+  "map_parse_success_count": 20,
+  "map_parse_failures": [
+    {
+      "rule_id": "ICDR_6_1_b",
+      "notes": "Map to operating_profits length=3 and each ≥ 15cr (restated, consolidated).",
+      "dropped_tokens": [
+        "each ≥ 15cr (restated"
+      ],
+      "reason": "dropped_invalid_tokens"
+    }
+  ],
+  "fields_proposed_from_map_to": [
+    "b",
+    "conditions_a",
+    "consolidated",
+    "has_demat_agreement",
+    "has_dematerialized_promoter_securities",
+    "has_firm_arrangements_of_finance",
+    "has_fully_paid_or_forfeited_partly_paid_equity",
+    "has_held_equity_shares_for_1_year",
+    "has_in_principle_approval",
+    "lead_manager_appointment",
+    "lock_in_bonus_equity_shares_if_applicable",
+    "lock_in_convertible_securities_if_applicable",
+    "lock_in_holders_persons_other_than_promoters",
+    "lock_in_period",
+    "lock_in_period_6_months",
+    "lock_in_period_excess_contribution",
+    "lock_in_period_minimum_contribution",
+    "lock_in_resultant_equity_shares_if_applicable",
+    "operating_profits_length",
+    "pari_passu_date_if_applicable",
+    "promoter_contribution",
+    "return_date",
+    "securities_acquired_by_certain_entities_at_lower_price",
+    "securities_acquired_non_cash_revaluation_capitalization",
+    "securities_resulting_from_ineligible_bonus_issue",
+    "upfront_exercise_price",
+    "warrant_tenure"
+  ],
+  "stability": null,
+  "unmapped_rules": [
+    "ICDR_10",
+    "ICDR_10_1b",
+    "ICDR_13_1d",
+    "ICDR_15_1",
+    "ICDR_15_1_i",
+    "ICDR_23_1",
+    "ICDR_23_2",
+    "ICDR_4_22",
+    "ICDR_5_1_a",
+    "ICDR_5_1_b",
+    "ICDR_5_1_c",
+    "ICDR_5_2",
+    "ICDR_6_1_a",
+    "ICDR_6_1_c",
+    "ICDR_8_a",
+    "ICDR_8_b",
+    "ICDR_8_c",
+    "ICDR_8_provided",
+    "ICDR_8_provided_further",
+    "ICDR_9"
+  ]
+}

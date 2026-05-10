@@ -1,0 +1,62 @@
+{
+  "pdf": "ICDR_rules_4_22.pdf",
+  "pages": [
+    1,
+    2
+  ],
+  "window_start": 0,
+  "validation": {
+    "ICDR_4": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_5_1_a": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_5_1_b": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_5_1_c": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_5_1_d": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_5_1_explanation": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_5_2": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_6_1_a": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_6_1_b": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_6_1_c": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_6_1_proviso": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_6_1_proviso_2": {
+      "hard_fail_reasons": [
+        "bad_rule_id_format"
+      ],
+      "soft_fail_reasons": []
+    }
+  },
+  "judge_report": {},
+  "judge_error": "ValueError: Judge returned invalid JSON shape."
+}

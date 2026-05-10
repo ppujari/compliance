@@ -1,0 +1,103 @@
+{
+  "pdf": "ICDR_rules_4_22.pdf",
+  "pages": [
+    3,
+    4
+  ],
+  "window_start": 2,
+  "validation": {
+    "ICDR_7_1_a": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_7_1_b": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_7_1_c": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_7_1_d": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    }
+  },
+  "judge_report": {
+    "judgments": [
+      {
+        "rule_id": "ICDR_7_1_a",
+        "scores": {
+          "atomicity": 0.0,
+          "fidelity": 0.0,
+          "completeness": 0.0,
+          "maps_to_quality": 0.0,
+          "source_alignment": 0.0
+        },
+        "overall": 0.0,
+        "failure_modes": [
+          "NOT_ATOMIC",
+          "LOSES_THRESHOLD",
+          "HALLUCINATION"
+        ],
+        "feedback_for_refinement": "The rule ICDR_7_1_a has multiple issues: it is not atomic, loses the 50% threshold, and contains a hallucination about the name change requirement. The text in the extraction does not accurately reflect the original chunk text, which includes additional conditions and details."
+      }
+    ],
+    "history": [
+      {
+        "iteration": 1,
+        "report": {
+          "judgments": [
+            {
+              "rule_id": "ICDR_7_1_a",
+              "scores": {
+                "atomicity": 0.0,
+                "fidelity": 0.0,
+                "completeness": 0.0,
+                "maps_to_quality": 0.0,
+                "source_alignment": 0.0
+              },
+              "overall": 0.0,
+              "failure_modes": [
+                "NOT_ATOMIC",
+                "LOSES_THRESHOLD",
+                "HALLUCINATION",
+                "MISSING_QUALIFIER",
+                "MAPS_TO_BAD_FIELD",
+                "MAPS_TO_BAD_TYPE",
+                "BAD_SPAN_HINT",
+                "OTHER"
+              ],
+              "feedback_for_refinement": "The extraction does not capture the atomicity properly, as it only extracts one rule per entry. Fidelity is low due to loss of threshold (75%) and hallucination of the book-building condition. Completeness misses qualifiers. Maps_to fields are bare snake_case but the type_hint is missing. Source_alignment is bad due to long span_hint."
+            }
+          ]
+        }
+      },
+      {
+        "iteration": 2,
+        "report": {
+          "judgments": [
+            {
+              "rule_id": "ICDR_7_1_a",
+              "scores": {
+                "atomicity": 0.0,
+                "fidelity": 0.0,
+                "completeness": 0.0,
+                "maps_to_quality": 0.0,
+                "source_alignment": 0.0
+              },
+              "overall": 0.0,
+              "failure_modes": [
+                "NOT_ATOMIC",
+                "LOSES_THRESHOLD",
+                "HALLUCINATION"
+              ],
+              "feedback_for_refinement": "The rule ICDR_7_1_a has multiple issues: it is not atomic (should be split into multiple rules), it loses the threshold of 75% and the refund condition, and it hallucinates the book-building process requirement. The atomicity is violated because the rule text includes multiple conditions. Fidelity is low due to missing key elements like the 75% threshold and the refund obligation. Completeness is lacking as the rule does not include the book-building process condition. Maps_to_quality is poor due to incorrect field mapping. Source_alignment is not checked as the source text is not provided in the context."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "judge_error": null
+}

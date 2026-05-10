@@ -1,0 +1,203 @@
+[
+  {
+    "name": "AIFs",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for AIFs.",
+    "from_rules": [
+      "ICDR_14_1_c"
+    ]
+  },
+  {
+    "name": "FVCI",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for FVCI.",
+    "from_rules": [
+      "ICDR_14_1_c"
+    ]
+  },
+  {
+    "name": "PFIs",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for PFIs.",
+    "from_rules": [
+      "ICDR_14_1_c"
+    ]
+  },
+  {
+    "name": "acquisition_scheme_approval",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer field for acquisition scheme approval.",
+    "from_rules": [
+      "ICDR_14_2_core"
+    ]
+  },
+  {
+    "name": "application_for_listing",
+    "lean_type": "String",
+    "python_type": "str",
+    "description": "Text/identifier field for application for listing.",
+    "from_rules": [
+      "ICDR_7_1_a"
+    ]
+  },
+  {
+    "name": "banks",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for banks.",
+    "from_rules": [
+      "ICDR_14_1_c"
+    ]
+  },
+  {
+    "name": "capital_expenditure_utilization",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for capital expenditure utilization.",
+    "from_rules": [
+      "ICDR_16_1_a",
+      "ICDR_16_1_b"
+    ]
+  },
+  {
+    "name": "combined_holding_period",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer duration (months/years) for combined holding period.",
+    "from_rules": [
+      "ICDR_8_provided"
+    ]
+  },
+  {
+    "name": "depository_agreement",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer field for depository agreement.",
+    "from_rules": [
+      "ICDR_7_1_b"
+    ]
+  },
+  {
+    "name": "firm_financial_arrangements",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for firm financial arrangements.",
+    "from_rules": [
+      "ICDR_7_1_e"
+    ]
+  },
+  {
+    "name": "general_corporate_purpose_amount",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: general corporate purpose amount.",
+    "from_rules": [
+      "ICDR_7_2_core"
+    ]
+  },
+  {
+    "name": "holding_period",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer duration (months/years) for holding period.",
+    "from_rules": [
+      "ICDR_8_core"
+    ]
+  },
+  {
+    "name": "issuer_conversion_financing_restriction",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: issuer conversion financing restriction.",
+    "from_rules": [
+      "ICDR_12_core"
+    ]
+  },
+  {
+    "name": "issuer_conversion_option_required",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: issuer conversion option required.",
+    "from_rules": [
+      "ICDR_11_2"
+    ]
+  },
+  {
+    "name": "issuer_conversion_redemption_disclosures",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: issuer conversion redemption disclosures.",
+    "from_rules": [
+      "ICDR_11_4"
+    ]
+  },
+  {
+    "name": "issuer_conversion_redemption_within_one_month",
+    "lean_type": "Bool",
+    "python_type": "bool",
+    "description": "Boolean flag: issuer conversion redemption within one month.",
+    "from_rules": [
+      "ICDR_11_3"
+    ]
+  },
+  {
+    "name": "issuer_debenture_redemption_reserve",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer field for issuer debenture redemption reserve.",
+    "from_rules": [
+      "ICDR_10_1_c"
+    ]
+  },
+  {
+    "name": "issuer_debenture_trustee_count",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for issuer debenture trustee count.",
+    "from_rules": [
+      "ICDR_10_1_b"
+    ]
+  },
+  {
+    "name": "partly_paid_up_shares",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer field for partly paid up shares.",
+    "from_rules": [
+      "ICDR_7_1_d"
+    ]
+  },
+  {
+    "name": "promoter_contribution",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for promoter contribution.",
+    "from_rules": [
+      "ICDR_14_1_c",
+      "ICDR_14_2_core"
+    ]
+  },
+  {
+    "name": "promoter_lock_in",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer (e.g. percentage or ratio) for promoter lock in.",
+    "from_rules": [
+      "ICDR_16_1_a",
+      "ICDR_16_1_b"
+    ]
+  },
+  {
+    "name": "promoter_securities_dematerialised",
+    "lean_type": "Nat",
+    "python_type": "int",
+    "description": "Non-negative integer field for promoter securities dematerialised.",
+    "from_rules": [
+      "ICDR_7_1_c"
+    ]
+  }
+]

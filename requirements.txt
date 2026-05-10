@@ -2,7 +2,10 @@
 # Python >= 3.11
 
 # --- PDF Parsing ---
-pymupdf==1.24.9           # PDF text extraction (used in extract_rules_pdf.py and llm_extract_rules.py)
+# PyMuPDF: 1.24.9 works on 3.11; on 3.14+ pip installs a current wheel (e.g. 1.27.x).
+pymupdf>=1.24.9           # PDF text extraction (llm_extract_rules.py, etc.)
+# pdfplumber (optional tables in pdf_tables.py / extract_issuer_from_rhp.py) needs this pin:
+# pdfminer.six==20251230
 
 # --- LLM Integration ---
 requests==2.32.3          # HTTP client for Ollama local model API calls

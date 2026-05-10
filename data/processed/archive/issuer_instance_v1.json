@@ -1,0 +1,40 @@
+{
+  "issuer_id": "demo",
+  "source": "data\\POC\\POC_red_herring.pdf",
+  "fields": {
+    "is_debarred": false,
+    "has_debarred_directors": false,
+    "is_fraudulent": false,
+    "is_fugitive": false,
+    "has_esop_exemption": true,
+    "has_sar_exemption": false,
+    "has_mandatory_convertibles": false,
+    "has_outstanding_convertibles": false,
+    "net_tangible_assets": null,
+    "monetary_asset_ratio": 6,
+    "used_monetary_assets": false,
+    "is_offer_for_sale_only": false,
+    "operating_profits": [
+      2023,
+      2024,
+      2025
+    ],
+    "net_worths": [
+      104360,
+      128027,
+      149365
+    ],
+    "changed_name_recently": false,
+    "percent_revenue_from_new_name": null,
+    "uses_book_building": false,
+    "qib_allocation_done": false,
+    "general_corp_purpose_ratio": null,
+    "sr_holder_exec": false,
+    "applied_to_stock_exchange": true,
+    "has_demat_agreement": false,
+    "promoter_securities_demat": false,
+    "no_partly_paid_shares": true,
+    "shares_held_duration_months": null,
+    "shares_fully_paid": true
+  }
+}

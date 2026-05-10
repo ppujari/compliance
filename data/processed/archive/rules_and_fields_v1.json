@@ -1,0 +1,436 @@
+{
+  "rules": [
+    {
+      "id": "ICDR_4_core",
+      "title": "Conditions on reference date",
+      "reference": "Regulation 4",
+      "remedy": null,
+      "check": "fun _ => True",
+      "failReason": "fun _ => \"Condition not met.\",\n    remedy? := some \"Ensure all conditions are satisfied as of the filing dates.\""
+    },
+    {
+      "id": "ICDR_5_1_a",
+      "title": "Disqualification: issuer/promoters/directors/sellers debarred",
+      "reference": "Regulation 5(1)(a)",
+      "remedy": null,
+      "check": "fun i => !i.is_debarred",
+      "failReason": "fun _ => \"Issuer, promoters, directors or selling shareholders are debarred.\",\n    remedy? := some \"Ensure no party is debarred.\""
+    },
+    {
+      "id": "ICDR_5_1_b",
+      "title": "Disqualification: promoter/director of another debarred company",
+      "reference": "Regulation 5(1)(b)",
+      "remedy": null,
+      "check": "fun i => !i.has_debarred_directors",
+      "failReason": "fun _ => \"Promoters or directors are associated with a debarred company.\",\n    remedy? := some \"Ensure no association with debarred companies.\""
+    },
+    {
+      "id": "ICDR_5_1_c",
+      "title": "Disqualification: wilful defaulter or fraudulent borrower",
+      "reference": "Regulation 5(1)(c)",
+      "remedy": null,
+      "check": "fun i => !i.is_fraudulent",
+      "failReason": "fun _ => \"Issuer, promoters or directors are fraudulent borrowers.\",\n    remedy? := some \"Ensure no fraudulence.\""
+    },
+    {
+      "id": "ICDR_5_1_d",
+      "title": "Disqualification: fugitive economic offender",
+      "reference": "Regulation 5(1)(d)",
+      "remedy": null,
+      "check": "fun i => !i.is_fugitive",
+      "failReason": "fun _ => \"Promoters or directors are fugitive economic offenders.\",\n    remedy? := some \"Ensure no association with fugitives.\""
+    },
+    {
+      "id": "ICDR_5_2_a",
+      "title": "Outstanding options for employees (ESOP)",
+      "reference": "Regulation 5(2)(a)",
+      "remedy": null,
+      "check": "fun i => !i.has_esop_exemption",
+      "failReason": "fun _ => \"Issuer has outstanding ESOPs.\",\n    remedy? := some \"Ensure no outstanding ESOPs.\""
+    },
+    {
+      "id": "ICDR_5_2_b",
+      "title": "Outstanding stock appreciation rights (SAR)",
+      "reference": "Regulation 5(2)(b)",
+      "remedy": null,
+      "check": "fun i => !i.has_sar_exemption",
+      "failReason": "fun _ => \"Issuer has outstanding SARs.\",\n    remedy? := some \"Ensure no outstanding SARs.\""
+    },
+    {
+      "id": "ICDR_5_2_c",
+      "title": "Fully paid-up convertible securities",
+      "reference": "Regulation 5(2)(c)",
+      "remedy": null,
+      "check": "fun i => !i.has_mandatory_convertibles",
+      "failReason": "fun _ => \"Issuer has outstanding mandatory convertibles.\",\n    remedy? := some \"Ensure no outstanding mandatory convertibles.\""
+    },
+    {
+      "id": "ICDR_5_2_core",
+      "title": "No outstanding convertibles/rights (pre-IPO)",
+      "reference": "Regulation 5(2)",
+      "remedy": null,
+      "check": "fun i => !i.has_outstanding_convertibles",
+      "failReason": "fun _ => \"Issuer has outstanding convertible securities or rights.\",\n    remedy? := some \"Ensure no outstanding convertibles or rights.\""
+    },
+    {
+      "id": "ICDR_6_1_a",
+      "title": "Net tangible assets ≥ ₹3 cr in each of last 3 years",
+      "reference": "Regulation 6(1)(a)",
+      "remedy": null,
+      "check": "fun i =>\n      let ntaOK := (lengthIs i.net_tangible_assets 3) && allGeNat i.net_tangible_assets 30000000\n      let moneyOK := (i.monetary_asset_ratio ≤ 50) || i.used_monetary_assets || i.is_offer_for_sale_only\n      ntaOK && moneyOK",
+      "failReason": "fun i =>\n      let ntaMsg :=\n        if !(lengthIs i.net_tangible_assets 3) then \"Need 3 full-year NTA figures.\"\n        else if !(allGeNat i.net_tangible_assets 30000000) then \"Each year’s net tangible assets must be ≥ ₹3.0 crore.\"\n        else \"\"\n      let moneyMsg :=\n        if i.is_offer_for_sale_only then \"\"\n        else if i.monetary_asset_ratio > 50 && !i.used_monetary_assets then \"Monetary assets exceed 50% of NTA without evidence of committed/actual use.\"\n        else \"\"\n      String.intercalate \" \" ([ntaMsg, moneyMsg].filter (· ≠ \"\")),\n    remedy? := some \"Demonstrate firm commitments/use of monetary assets, or restructure to OSF-only; ensure each NTA year ≥ ₹3 cr.\""
+    },
+    {
+      "id": "ICDR_6_1_b",
+      "title": "Operating profit ≥ ₹15 cr in each of last 3 years",
+      "reference": "Regulation 6(1)(b)",
+      "remedy": null,
+      "check": "fun i => (lengthIs i.operating_profits 3) && allGeNat i.operating_profits 150000000",
+      "failReason": "fun i =>\n      if !(lengthIs i.operating_profits 3) then \"Need 3 full-year operating profit figures.\"\n      else\n        let fails := i.operating_profits.zipIdx |>.filter (fun (x, idx) => x < 150000000)\n        let years := fails.map (fun (_, idx) => s!\"Year {idx + 1}\")\n        \"Operating profit below ₹15 cr in: \" ++ String.intercalate \", \" years,\n    remedy? := some \"Demonstrate ≥ ₹15 cr operating profit in each of the last 3 full financial years (restated, consolidated).\""
+    },
+    {
+      "id": "ICDR_6_1_c",
+      "title": "Net worth ≥ ₹1 cr in each of last 3 years",
+      "reference": "Regulation 6(1)(c)",
+      "remedy": null,
+      "check": "fun i => (lengthIs i.net_worths 3) && allGeNat i.net_worths 10000000",
+      "failReason": "fun i =>\n      if !(lengthIs i.net_worths 3) then \"Need 3 full-year net worth figures.\"\n      else\n        let fails := i.net_worths.zipIdx |>.filter (fun (x, idx) => x < 10000000)\n        let years := fails.map (fun (_, idx) => s!\"Year {idx + 1}\")\n        \"Net worth below ₹1 cr in: \" ++ String.intercalate \", \" years,\n    remedy? := some \"Increase equity/retained earnings to meet ≥ ₹1 cr in each of the last 3 full years.\""
+    },
+    {
+      "id": "ICDR_6_1_d",
+      "title": "Revenue from new name activity ≥ 50% in last year",
+      "reference": "Regulation 6(1)(d)",
+      "remedy": null,
+      "check": "fun i => (!i.changed_name_recently) || (i.percent_revenue_from_new_name ≥ 50)",
+      "failReason": "fun i =>\n      if i.changed_name_recently && i.percent_revenue_from_new_name < 50 then\n        \"Changed name within 1 year but <50% revenue from new-name activity in the preceding full year.\"\n      else \"Condition not met.\",\n    remedy? := some \"Demonstrate ≥50% revenue from the activity indicated by the new name or defer filing.\""
+    },
+    {
+      "id": "ICDR_6_2_core",
+      "title": "Eligibility for IPO through book-building process",
+      "reference": "Regulation 6(2)",
+      "remedy": null,
+      "check": "fun i => i.uses_book_building && (i.general_corp_purpose_ratio ≤ 75) && i.qib_allocation_done",
+      "failReason": "fun _ => \"Issuer does not meet the eligibility criteria for IPO through book-building process.\",\n    remedy? := some \"Ensure at least 75% allocation to QIBs and complete QIB allocations.\""
+    },
+    {
+      "id": "ICDR_6_3_i",
+      "title": "General corporate purposes limit ≤ 35%",
+      "reference": "Regulation 6(3)",
+      "remedy": null,
+      "check": "fun i => (i.general_corp_purpose_ratio ≤ 35)",
+      "failReason": "fun _ => \"Amount for general corporate purposes exceeds 35%.\",\n    remedy? := some \"Ensure the amount for general corporate purposes does not exceed 35%.\""
+    },
+    {
+      "id": "ICDR_6_3_ii",
+      "title": "Unidentified acquisition/investment limit ≤ 25%",
+      "reference": "Regulation 6(3)",
+      "remedy": null,
+      "check": "fun i => (i.general_corp_purpose_ratio ≤ 25)",
+      "failReason": "fun _ => \"Amount for unidentified acquisitions or investments exceeds 25%.\",\n    remedy? := some \"Ensure the amount for unidentified acquisitions or investments does not exceed 25%.\""
+    },
+    {
+      "id": "ICDR_6_3_iii",
+      "title": "SR shares issued to promoters/founders with executive positions",
+      "reference": "Regulation 6(3)(iii)",
+      "remedy": null,
+      "check": "fun i => !i.sr_holder_exec",
+      "failReason": "fun _ => \"SR shares were not issued only to promoters/founders who hold an executive position.\",\n    remedy? := some \"Ensure SR shares are issued only to promoters/founders with executive positions.\""
+    }
+  ],
+  "issuer_questions": [
+    {
+      "field": "is_debarred",
+      "question": "Is the issuer debarred from accessing the capital market?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_debarred_directors",
+      "question": "Are any of the directors associated with a debarred company?",
+      "type": "Bool"
+    },
+    {
+      "field": "is_fraudulent",
+      "question": "Is the issuer or its promoters/directors fraudulent borrowers?",
+      "type": "Bool"
+    },
+    {
+      "field": "is_fugitive",
+      "question": "Are any of the promoters or directors fugitive economic offenders?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_esop_exemption",
+      "question": "Does the issuer have outstanding ESOPs?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_sar_exemption",
+      "question": "Does the issuer have outstanding SARs?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_mandatory_convertibles",
+      "question": "Does the issuer have outstanding mandatory convertibles?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_outstanding_convertibles",
+      "question": "Are there any outstanding convertible securities or rights?",
+      "type": "Bool"
+    },
+    {
+      "field": "net_tangible_assets",
+      "question": "Provide NTA for each of the last 3 full years (₹ paise).",
+      "type": "List Nat"
+    },
+    {
+      "field": "monetary_asset_ratio",
+      "question": "What % of NTA is held in monetary assets?",
+      "type": "Nat"
+    },
+    {
+      "field": "used_monetary_assets",
+      "question": "Have excess monetary assets been used or firmly committed?",
+      "type": "Bool"
+    },
+    {
+      "field": "is_offer_for_sale_only",
+      "question": "Is the IPO entirely an offer for sale (no fresh issue)?",
+      "type": "Bool"
+    },
+    {
+      "field": "operating_profits",
+      "question": "Provide operating profit for each of the last 3 full years (₹ paise).",
+      "type": "List Nat"
+    },
+    {
+      "field": "net_worths",
+      "question": "Provide net worth for each of the last 3 full years (₹ paise).",
+      "type": "List Nat"
+    },
+    {
+      "field": "changed_name_recently",
+      "question": "Has the company changed its name within the last 1 year?",
+      "type": "Bool"
+    },
+    {
+      "field": "percent_revenue_from_new_name",
+      "question": "What % of last year’s revenue came from the new-name activity?",
+      "type": "Nat"
+    },
+    {
+      "field": "uses_book_building",
+      "question": "Does the issuer use book-building process for IPO?",
+      "type": "Bool"
+    },
+    {
+      "field": "qib_allocation_done",
+      "question": "Has at least 75% allocation to QIBs been completed?",
+      "type": "Bool"
+    },
+    {
+      "field": "general_corp_purpose_ratio",
+      "question": "What % of funds are allocated for general corporate purposes?",
+      "type": "Nat"
+    },
+    {
+      "field": "sr_holder_exec",
+      "question": "Are SR shares issued only to promoters/founders with executive positions?",
+      "type": "Bool"
+    },
+    {
+      "field": "applied_to_stock_exchange",
+      "question": "Has an application been made to a stock exchange for in-principle approval?",
+      "type": "Bool"
+    },
+    {
+      "field": "has_demat_agreement",
+      "question": "Is there an agreement with a depository for dematerialisation of specified securities?",
+      "type": "Bool"
+    },
+    {
+      "field": "promoter_securities_demat",
+      "question": "Are all promoter securities held in dematerialised form?",
+      "type": "Bool"
+    },
+    {
+      "field": "no_partly_paid_shares",
+      "question": "Have all partly paid-up equity shares been fully paid-up or forfeited?",
+      "type": "Bool"
+    },
+    {
+      "field": "general_corp_purpose_ratio",
+      "question": "What percentage of the issue proceeds is allocated to general corporate purposes?",
+      "type": "Nat"
+    },
+    {
+      "field": "shares_held_duration_months",
+      "question": "How long have the equity shares being offered for sale been held by sellers (in months)?",
+      "type": "Nat"
+    },
+    {
+      "field": "no_partly_paid_shares",
+      "question": "Are there any partly paid-up shares?",
+      "type": "Bool"
+    },
+    {
+      "field": "shares_fully_paid",
+      "question": "Are the specified securities fully paid up?",
+      "type": "Bool"
+    }
+  ],
+  "issuer_schema": [
+    {
+      "field": "is_debarred",
+      "type": "Bool"
+    },
+    {
+      "field": "has_debarred_directors",
+      "type": "Bool"
+    },
+    {
+      "field": "is_fraudulent",
+      "type": "Bool"
+    },
+    {
+      "field": "is_fugitive",
+      "type": "Bool"
+    },
+    {
+      "field": "has_outstanding_convertibles",
+      "type": "Bool"
+    },
+    {
+      "field": "has_esop_exemption",
+      "type": "Bool"
+    },
+    {
+      "field": "has_sar_exemption",
+      "type": "Bool"
+    },
+    {
+      "field": "has_mandatory_convertibles",
+      "type": "Bool"
+    },
+    {
+      "field": "net_tangible_assets",
+      "type": "List Nat"
+    },
+    {
+      "field": "monetary_asset_ratio",
+      "type": "Nat"
+    },
+    {
+      "field": "used_monetary_assets",
+      "type": "Bool"
+    },
+    {
+      "field": "is_offer_for_sale_only",
+      "type": "Bool"
+    },
+    {
+      "field": "operating_profits",
+      "type": "List Nat"
+    },
+    {
+      "field": "net_worths",
+      "type": "List Nat"
+    },
+    {
+      "field": "changed_name_recently",
+      "type": "Bool"
+    },
+    {
+      "field": "percent_revenue_from_new_name",
+      "type": "Nat"
+    },
+    {
+      "field": "uses_book_building",
+      "type": "Bool"
+    },
+    {
+      "field": "qib_allocation_done",
+      "type": "Bool"
+    },
+    {
+      "field": "is_tech_firm",
+      "type": "Bool"
+    },
+    {
+      "field": "sr_net_worth",
+      "type": "Nat"
+    },
+    {
+      "field": "sr_holder_exec",
+      "type": "Bool"
+    },
+    {
+      "field": "sr_voting_ratio",
+      "type": "Nat"
+    },
+    {
+      "field": "sr_class_count",
+      "type": "Nat"
+    },
+    {
+      "field": "sr_same_face_value",
+      "type": "Bool"
+    },
+    {
+      "field": "sr_issued_3mo_prior",
+      "type": "Bool"
+    },
+    {
+      "field": "applied_to_stock_exchange",
+      "type": "Bool"
+    },
+    {
+      "field": "has_demat_agreement",
+      "type": "Bool"
+    },
+    {
+      "field": "promoter_securities_demat",
+      "type": "Bool"
+    },
+    {
+      "field": "no_partly_paid_shares",
+      "type": "Bool"
+    },
+    {
+      "field": "finance_75_percent_done",
+      "type": "Bool"
+    },
+    {
+      "field": "general_corp_purpose_ratio",
+      "type": "Nat"
+    },
+    {
+      "field": "shares_fully_paid",
+      "type": "Bool"
+    },
+    {
+      "field": "shares_held_duration_months",
+      "type": "Nat"
+    },
+    {
+      "field": "is_govt_entity",
+      "type": "Bool"
+    },
+    {
+      "field": "via_merger_scheme",
+      "type": "Bool"
+    },
+    {
+      "field": "is_bonus_from_free_reserve",
+      "type": "Bool"
+    },
+    {
+      "field": "underlying_held_1y",
+      "type": "Bool"
+    },
+    {
+      "field": "bonus_not_from_revaluation",
+      "type": "Bool"
+    }
+  ]
+}

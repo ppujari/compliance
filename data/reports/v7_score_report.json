@@ -1,0 +1,521 @@
+{
+  "candidate": "data/processed/rules_refactored_v7.jsonl",
+  "gold": "data/gold_standard/gold_standard_regs_4_23.jsonl",
+  "baseline": "data/processed/rules_refactored_v6.jsonl",
+  "scores": {
+    "label": "data/processed/rules_refactored_v7.jsonl",
+    "gold_total": 143,
+    "extracted_unique": 113,
+    "tp": 88,
+    "fn": 55,
+    "fp": 25,
+    "recall": 61.53846153846154,
+    "precision": 77.87610619469027,
+    "f1": 68.75,
+    "duplicates": {
+      "ICDR_15_1_a_iv_proviso": 2
+    },
+    "missing": [
+      "ICDR_13_c",
+      "ICDR_13_proviso",
+      "ICDR_14_4_proviso",
+      "ICDR_14_4_proviso_2",
+      "ICDR_14_a_proviso",
+      "ICDR_14_c_proviso",
+      "ICDR_14_proviso",
+      "ICDR_14_proviso_2",
+      "ICDR_15_1_c",
+      "ICDR_15_1_c_proviso",
+      "ICDR_15_1_d",
+      "ICDR_15_1_explanation",
+      "ICDR_15_1_i",
+      "ICDR_15_1_ii",
+      "ICDR_15_1_iii",
+      "ICDR_15_1_iv",
+      "ICDR_15_1_iv_proviso",
+      "ICDR_16_1_b_proviso",
+      "ICDR_16_1_explanation",
+      "ICDR_16_1_proviso",
+      "ICDR_17_a",
+      "ICDR_17_b",
+      "ICDR_17_b_proviso",
+      "ICDR_17_c",
+      "ICDR_17_c_proviso",
+      "ICDR_22_proviso",
+      "ICDR_23_5_proviso",
+      "ICDR_5_1_explanation",
+      "ICDR_5_2_proviso",
+      "ICDR_5_2_proviso_2",
+      "ICDR_5_2_proviso_3",
+      "ICDR_6_1_proviso",
+      "ICDR_6_1_proviso_2",
+      "ICDR_6_3_ii_explanation",
+      "ICDR_6_3_iv_c",
+      "ICDR_6_3_iv_d",
+      "ICDR_6_3_iv_e",
+      "ICDR_6_3_ix",
+      "ICDR_6_3_v",
+      "ICDR_6_3_vi",
+      "ICDR_6_3_vii",
+      "ICDR_6_3_viii",
+      "ICDR_7_explanation_b_i",
+      "ICDR_7_explanation_b_ii",
+      "ICDR_7_explanation_b_iii",
+      "ICDR_8",
+      "ICDR_8_proviso",
+      "ICDR_8_proviso_2",
+      "ICDR_8_proviso_3",
+      "ICDR_8_proviso_3_a",
+      "ICDR_8_proviso_3_b",
+      "ICDR_8_proviso_3_c",
+      "ICDR_8_proviso_3_c_i",
+      "ICDR_8_proviso_3_c_ii",
+      "ICDR_8a_explanation"
+    ],
+    "extra": [
+      "ICDR_13",
+      "ICDR_13_c_a",
+      "ICDR_13_c_b",
+      "ICDR_13_c_proviso",
+      "ICDR_13_explanation",
+      "ICDR_15_1_a_c",
+      "ICDR_15_1_a_iv_explanation",
+      "ICDR_15_1_a_iv_proviso",
+      "ICDR_16_1",
+      "ICDR_16_1_a_proviso",
+      "ICDR_16_explanation",
+      "ICDR_17_1_a",
+      "ICDR_17_1_a_proviso",
+      "ICDR_17_1_b",
+      "ICDR_17_1_b_proviso",
+      "ICDR_17_explanation_ii_a",
+      "ICDR_17_explanation_ii_b",
+      "ICDR_5_explanation",
+      "ICDR_5_proviso_2",
+      "ICDR_6_v",
+      "ICDR_7_1",
+      "ICDR_7_3_proviso_2_i",
+      "ICDR_7_3_proviso_2_i_a",
+      "ICDR_7_3_proviso_2_i_b",
+      "ICDR_7_3_proviso_2_i_c_ii"
+    ]
+  },
+  "baseline_scores": {
+    "label": "data/processed/rules_refactored_v6.jsonl",
+    "gold_total": 143,
+    "extracted_unique": 103,
+    "tp": 100,
+    "fn": 43,
+    "fp": 3,
+    "recall": 69.93006993006993,
+    "precision": 97.0873786407767,
+    "f1": 81.30081300813009,
+    "duplicates": {
+      "ICDR_17_proviso": 2
+    },
+    "missing": [
+      "ICDR_10_1_d_iv",
+      "ICDR_11_2_proviso",
+      "ICDR_12",
+      "ICDR_14_4_proviso",
+      "ICDR_14_4_proviso_2",
+      "ICDR_14_a_proviso",
+      "ICDR_14_c_proviso",
+      "ICDR_15_1_c_proviso",
+      "ICDR_15_1_d",
+      "ICDR_15_1_explanation",
+      "ICDR_15_1_iii",
+      "ICDR_16_1_b_proviso",
+      "ICDR_17_b_proviso",
+      "ICDR_17_c_proviso",
+      "ICDR_17_explanation_i",
+      "ICDR_17_explanation_ii",
+      "ICDR_17_explanation_iii",
+      "ICDR_5_1_explanation",
+      "ICDR_5_2_proviso_2",
+      "ICDR_5_2_proviso_3",
+      "ICDR_6_3",
+      "ICDR_6_3_ii_explanation",
+      "ICDR_6_3_iv_a",
+      "ICDR_6_3_iv_b",
+      "ICDR_6_3_iv_c",
+      "ICDR_6_3_iv_d",
+      "ICDR_6_3_iv_e",
+      "ICDR_6_3_ix",
+      "ICDR_6_3_v",
+      "ICDR_6_3_vi",
+      "ICDR_6_3_vii",
+      "ICDR_6_3_viii",
+      "ICDR_7_3",
+      "ICDR_7_3_proviso",
+      "ICDR_7_3_proviso_2",
+      "ICDR_8_explanation",
+      "ICDR_8_proviso_3",
+      "ICDR_8_proviso_3_a",
+      "ICDR_8_proviso_3_b",
+      "ICDR_8_proviso_3_c",
+      "ICDR_8_proviso_3_c_i",
+      "ICDR_8_proviso_3_c_ii",
+      "ICDR_8a_explanation"
+    ],
+    "extra": [
+      "ICDR_10_iv",
+      "ICDR_15_1_b_proviso",
+      "ICDR_16_1_a_proviso"
+    ]
+  },
+  "per_regulation": [
+    {
+      "reg": "4",
+      "gold": 1,
+      "tp": 1,
+      "fn": 0,
+      "fp": 0,
+      "missing": [],
+      "extra": [],
+      "base_tp": 1,
+      "delta_tp": 0
+    },
+    {
+      "reg": "5",
+      "gold": 9,
+      "tp": 5,
+      "fn": 4,
+      "fp": 2,
+      "missing": [
+        "ICDR_5_1_explanation",
+        "ICDR_5_2_proviso",
+        "ICDR_5_2_proviso_2",
+        "ICDR_5_2_proviso_3"
+      ],
+      "extra": [
+        "ICDR_5_explanation",
+        "ICDR_5_proviso_2"
+      ],
+      "base_tp": 6,
+      "delta_tp": -1
+    },
+    {
+      "reg": "6",
+      "gold": 23,
+      "tp": 12,
+      "fn": 11,
+      "fp": 1,
+      "missing": [
+        "ICDR_6_1_proviso",
+        "ICDR_6_1_proviso_2",
+        "ICDR_6_3_ii_explanation",
+        "ICDR_6_3_iv_c",
+        "ICDR_6_3_iv_d",
+        "ICDR_6_3_iv_e",
+        "ICDR_6_3_ix",
+        "ICDR_6_3_v",
+        "ICDR_6_3_vi",
+        "ICDR_6_3_vii",
+        "ICDR_6_3_viii"
+      ],
+      "extra": [
+        "ICDR_6_v"
+      ],
+      "base_tp": 11,
+      "delta_tp": 1
+    },
+    {
+      "reg": "7",
+      "gold": 13,
+      "tp": 10,
+      "fn": 3,
+      "fp": 5,
+      "missing": [
+        "ICDR_7_explanation_b_i",
+        "ICDR_7_explanation_b_ii",
+        "ICDR_7_explanation_b_iii"
+      ],
+      "extra": [
+        "ICDR_7_1",
+        "ICDR_7_3_proviso_2_i",
+        "ICDR_7_3_proviso_2_i_a",
+        "ICDR_7_3_proviso_2_i_b",
+        "ICDR_7_3_proviso_2_i_c_ii"
+      ],
+      "base_tp": 10,
+      "delta_tp": 0
+    },
+    {
+      "reg": "8",
+      "gold": 10,
+      "tp": 1,
+      "fn": 9,
+      "fp": 0,
+      "missing": [
+        "ICDR_8",
+        "ICDR_8_proviso",
+        "ICDR_8_proviso_2",
+        "ICDR_8_proviso_3",
+        "ICDR_8_proviso_3_a",
+        "ICDR_8_proviso_3_b",
+        "ICDR_8_proviso_3_c",
+        "ICDR_8_proviso_3_c_i",
+        "ICDR_8_proviso_3_c_ii"
+      ],
+      "extra": [],
+      "base_tp": 3,
+      "delta_tp": -2
+    },
+    {
+      "reg": "8a",
+      "gold": 4,
+      "tp": 3,
+      "fn": 1,
+      "fp": 0,
+      "missing": [
+        "ICDR_8a_explanation"
+      ],
+      "extra": [],
+      "base_tp": 3,
+      "delta_tp": 0
+    },
+    {
+      "reg": "9",
+      "gold": 2,
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "missing": [],
+      "extra": [],
+      "base_tp": 2,
+      "delta_tp": 0
+    },
+    {
+      "reg": "10",
+      "gold": 10,
+      "tp": 10,
+      "fn": 0,
+      "fp": 0,
+      "missing": [],
+      "extra": [],
+      "base_tp": 9,
+      "delta_tp": 1
+    },
+    {
+      "reg": "11",
+      "gold": 5,
+      "tp": 5,
+      "fn": 0,
+      "fp": 0,
+      "missing": [],
+      "extra": [],
+      "base_tp": 4,
+      "delta_tp": 1
+    },
+    {
+      "reg": "12",
+      "gold": 2,
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "missing": [],
+      "extra": [],
+      "base_tp": 1,
+      "delta_tp": 1
+    },
+    {
+      "reg": "13",
+      "gold": 5,
+      "tp": 3,
+      "fn": 2,
+      "fp": 5,
+      "missing": [
+        "ICDR_13_c",
+        "ICDR_13_proviso"
+      ],
+      "extra": [
+        "ICDR_13",
+        "ICDR_13_c_a",
+        "ICDR_13_c_b",
+        "ICDR_13_c_proviso",
+        "ICDR_13_explanation"
+      ],
+      "base_tp": 5,
+      "delta_tp": -2
+    },
+    {
+      "reg": "14",
+      "gold": 13,
+      "tp": 7,
+      "fn": 6,
+      "fp": 0,
+      "missing": [
+        "ICDR_14_4_proviso",
+        "ICDR_14_4_proviso_2",
+        "ICDR_14_a_proviso",
+        "ICDR_14_c_proviso",
+        "ICDR_14_proviso",
+        "ICDR_14_proviso_2"
+      ],
+      "extra": [],
+      "base_tp": 9,
+      "delta_tp": -2
+    },
+    {
+      "reg": "15",
+      "gold": 14,
+      "tp": 5,
+      "fn": 9,
+      "fp": 3,
+      "missing": [
+        "ICDR_15_1_c",
+        "ICDR_15_1_c_proviso",
+        "ICDR_15_1_d",
+        "ICDR_15_1_explanation",
+        "ICDR_15_1_i",
+        "ICDR_15_1_ii",
+        "ICDR_15_1_iii",
+        "ICDR_15_1_iv",
+        "ICDR_15_1_iv_proviso"
+      ],
+      "extra": [
+        "ICDR_15_1_a_c",
+        "ICDR_15_1_a_iv_explanation",
+        "ICDR_15_1_a_iv_proviso"
+      ],
+      "base_tp": 10,
+      "delta_tp": -5
+    },
+    {
+      "reg": "16",
+      "gold": 6,
+      "tp": 3,
+      "fn": 3,
+      "fp": 3,
+      "missing": [
+        "ICDR_16_1_b_proviso",
+        "ICDR_16_1_explanation",
+        "ICDR_16_1_proviso"
+      ],
+      "extra": [
+        "ICDR_16_1",
+        "ICDR_16_1_a_proviso",
+        "ICDR_16_explanation"
+      ],
+      "base_tp": 5,
+      "delta_tp": -2
+    },
+    {
+      "reg": "17",
+      "gold": 10,
+      "tp": 5,
+      "fn": 5,
+      "fp": 6,
+      "missing": [
+        "ICDR_17_a",
+        "ICDR_17_b",
+        "ICDR_17_b_proviso",
+        "ICDR_17_c",
+        "ICDR_17_c_proviso"
+      ],
+      "extra": [
+        "ICDR_17_1_a",
+        "ICDR_17_1_a_proviso",
+        "ICDR_17_1_b",
+        "ICDR_17_1_b_proviso",
+        "ICDR_17_explanation_ii_a",
+        "ICDR_17_explanation_ii_b"
+      ],
+      "base_tp": 5,
+      "delta_tp": 0
+    },
+    {
+      "reg": "18",
+      "gold": 2,
+      "tp": 2,
+      "fn": 0,
+      "fp": 0,
+      "missing": [],
+      "extra": [],
+      "base_tp": 2,
+      "delta_tp": 0
+    },
+    {
+      "reg": "19",
+      "gold": 1,
+      "tp": 1,
+      "fn": 0,
+      "fp": 0,
+      "missing": [],
+      "extra": [],
+      "base_tp": 1,
+      "delta_tp": 0
+    },
+    {
+      "reg": "20",
+      "gold": 1,
+      "tp": 1,
+      "fn": 0,
+      "fp": 0,
+      "missing": [],
+      "extra": [],
+      "base_tp": 1,
+      "delta_tp": 0
+    },
+    {
+      "reg": "21",
+      "gold": 4,
+      "tp": 4,
+      "fn": 0,
+      "fp": 0,
+      "missing": [],
+      "extra": [],
+      "base_tp": 4,
+      "delta_tp": 0
+    },
+    {
+      "reg": "22",
+      "gold": 2,
+      "tp": 1,
+      "fn": 1,
+      "fp": 0,
+      "missing": [
+        "ICDR_22_proviso"
+      ],
+      "extra": [],
+      "base_tp": 2,
+      "delta_tp": -1
+    },
+    {
+      "reg": "23",
+      "gold": 6,
+      "tp": 5,
+      "fn": 1,
+      "fp": 0,
+      "missing": [
+        "ICDR_23_5_proviso"
+      ],
+      "extra": [],
+      "base_tp": 6,
+      "delta_tp": -1
+    }
+  ],
+  "maps_to_coverage": {
+    "shared_rule_count": 88,
+    "gold_has_maps_to": 59,
+    "extracted_has_maps_to": 48,
+    "both_have_maps_to": 45,
+    "gold_has_extracted_empty": [
+      "ICDR_10_2",
+      "ICDR_15_2",
+      "ICDR_16_2",
+      "ICDR_21",
+      "ICDR_23_1",
+      "ICDR_23_5",
+      "ICDR_4",
+      "ICDR_5_2",
+      "ICDR_6_3",
+      "ICDR_6_3_i",
+      "ICDR_6_3_iv",
+      "ICDR_6_3_iv_a",
+      "ICDR_6_3_iv_b",
+      "ICDR_8_explanation"
+    ]
+  }
+}

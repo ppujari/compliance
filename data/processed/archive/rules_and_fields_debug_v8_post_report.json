@@ -1,0 +1,225 @@
+{
+  "input": "data/processed/rules_and_fields_debug_v8.json",
+  "output": "data/processed/rules_and_fields_debug_v8_post.json",
+  "rules_in": 44,
+  "rules_out": 44,
+  "issuer_questions_in": 23,
+  "issuer_questions_out": 23,
+  "fixes": [
+    {
+      "id": "ICDR_6_1_a",
+      "fixes": [
+        "stubbed_check",
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_6_1_b",
+      "fixes": [
+        "stubbed_check",
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_6_1_c",
+      "fixes": [
+        "stubbed_check",
+        "wrapped_failReason"
+      ]
+    },
+    {
+      "id": "ICDR_7_1_a",
+      "fixes": [
+        "stubbed_check"
+      ]
+    },
+    {
+      "id": "ICDR_7_1_b",
+      "fixes": [
+        "stubbed_check"
+      ]
+    },
+    {
+      "id": "ICDR_7_1_c",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:promoter_securities_dematerialised"
+      ]
+    },
+    {
+      "id": "ICDR_7_1_d",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:fully_paid_up_equity_shares"
+      ]
+    },
+    {
+      "id": "ICDR_7_1_e",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:finance_arrangements,offer_size"
+      ]
+    },
+    {
+      "id": "ICDR_8",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:equity_shares_held_for_sale"
+      ]
+    },
+    {
+      "id": "ICDR_8_1",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:convertible_securities,equity_shares_resulting_from_conversion"
+      ]
+    },
+    {
+      "id": "ICDR_6_8_provided",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:max_sale_unidentified_targets"
+      ]
+    },
+    {
+      "id": "ICDR_8_provided_further",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:convertible_securities_conditions"
+      ]
+    },
+    {
+      "id": "ICDR_9",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:eligible_for_cdi_without_prior_ipo"
+      ]
+    },
+    {
+      "id": "ICDR_10_1a",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:credit_rating_required"
+      ]
+    },
+    {
+      "id": "ICDR_11_2",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:option_not_convert"
+      ]
+    },
+    {
+      "id": "ICDR_13_a",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:warrant_tenure"
+      ]
+    },
+    {
+      "id": "ICDR_13_c",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:upfront_payment,warrant_exercise_price"
+      ]
+    },
+    {
+      "id": "ICDR_13_d",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:upfront_payment,warrant_exercise_price,warrant_tenure"
+      ]
+    },
+    {
+      "id": "ICDR_14_1",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:promoter_contribution"
+      ]
+    },
+    {
+      "id": "ICDR_14_1_a",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:contribution_method"
+      ]
+    },
+    {
+      "id": "ICDR_4_13_a",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:issue_price"
+      ]
+    },
+    {
+      "id": "ICDR_4_13_b",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:issue_price,promoter_investments"
+      ]
+    },
+    {
+      "id": "ICDR_4_13_d",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:issue_price"
+      ]
+    },
+    {
+      "id": "ICDR_16_1",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:lock_in_periods"
+      ]
+    },
+    {
+      "id": "ICDR_16_49a",
+      "fixes": [
+        "stubbed_check",
+        "suspected_function_field_usage"
+      ]
+    },
+    {
+      "id": "ICDR_16_49b",
+      "fixes": [
+        "stubbed_check",
+        "suspected_function_field_usage"
+      ]
+    },
+    {
+      "id": "ICDR_17",
+      "fixes": [
+        "stubbed_check",
+        "suspected_function_field_usage"
+      ]
+    },
+    {
+      "id": "ICDR_17_c",
+      "fixes": [
+        "stubbed_check",
+        "suspected_function_field_usage"
+      ]
+    },
+    {
+      "id": "ICDR_21_a",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:issuer_or_subsidiary,loan_for_issue_financing"
+      ]
+    },
+    {
+      "id": "ICDR_21_b",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:loan_terms"
+      ]
+    },
+    {
+      "id": "ICDR_23",
+      "fixes": [
+        "stubbed_check",
+        "missing_fields:lead_manager_roles"
+      ]
+    }
+  ]
+}

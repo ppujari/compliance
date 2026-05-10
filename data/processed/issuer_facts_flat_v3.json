@@ -1,0 +1,41 @@
+{
+  "issuer_id": "rhp_v3",
+  "source": "issuer_candidate",
+  "fields": {
+    "agreement_with_depository": true,
+    "conditions": null,
+    "default_payment_or_repayments": null,
+    "eligible_for_cdi_without_equity_ipo": true,
+    "exceptions": null,
+    "fully_paid_up_equity_shares": null,
+    "general_corporate_purposes": 25,
+    "holding_period": null,
+    "lead_manager_appointment": null,
+    "lock_in_period": 6,
+    "net_tangible_assets": [
+      144445,
+      124541,
+      101714
+    ],
+    "net_worth": [
+      149365,
+      128027,
+      104360
+    ],
+    "operating_profits": [
+      29532,
+      24265,
+      14918
+    ],
+    "option_not_convert_if_conversion_price_not_determined": null,
+    "other_unidentified_objects": null,
+    "promoter_specified_securities_dematerialised": null,
+    "securities": null,
+    "securities_held_by_promoters": null,
+    "specified_securities_ineligible": null,
+    "upfront_payment": null,
+    "warrant_exercise_price": null,
+    "warrant_non_exercise": null,
+    "warrant_tenure": 18
+  }
+}

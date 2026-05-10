@@ -1,0 +1,99 @@
+{
+  "pdf": "ICDR_rules_4_22.pdf",
+  "pages": [
+    4,
+    5
+  ],
+  "window_start": 3,
+  "validation": {
+    "ICDR_7_1_a": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_7_1_b": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_7_1_c": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    },
+    "ICDR_7_1_d": {
+      "hard_fail_reasons": [],
+      "soft_fail_reasons": []
+    }
+  },
+  "judge_report": {
+    "judgments": [
+      {
+        "rule_id": "ICDR_7_1_a",
+        "scores": {
+          "atomicity": 0.0,
+          "fidelity": 0.0,
+          "completeness": 0.0,
+          "maps_to_quality": 0.0,
+          "source_alignment": 0.0
+        },
+        "overall": 0.0,
+        "failure_modes": [
+          "NOT_ATOMIC",
+          "LOSES_THRESHOLD",
+          "HALLUCINATION",
+          "MISSING_QUALIFIER",
+          "MAPS_TO_BAD_FIELD",
+          "MAPS_TO_BAD_TYPE",
+          "BAD_SPAN_HINT"
+        ],
+        "feedback_for_refinement": "The rule ICDR_7_1_a is not atomic because it refers to 'one or more' stock exchanges, but the atomic rule should specify exactly one. Also, the text provided does not mention the condition of choosing one designated stock exchange, which is part of the regulation. Additionally, there are missing qualifiers and incorrect mappings. The span_hint is too vague and does not align with the source text."
+      }
+    ],
+    "history": [
+      {
+        "iteration": 1,
+        "report": {
+          "judgments": [
+            {
+              "rule_id": "ICDR_7_1_a",
+              "scores": {
+                "atomicity": 0.0,
+                "fidelity": 0.0,
+                "completeness": 0.0,
+                "maps_to_quality": 0.0,
+                "source_alignment": 0.0
+              },
+              "overall": 0.0,
+              "failure_modes": [
+                "NOT_ATOMIC"
+              ],
+              "feedback_for_refinement": "The rule ICDR_7_1_a is atomic but the text does not match the source_alignment. The source_alignment is too long and does not match the CHUNK_TEXT."
+            }
+          ]
+        }
+      },
+      {
+        "iteration": 2,
+        "report": {
+          "judgments": [
+            {
+              "rule_id": "ICDR_7_1_a",
+              "scores": {
+                "atomicity": 0.0,
+                "fidelity": 0.0,
+                "completeness": 0.0,
+                "maps_to_quality": 0.0,
+                "source_alignment": 0.0
+              },
+              "overall": 0.0,
+              "failure_modes": [
+                "NOT_ATOMIC",
+                "LOSES_THRESHOLD"
+              ],
+              "feedback_for_refinement": "The rule ICDR_7_1_a is not atomic because it combines multiple obligations. It also loses the threshold of 'at least three months' from the original text."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "judge_error": null
+}

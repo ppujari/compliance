@@ -1,0 +1,94 @@
+[
+  {
+    "field": "agreement_with_depository",
+    "type": "Bool"
+  },
+  {
+    "field": "conditions",
+    "type": "List Nat"
+  },
+  {
+    "field": "default_payment_or_repayments",
+    "type": "Option Nat"
+  },
+  {
+    "field": "eligible_for_cdi_without_equity_ipo",
+    "type": "Bool"
+  },
+  {
+    "field": "exceptions",
+    "type": "List Nat"
+  },
+  {
+    "field": "fully_paid_up_equity_shares",
+    "type": "List Nat"
+  },
+  {
+    "field": "general_corporate_purposes",
+    "type": "List Nat"
+  },
+  {
+    "field": "holding_period",
+    "type": "Option Nat"
+  },
+  {
+    "field": "lead_manager_appointment",
+    "type": "List Nat"
+  },
+  {
+    "field": "lock_in_period",
+    "type": "Option Nat"
+  },
+  {
+    "field": "net_tangible_assets",
+    "type": "List Nat"
+  },
+  {
+    "field": "net_worth",
+    "type": "Nat"
+  },
+  {
+    "field": "operating_profits",
+    "type": "Nat"
+  },
+  {
+    "field": "option_not_convert_if_conversion_price_not_determined",
+    "type": "Option None"
+  },
+  {
+    "field": "other_unidentified_objects",
+    "type": "List Nat"
+  },
+  {
+    "field": "promoter_specified_securities_dematerialised",
+    "type": "Option (List Nat)"
+  },
+  {
+    "field": "securities",
+    "type": "List Nat"
+  },
+  {
+    "field": "securities_held_by_promoters",
+    "type": "Option (List Nat)"
+  },
+  {
+    "field": "specified_securities_ineligible",
+    "type": "List Nat"
+  },
+  {
+    "field": "upfront_payment",
+    "type": "List Nat"
+  },
+  {
+    "field": "warrant_exercise_price",
+    "type": "Option (List Nat)"
+  },
+  {
+    "field": "warrant_non_exercise",
+    "type": "Option (List Nat)"
+  },
+  {
+    "field": "warrant_tenure",
+    "type": "List Nat"
+  }
+]

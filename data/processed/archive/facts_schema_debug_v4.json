@@ -1,0 +1,130 @@
+{
+  "issuer_facts": [
+    {
+      "name": "lock_in_period",
+      "lean_type": "Nat",
+      "python_type": "int",
+      "description": "Field for lock in period (from rule type_hint).",
+      "from_rules": [
+        "ICDR_16_49a",
+        "ICDR_16_49b",
+        "ICDR_17",
+        "ICDR_17_c"
+      ],
+      "raw_tokens_seen": [
+        "lock_in_period"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "Nat"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "locked_in_securities",
+      "lean_type": "List Nat",
+      "python_type": "List[int]",
+      "description": "Field for locked in securities (from rule type_hint).",
+      "from_rules": [
+        "ICDR_21",
+        "ICDR_21_a",
+        "ICDR_21_b"
+      ],
+      "raw_tokens_seen": [
+        "locked_in_securities"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "List Nat",
+        "Nat"
+      ],
+      "constraints_text_samples": []
+    },
+    {
+      "name": "net_tangible_assets",
+      "lean_type": "Nat",
+      "python_type": "int",
+      "description": "Non-negative integer (e.g. percentage or ratio) for net tangible assets.",
+      "from_rules": [
+        "ICDR_6_1_a"
+      ],
+      "raw_tokens_seen": [
+        "net_tangible_assets"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [],
+      "constraints_text_samples": [
+        "≥ ₹3 cr; calculated on restated, consolidated basis; each year has 12 months"
+      ]
+    },
+    {
+      "name": "net_worth",
+      "lean_type": "List Nat",
+      "python_type": "List[int]",
+      "description": "Field for net worth (from rule type_hint).",
+      "from_rules": [
+        "ICDR_6_1_c"
+      ],
+      "raw_tokens_seen": [
+        "net_worth"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "List Nat"
+      ],
+      "constraints_text_samples": [
+        "length=3; each ≥ ₹1 cr; basis=restated, consolidated"
+      ]
+    },
+    {
+      "name": "operating_profits",
+      "lean_type": "List Nat",
+      "python_type": "List[int]",
+      "description": "Series of non-negative integers over multiple years for operating profits.",
+      "from_rules": [
+        "ICDR_6_1_b"
+      ],
+      "raw_tokens_seen": [
+        "operating_profits"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [],
+      "constraints_text_samples": [
+        "length=3; each ≥ ₹15 cr; basis=restated, consolidated"
+      ]
+    },
+    {
+      "name": "specified_securities",
+      "lean_type": "List Nat",
+      "python_type": "List[int]",
+      "description": "Field for specified securities (from rule type_hint).",
+      "from_rules": [
+        "ICDR_4_13_a",
+        "ICDR_4_13_b",
+        "ICDR_4_13_c",
+        "ICDR_4_13_d"
+      ],
+      "raw_tokens_seen": [
+        "specified_securities"
+      ],
+      "normalization_applied": [
+        "from_maps_to"
+      ],
+      "type_hints_seen": [
+        "List Nat"
+      ],
+      "constraints_text_samples": []
+    }
+  ],
+  "offer_facts": []
+}

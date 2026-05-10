@@ -1,0 +1,638 @@
+[
+  {
+    "field": "agreement_with_depository",
+    "provisional_type": "Option Nat",
+    "final_type": "Bool",
+    "metrics": {
+      "Bool_parse_rate": 1.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "yes",
+        "evidence": {
+          "page": 1,
+          "quote": "our Company has received in-principle approvals from BSE and NSE for the listing of the Equity Shares pursuant to letters both dated December 10, 2024.",
+          "span_hint": "listing approvals"
+        }
+      }
+    ],
+    "reason": "bool_indicator"
+  },
+  {
+    "field": "conditions",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": ""
+        }
+      },
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "None of our Company, our Promoter, which is also the Promoter Selling Shareholder, members of our Promoter Group or our Directors are debarred from accessing the capital market by SEBI;",
+          "span_hint": "debarred from accessing the capital market"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "conditions",
+      "final_type": "List Nat",
+      "confidence": 0.9,
+      "rationale": "The evidence examples show that the field 'conditions' has values that are lists of natural language expressions. The term 'ListNat_parse_rate' being 0.0 indicates that the parser is not confident in identifying List Nat types, but the evidence contains multiple entries with non-empty strings that suggest conditions or requirements, which align with the List Nat type. The absence of other types with higher parse rates suggests that List Nat is the most appropriate choice."
+    }
+  },
+  {
+    "field": "default_payment_or_repayments",
+    "provisional_type": "Option Nat",
+    "final_type": "Option Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "not mentioned",
+        "evidence": {
+          "page": 1,
+          "quote": "our Company is not prohibited from accessing the capital market or debarred from buying, selling or dealing in securities under any order or direction passed by SEBI or any securities market regulator in any other jurisdiction or any other authority/court.",
+          "span_hint": "capital market"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "default_payment_or_repayments",
+      "final_type": "Option Nat",
+      "confidence": 0.8,
+      "rationale": "The field 'default_payment_or_repayments' has a provisional type of 'Option Nat'. The metrics show low parse rates for various types, including 0.0 for Nat and ListNat. However, the evidence example indicates that the value is 'not mentioned', which aligns with the 'Option Nat' type that can represent absence. Therefore, the provisional type is maintained with moderate confidence."
+    }
+  },
+  {
+    "field": "eligible_for_cdi_without_equity_ipo",
+    "provisional_type": "Option Nat",
+    "final_type": "Bool",
+    "metrics": {
+      "Bool_parse_rate": 1.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "yes",
+        "evidence": {
+          "page": 2,
+          "quote": "our Company confirms that it is also in compliance with the conditions specified in Regulation 7(1) of the SEBI ICDR Regulations, to the extent applicable.",
+          "span_hint": "compliance with Regulation 7(1) of SEBI ICDR"
+        }
+      }
+    ],
+    "reason": "bool_indicator"
+  },
+  {
+    "field": "exceptions",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 2,
+          "quote": "Eligibility for the Offer in accordance with Regulation 6(1) of the SEBI ICDR Regulations, which states as follows:",
+          "span_hint": "Regulation 6(1)"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "exceptions",
+      "final_type": "List Nat",
+      "confidence": 0.8,
+      "rationale": "The field 'exceptions' has a provisional type of 'Option Nat'. However, the metrics show low parse rates for all types, including 'Nat' and 'List Nat'. The evidence example indicates that the field is related to a specific regulation, which suggests it might be a list of natural numbers or strings representing regulations. Given the low confidence in parsing, the final type is set to 'List Nat' with moderate confidence."
+    }
+  },
+  {
+    "field": "fully_paid_up_equity_shares",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "All the Equity Shares are fully paid up",
+        "evidence": {
+          "page": 2,
+          "quote": "All the Equity Shares are fully paid up and there are no partly paid up Equity Shares as on the date of filing of this Red Herring Prospectus.",
+          "span_hint": "Equity Shares are fully paid up"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "fully_paid_up_equity_shares",
+      "final_type": "List Nat",
+      "confidence": 0.8,
+      "rationale": "The evidence example mentions 'Equity Shares are fully paid up' which can be interpreted as a list of shares that are fully paid up, as opposed to a single value or a boolean. The term 'Shares' often implies multiple entities, suggesting a list of natural numbers representing the number of shares or their details. The provisional type 'Option Nat' is too vague, and given the context, 'List Nat' is more appropriate."
+    }
+  },
+  {
+    "field": "general_corporate_purposes",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 1.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "25",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": ""
+        }
+      }
+    ],
+    "reason": "list_indicator",
+    "judge": {
+      "field": "general_corporate_purposes",
+      "final_type": "List Nat",
+      "confidence": 1.0,
+      "rationale": "Based on the metrics, ListNat_parse_rate is 1.0, indicating that all examples parse as List Nat. The value_raw \"25\" can be interpreted as a natural number, and since it's a list (as per the provisional type and parse rates), it fits the List Nat type with high confidence."
+    }
+  },
+  {
+    "field": "holding_period",
+    "provisional_type": "Option Nat",
+    "final_type": "Option Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 2,
+          "quote": "All the Equity Shares are fully paid up and there are no partly paid up Equity Shares as on the date of filing of this Red Herring Prospectus.",
+          "span_hint": "date of filing"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "holding_period",
+      "final_type": "Option Nat",
+      "confidence": 0.0,
+      "rationale": "The provisional type is Option Nat, but the parse rates for Nat and ListNat are 0.0, indicating that the evidence does not contain any natural number or list of natural numbers. The missing rate is 1.0, meaning all values are missing or not parseable. The evidence example shows an empty string, so there is no data to suggest a change in type. Therefore, the type remains Option Nat with very low confidence."
+    }
+  },
+  {
+    "field": "lead_manager_appointment",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "our Company has received in-principle approvals from BSE and NSE for the listing of the Equity Shares",
+          "span_hint": "BSE and NSE"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "lead_manager_appointment",
+      "final_type": "List Nat",
+      "confidence": 0.8,
+      "rationale": "The evidence indicates that the field is related to approvals from stock exchanges, which are entities. However, the parse rates for all types are 0, suggesting no clear pattern. The span hint 'BSE and NSE' refers to entities, and the field name 'lead_manager_appointment' might imply multiple appointments, so 'List Nat' is chosen with moderate confidence."
+    }
+  },
+  {
+    "field": "lock_in_period",
+    "provisional_type": "Option Nat",
+    "final_type": "Option Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 1.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "6 months",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": ""
+        }
+      },
+      {
+        "value_raw": "6 months",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": ""
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "lock_in_period",
+      "final_type": "Option Nat",
+      "confidence": 1.0,
+      "rationale": "The provisional type is Option Nat, and the metrics show a Nat_parse_rate of 1.0, indicating that all values are successfully parsed as natural numbers. The evidence examples are both '6 months', which can be interpreted as a natural number (6) representing months, and there are no examples that contradict this type."
+    }
+  },
+  {
+    "field": "net_tangible_assets",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 1.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "1,44,445.3",
+        "evidence": {
+          "page": 2,
+          "quote": "our Company has net tangible assets of at least ₹30.0 million, calculated on a restated and consolidated basis, in each of the preceding three full years (of 12 months each)",
+          "span_hint": "net tangible assets"
+        }
+      }
+    ],
+    "reason": "list_indicator",
+    "judge": {
+      "field": "net_tangible_assets",
+      "final_type": "List Nat",
+      "confidence": 0.8,
+      "rationale": "The provisional type is Option Nat, but the metrics show a ListNat_parse_rate of 1.0, indicating that all values parsed as List Nat successfully. The evidence example shows a value with a comma and a dot, which is consistent with a list of numbers (e.g., 1,44,445.3). The comma is likely used as a thousand separator, and the dot as decimal separator, which is common in some regions for representing numbers with multiple parts. The presence of a single value with a comma and dot suggests it might be a list formatted in a compact way, hence List Nat is more appropriate."
+    }
+  },
+  {
+    "field": "net_worth",
+    "provisional_type": "Option Nat",
+    "final_type": "Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "₹10.0 million",
+        "evidence": {
+          "page": 2,
+          "quote": "our Company has a net worth of at least ₹10.0 million in each of the three preceding full years (of 12 months each)",
+          "span_hint": "net worth"
+        }
+      }
+    ],
+    "reason": "parse_rate"
+  },
+  {
+    "field": "operating_profits",
+    "provisional_type": "Option Nat",
+    "final_type": "Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "150.0",
+        "evidence": {
+          "page": 2,
+          "quote": "our Company has an average operating profit of at least ₹150.0 million, calculated on a restated and consolidated basis, during the preceding three years (of 12 months each)",
+          "span_hint": "calculated on a restated and consolidated basis"
+        }
+      }
+    ],
+    "reason": "parse_rate"
+  },
+  {
+    "field": "option_not_convert_if_conversion_price_not_determined",
+    "provisional_type": "Option Nat",
+    "final_type": "Option None",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "None",
+        "evidence": {
+          "page": 1,
+          "quote": "Except employee stock options granted pursuant to ESOS 2014, ESOS 2017 and ESOS 2022, there are no outstanding warrants, options or rights to convert debentures, loans or other instruments convertible into, or which would entitle any person any option to receive Equity Shares, as on the date of this Red Herring Prospectus.",
+          "span_hint": "as on the date of this Red Herring Prospectus"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "option_not_convert_if_conversion_price_not_determined",
+      "final_type": "Option None",
+      "confidence": 0.8,
+      "rationale": "Based on the evidence example, the value_raw is 'None', which suggests that the field should be 'None'. The parse rates for Bool, Nat, and ListNat are all 0, indicating no conversion to these types. The provisional type was 'Option Nat', but the evidence does not support that. The field is about options not being convertible if the conversion price is not determined, and the example shows 'None', which fits the 'Option None' type."
+    }
+  },
+  {
+    "field": "other_unidentified_objects",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 2,
+          "quote": "our Company shall ensure that the number of Bidders to whom the Equity Shares will be Allotted will be not less than 1,000",
+          "span_hint": "number of bidders for equity shares"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "other_unidentified_objects",
+      "final_type": "List Nat",
+      "confidence": 0.8,
+      "rationale": "The evidence example shows a value_raw as empty string, but the quote indicates a list of bidders (e.g., 'not less than 1,000'), suggesting that the field might represent a list of natural numbers or a collection. The parse rates for Bool, Nat, and ListNat are all 0.0, but given the context, ListNat is the most appropriate type as it could represent multiple bidders or similar counts. The missing_rate of 1.0 indicates no data was parsed correctly, so we rely on the evidence context."
+    }
+  },
+  {
+    "field": "promoter_specified_securities_dematerialised",
+    "provisional_type": "Option Nat",
+    "final_type": "Option (List Nat)",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 2,
+          "quote": "The Promoter Selling Shareholder confirms that the Offered Shares are eligible to be offered for sale in the Offer in accordance with Regulation 8 of the SEBI ICDR Regulations, as on the date of the Draft Red Herring Prospectus and this Red Herring Prospectus.",
+          "span_hint": "confirmation of eligibility under SEBI ICDR Regulations"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "promoter_specified_securities_dematerialised",
+      "final_type": "Option (List Nat)",
+      "confidence": 0.8,
+      "rationale": "The field has no clear numerical data, and the parse rates for all numeric types are 0. However, the evidence example indicates a confirmation statement, suggesting the field might represent a list of securities or quantities, but the low parse rates indicate high uncertainty. Assigning to Option (List Nat) with medium confidence due to lack of clear evidence for numbers."
+    }
+  },
+  {
+    "field": "securities",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "securities",
+        "evidence": {
+          "page": 2,
+          "quote": "",
+          "span_hint": ""
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "securities",
+      "final_type": "List Nat",
+      "confidence": 0.8,
+      "rationale": "The field 'securities' has a parse rate of 0.0 for all types, but based on the context of the field name and the single example value 'securities', it is likely that the field is intended to be a list of securities, each represented as a natural number. This interpretation aligns with common data structures in similar contexts, such as financial data where securities are often enumerated. The low parse rates may be due to the absence of actual numeric data in the examples provided, but the field name suggests a collection type. Therefore, I am assigning a confidence of 0.8 to this decision."
+    }
+  },
+  {
+    "field": "securities_held_by_promoters",
+    "provisional_type": "Option Nat",
+    "final_type": "Option (List Nat)",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "The Promoter Selling Shareholder confirms that the Offered Shares are eligible to be offered for sale in the Offer in accordance with Regulation 8 of the SEBI ICDR Regulations, as on the date of the Draft Red Herring Prospectus and this Red Herring Prospectus.",
+          "span_hint": "Regulation 8"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "securities_held_by_promoters",
+      "final_type": "Option (List Nat)",
+      "confidence": 0.8,
+      "rationale": "The field is about securities held by promoters, but the evidence provided does not directly mention the quantity. However, the provisional type is Option Nat, and the parse rates for all types are 0.0, indicating no clear evidence for the exact type. Given the context, it might be an option to hold a natural number of securities, but the evidence does not specify the quantity. The low parse rates suggest uncertainty, so we maintain the provisional type with moderate confidence."
+    }
+  },
+  {
+    "field": "specified_securities_ineligible",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "Prohibition by SEBI, RBI or other governmental authorities\nOur Company, Promoter, which is also the Promoter Selling Shareholder, Directors, members of our Promoter Group, the persons in control of our Promoter or our Company, as applicable, are not prohibited from accessing the capital market or debarred from buying, selling or dealing in securities under any order or direction passed by SEBI or any securities market regulator in any other jurisdiction or any other authority/court.",
+          "span_hint": "Prohibition"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "specified_securities_ineligible",
+      "final_type": "List Nat",
+      "confidence": 0.8,
+      "rationale": "The evidence mentions 'Prohibition by SEBI, RBI or other governmental authorities' and the span hint is 'Prohibition'. This suggests that the field is about a list of entities or authorities that prohibit securities. However, the parse rates for List Nat are 0.0, indicating that the parser struggled, but the context and hint suggest a list of authorities or entities. The field name 'specified_securities_ineligible' likely refers to a list of specified securities or authorities that are ineligible. Given the low parse rates, there might be ambiguity, but the evidence points towards a List Nat type."
+    }
+  },
+  {
+    "field": "upfront_payment",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "Except employee stock options granted pursuant to ESOS 2014, ESOS 2017 and ESOS 2022, there are no outstanding warrants, options or rights to convert debentures, loans or other instruments convertible into, or which would entitle any person any option to receive Equity Shares, as on the date of this Red Herring Prospectus.",
+          "span_hint": "warrants"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "upfront_payment",
+      "final_type": "List Nat",
+      "confidence": 0.8,
+      "rationale": "The field 'upfront_payment' has a parse rate of 0.0 for all numeric types and a missing rate of 1.0, indicating no data or errors. However, the evidence example shows the value_raw as an empty string, which is not directly helpful. Given the context of the field name, it likely represents a numeric value, but without data, the type cannot be confidently determined. I am considering 'List Nat' as it might represent a list of numeric values, but with no evidence, the confidence is moderate."
+    }
+  },
+  {
+    "field": "warrant_exercise_price",
+    "provisional_type": "Option Nat",
+    "final_type": "Option (List Nat)",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "Except employee stock options granted pursuant to ESOS 2014, ESOS 2017 and ESOS 2022, there are no outstanding warrants, options or rights to convert debentures, loans or other instruments convertible into, or which would entitle any person any option to receive Equity Shares, as on the date of this Red Herring Prospectus.",
+          "span_hint": "warrants"
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "warrant_exercise_price",
+      "final_type": "Option (List Nat)",
+      "confidence": 0.8,
+      "rationale": "The provisional type is Option Nat, but the evidence example shows an empty string, indicating missing data. However, based on the context, it could be a list of natural numbers if multiple warrants exist. The parse rates for Bool, Nat, and ListNat are all low, but the missing rate is high. The field might be a list of natural numbers, as warrant exercise prices can vary and are often numerical. The confidence is set to 0.8 due to limited evidence."
+    }
+  },
+  {
+    "field": "warrant_non_exercise",
+    "provisional_type": "Option Nat",
+    "final_type": "Option (List Nat)",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 0.0,
+      "ListNat_parse_rate": 0.0,
+      "missing_rate": 1.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": ""
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "warrant_non_exercise",
+      "final_type": "Option (List Nat)",
+      "confidence": 0.8,
+      "rationale": "Based on the evidence, the field 'warrant_non_exercise' has a parse rate of 0.0 for all types, including Option Nat, List Nat, and Nat. However, the missing rate is 1.0, indicating that the field is entirely missing in the data. Given that the field is missing, the provisional type cannot be determined, but the highest confidence type is Option (List Nat) as it is a common representation for optional list of natural numbers in the context of parsing."
+    }
+  },
+  {
+    "field": "warrant_tenure",
+    "provisional_type": "Option Nat",
+    "final_type": "List Nat",
+    "metrics": {
+      "Bool_parse_rate": 0.0,
+      "Nat_parse_rate": 1.0,
+      "ListNat_parse_rate": 1.0,
+      "missing_rate": 0.0
+    },
+    "evidence_examples": [
+      {
+        "value_raw": "18 months",
+        "evidence": {
+          "page": 1,
+          "quote": "",
+          "span_hint": ""
+        }
+      }
+    ],
+    "reason": "parse_rate",
+    "judge": {
+      "field": "warrant_tenure",
+      "final_type": "List Nat",
+      "confidence": 0.9,
+      "rationale": "The provisional type is Option Nat, but the metrics show a ListNat_parse_rate of 1.0, indicating that all examples parse as List Nat. The evidence example '18 months' can be interpreted as a single natural number, but the ListNat_parse_rate suggests that the field is intended to be a list of natural numbers. Therefore, the final type is List Nat with high confidence."
+    }
+  }
+]

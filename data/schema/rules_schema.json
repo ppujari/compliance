@@ -26,6 +26,11 @@
       "type": "string"
     },
 
+    "status": {
+      "type": "string",
+      "enum": ["accepted", "fixed", "quarantined"]
+    },
+
     "maps_to": {
       "type": "array",
       "items": {
@@ -77,7 +82,44 @@
       "type": "number",
       "minimum": 0.0,
       "maximum": 1.0
-    }
+    },
+
+    "regulation_framework": {"type": "string"},
+    "regulation_number": {"type": "string"},
+    "jurisdiction": {"type": "string"},
+    "regulator": {"type": "string"},
+    "country": {"type": "string"},
+    "chapter": {
+      "type": "object",
+      "properties": {
+        "number": {"type": "string"},
+        "title": {"type": "string"}
+      }
+    },
+    "part": {
+      "type": ["object", "null"],
+      "properties": {
+        "number": {"type": "string"},
+        "title": {"type": "string"}
+      }
+    },
+    "rule_type": {"type": "string"},
+    "condition_type": {"type": "string"},
+    "compliance_actor": {"type": "string"},
+    "applicability_scope": {"type": "array", "items": {"type": "string"}},
+    "original_effective_date": {"type": ["string", "null"]},
+    "last_amended_date": {"type": ["string", "null"]},
+    "amendment_history": {"type": "array"},
+    "gazette_notification": {"type": ["string", "null"]},
+    "is_current": {"type": "boolean"},
+    "references_regulations": {"type": "array", "items": {"type": "string"}},
+    "references_schedules": {"type": "array", "items": {"type": "string"}},
+    "references_external": {"type": "array"},
+    "is_proviso": {"type": "boolean"},
+    "exception_to": {"type": ["string", "null"]},
+    "extraction_timestamp": {"type": ["string", "null"]},
+    "extraction_model": {"type": ["string", "null"]},
+    "pipeline_version": {"type": ["string", "null"]}
   },
   "additionalProperties": false
 }

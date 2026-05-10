@@ -1,0 +1,270 @@
+{
+  "threshold": 1,
+  "extended_mode": "all",
+  "out_core": "data/processed/facts_schema_core_v2.json",
+  "out_extended": "data/processed/facts_schema_extended_v2.json",
+  "demoted_fields": [
+    "agreement_with_depository",
+    "default_payment_or_repayments",
+    "eligible_for_cdi_without_equity_ipo",
+    "exceptions",
+    "fully_paid_up_equity_shares",
+    "holding_period",
+    "promoter_specified_securities_dematerialised",
+    "securities_held_by_promoters",
+    "specified_securities_ineligible",
+    "warrant_non_exercise"
+  ],
+  "kept_fields": [
+    "conditions",
+    "general_corporate_purposes",
+    "lead_manager_appointment",
+    "lock_in_period",
+    "net_tangible_assets",
+    "net_worth",
+    "operating_profits",
+    "option_not_convert_if_conversion_price_not_determined",
+    "other_unidentified_objects",
+    "securities",
+    "upfront_payment",
+    "warrant_exercise_price",
+    "warrant_tenure"
+  ],
+  "scores": [
+    {
+      "name": "agreement_with_depository",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "conditions",
+      "score": 1,
+      "occurrences": 2,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "reusable_2plus_rules",
+        "numeric_threshold_nearby",
+        "generic_token_penalty"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "default_payment_or_repayments",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "eligible_for_cdi_without_equity_ipo",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "exceptions",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "fully_paid_up_equity_shares",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "general_corporate_purposes",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "holding_period",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "lead_manager_appointment",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "lock_in_period",
+      "score": 2,
+      "occurrences": 2,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [
+        "reusable_2plus_rules"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "net_tangible_assets",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "net_worth",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "operating_profits",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "option_not_convert_if_conversion_price_not_determined",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "other_unidentified_objects",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "promoter_specified_securities_dematerialised",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "securities",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "securities_held_by_promoters",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "specified_securities_ineligible",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "upfront_payment",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "warrant_exercise_price",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    },
+    {
+      "name": "warrant_non_exercise",
+      "score": 0,
+      "occurrences": 1,
+      "comparator_context": false,
+      "only_in_parens": false,
+      "details": [],
+      "promoted": false
+    },
+    {
+      "name": "warrant_tenure",
+      "score": 2,
+      "occurrences": 1,
+      "comparator_context": true,
+      "only_in_parens": false,
+      "details": [
+        "numeric_threshold_nearby"
+      ],
+      "promoted": true
+    }
+  ]
+}
