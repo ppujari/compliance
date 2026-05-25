@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEBI ICDR Compliance Pipeline — Weekly Progress</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
+
+  :root {
+    --ink:      #1a1814;
+    --ink2:     #4a4740;
+    --ink3:     #8a8780;
+    --rule:     #e2dfd8;
+    --surface:  #faf9f7;
+    --accent:   #2d5a8e;
+    --accent2:  #1d7a5f;
+    --amber:    #b86e00;
+    --coral:    #c04830;
+    --purple:   #5340b8;
+    --bg:       #f5f3ef;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 400;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 48px;
+  }
+
+  /* Header */
+  .doc-header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+  .doc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 12px;
+  }
+  .doc-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 38px;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .doc-subtitle {
+    font-size: 16px;
+    color: var(--ink2);
+    font-weight: 300;
+  }
+  .doc-meta {
+    margin-top: 20px;
+    display: flex;
+    gap: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink3);
+  }
+  .doc-meta span { border-left: 2px solid var(--rule); padding-left: 10px; }
+
+  /* Section headers */
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--ink);
+    margin: 52px 0 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 32px 0 12px;
+  }
+  p { margin-bottom: 14px; color: var(--ink2); }
+  p strong { color: var(--ink); font-weight: 500; }
+
+  /* Stat row */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 20px 18px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--ink3);
+    line-height: 1.4;
+  }
+
+  /* Checklist */
+  .checklist { list-style: none; margin: 16px 0 24px; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 14px;
+    color: var(--ink2);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check { color: var(--accent2); font-weight: 600; flex-shrink: 0; margin-top: 1px; }
+  .check.warn { color: var(--amber); }
+  .check.pending { color: var(--ink3); }
+  .check-label { flex: 1; }
+  .check-label strong { color: var(--ink); font-weight: 500; }
+  .check-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 2px 7px;
+    color: var(--ink3);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .check-tag.done { background: #edf7f2; border-color: #9fd4bc; color: var(--accent2); }
+  .check-tag.partial { background: #fef8ec; border-color: #f5d490; color: var(--amber); }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+  th {
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--rule);
+  }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--rule); color: var(--ink2); vertical-align: top; }
+  td:first-child { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink); }
+  tr:last-child td { border-bottom: none; }
+
+  /* Code */
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: #eeecea;
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--accent);
+  }
+  pre {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: #1a1814;
+    color: #d4d0c8;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+  pre .kw { color: #7eb8f7; }
+  pre .fn { color: #a8d8a8; }
+  pre .cm { color: #6a6860; font-style: italic; }
+  pre .st { color: #f5c07a; }
+
+  /* Callout */
+  .callout {
+    background: white;
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--ink2);
+  }
+  .callout.amber { border-color: var(--amber); }
+  .callout.green { border-color: var(--accent2); }
+  .callout strong { color: var(--ink); font-weight: 500; }
+
+  /* SVG diagrams */
+  .diagram-wrap {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+  .diagram-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 16px;
+  }
+
+  /* Tool pill */
+  .pill {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin: 2px;
+    font-weight: 500;
+  }
+  .pill.blue { background: #deeaf7; color: var(--accent); }
+  .pill.green { background: #ddf2ea; color: var(--accent2); }
+  .pill.amber { background: #fef0d0; color: var(--amber); }
+  .pill.purple { background: #e8e4f8; color: var(--purple); }
+  .pill.coral { background: #fce8e4; color: var(--coral); }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink3);
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="doc-label">Research Progress — SEBI ICDR Compliance Pipeline</div>
+    <div class="doc-title">Formal Regulatory Verification<br>with Lean 4 + LeanCopilot</div>
+    <div class="doc-subtitle">Week ending May 23, 2026 — Definitions extraction, Core.lean grounding, Reglib_gold design</div>
+    <div class="doc-meta">
+      <span>Project: SEBI ICDR 2018</span>
+      <span>Regulations: 4–23 (gold)</span>
+      <span>Framework: Lean 4 / LeanDojo</span>
+      <span>Models: Qwen2.5:14b · ReProver</span>
+    </div>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-num">68</div>
+      <div class="stat-label">Reg 2 definitions extracted &amp; patched</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">143</div>
+      <div class="stat-label">Gold standard rules (Regs 4–23)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">81</div>
+      <div class="stat-label">Real-predicate LeanCopilot targets</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">1</div>
+      <div class="stat-label">Real closed proof (sample_passes_reg5)</div>
+    </div>
+  </div>
+
+  <!-- ── Section 1: What we built ── -->
+  <h2>1. What we built this week</h2>
+
+  <h3>Definitions extraction pipeline</h3>
+  <ul class="checklist">
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>--mode definitions flag</strong> added to <code>llm_extract_rules.py</code> — two-pass extraction for Regulation 2 sub-clauses</span>
+      <span class="check-tag done">done</span>
+    </li>
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>65/68 sub-clauses extracted</strong> automatically from <code>SEBI_ICDR_2018_definitions.pdf</code> — confidence ≈1.0, zero false positives</span>
+      <span class="check-tag done">done</span>
+    </li>
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>patch_definitions.py</strong> — manually patched 3 missing amendment insertions: <code>(oa)</code> financial year, <code>(bbbb)</code> senior management, <code>(eeea)</code> SR equity shares</span>
+      <span class="check-tag done">done</span>
+    </li>
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>add_inductive_constructors.py</strong> — LLM post-processing pass adds <code>constructors</code> field to all 7 Inductive-typed definitions (QIB, SpecifiedSecurities, IssueType, etc.)</span>
+      <span class="check-tag done">done</span>
+    </li>
+  </ul>
+
+  <h3>Core.lean — now definition-grounded</h3>
+  <ul class="checklist">
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>generate_reglib.py --defs flag</strong> — reads definitions JSONL alongside rules JSONL; definitions take type precedence over maps_to inference</span>
+      <span class="check-tag done">done</span>
+    </li>
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>Inductive types data-driven</strong> — <code>SpecifiedSecurities</code>, <code>IssueType</code> (6 constructors), <code>QualifiedInstitutionalBuyer</code> (14 constructors) generated from JSONL, not hardcoded</span>
+      <span class="check-tag done">done</span>
+    </li>
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>Promoter struct</strong> — 3 Bool fields encoding statutory limbs of Reg 2(oo)(i–iii) directly. No longer guessed from rule usage.</span>
+      <span class="check-tag done">done</span>
+    </li>
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>Issuer struct</strong> — 61 fields; financial fields use <code>INR_Crore</code> alias; <code>issue_type : IssueType</code> and <code>specified_securities_type : SpecifiedSecurities</code> added</span>
+      <span class="check-tag done">done</span>
+    </li>
+  </ul>
+
+  <h3>LeanCopilot integration</h3>
+  <ul class="checklist">
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>lake build succeeds</strong> — Lean 4.28.0, LeanCopilot as Lake dependency, sorry warnings only (expected)</span>
+      <span class="check-tag done">done</span>
+    </li>
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>sample_passes_reg5</strong> — first real closed proof over <code>sample_compliant_issuer</code>. Proves Reg 5 disqualification gate using <code>simp</code> after <code>unfold</code>. Confirms APOLLO loop is viable.</span>
+      <span class="check-tag done">done</span>
+    </li>
+    <li>
+      <span class="check warn">~</span>
+      <span class="check-label"><strong>LeanCopilot native build on Windows</strong> — blocked by OneDrive path spaces + MSYS2/FFI linker issue. Workaround: clone to <code>C:\compliance</code> or use WSL.</span>
+      <span class="check-tag partial">needs fix</span>
+    </li>
+    <li>
+      <span class="check">✓</span>
+      <span class="check-label"><strong>ReProver models downloaded</strong> — 4 models in <code>~/.cache/lean_copilot/</code>: tacgen, retriever, premise embeddings, byt5-small</span>
+      <span class="check-tag done">done</span>
+    </li>
+  </ul>
+
+  <h3>Reglib_gold — designed, ready to build</h3>
+  <ul class="checklist">
+    <li>
+      <span class="check pending">○</span>
+      <span class="check-label"><strong>generate_reglib.py</strong> with <code>gold_standard_regs_4_23.jsonl</code> + definitions JSONL → <code>Reglib_gold/</code></span>
+      <span class="check-tag">next</span>
+    </li>
+    <li>
+      <span class="check pending">○</span>
+      <span class="check-label"><strong>generate_gold_probe.py</strong> → <code>GoldProbe.lean</code> with 81 LeanCopilot target theorems + 49 trivial provisos</span>
+      <span class="check-tag">next</span>
+    </li>
+    <li>
+      <span class="check pending">○</span>
+      <span class="check-label"><strong>verify_one.py</strong> — APOLLO automation loop using LeanDojo Python API; Qwen2.5 for tactic generation; results logged to <code>proof_results.jsonl</code></span>
+      <span class="check-tag">next</span>
+    </li>
+  </ul>
+
+  <!-- ── Section 2: Full pipeline diagram ── -->
+  <h2>2. Full pipeline — PDF to proof</h2>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">End-to-end architecture</div>
+    <svg width="100%" viewBox="0 0 780 340" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#8a8780" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#2d5a8e" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arr-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#1d7a5f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+
+      <!-- Source PDF -->
+      <rect x="20" y="130" width="110" height="56" rx="6" fill="#f0ede8" stroke="#c8c5be" stroke-width="1"/>
+      <text x="75" y="152" text-anchor="middle" font-family="DM Serif Display, serif" font-size="12" fill="#1a1814">SEBI ICDR</text>
+      <text x="75" y="170" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#8a8780">2018 PDF</text>
+
+      <!-- Arrow to extractors -->
+      <line x1="130" y1="158" x2="162" y2="158" stroke="#8a8780" stroke-width="1.2" marker-end="url(#arr)"/>
+
+      <!-- Two extractor boxes -->
+      <rect x="163" y="100" width="130" height="48" rx="6" fill="#deeaf7" stroke="#2d5a8e" stroke-width="1"/>
+      <text x="228" y="120" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2d5a8e">llm_extract_rules</text>
+      <text x="228" y="136" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">--mode rules</text>
+
+      <rect x="163" y="168" width="130" height="48" rx="6" fill="#deeaf7" stroke="#2d5a8e" stroke-width="1"/>
+      <text x="228" y="188" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2d5a8e">llm_extract_rules</text>
+      <text x="228" y="204" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">--mode definitions</text>
+
+      <!-- Arrows to JSONLs -->
+      <line x1="293" y1="124" x2="325" y2="124" stroke="#2d5a8e" stroke-width="1.2" marker-end="url(#arr-blue)"/>
+      <line x1="293" y1="192" x2="325" y2="192" stroke="#2d5a8e" stroke-width="1.2" marker-end="url(#arr-blue)"/>
+
+      <!-- JSONLs -->
+      <rect x="326" y="100" width="120" height="48" rx="6" fill="#f0ede8" stroke="#c8c5be" stroke-width="1"/>
+      <text x="386" y="118" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4740">rules_v8.jsonl</text>
+      <text x="386" y="134" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">301 regs (planned)</text>
+
+      <rect x="326" y="168" width="120" height="48" rx="6" fill="#f0ede8" stroke="#c8c5be" stroke-width="1"/>
+      <text x="386" y="186" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4740">definitions.jsonl</text>
+      <text x="386" y="202" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">68 sub-clauses ✓</text>
+
+      <!-- Arrows to generator -->
+      <line x1="446" y1="124" x2="476" y2="150" stroke="#8a8780" stroke-width="1.2" marker-end="url(#arr)"/>
+      <line x1="446" y1="192" x2="476" y2="170" stroke="#8a8780" stroke-width="1.2" marker-end="url(#arr)"/>
+
+      <!-- generate_reglib -->
+      <rect x="477" y="130" width="126" height="56" rx="6" fill="#e8e4f8" stroke="#5340b8" stroke-width="1"/>
+      <text x="540" y="152" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#5340b8">generate_reglib.py</text>
+      <text x="540" y="168" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">--rules + --defs</text>
+
+      <!-- Arrow to Reglib -->
+      <line x1="603" y1="158" x2="635" y2="158" stroke="#5340b8" stroke-width="1.2" marker-end="url(#arr)"/>
+
+      <!-- Reglib -->
+      <rect x="636" y="106" width="120" height="104" rx="6" fill="#ddf2ea" stroke="#1d7a5f" stroke-width="1"/>
+      <text x="696" y="126" text-anchor="middle" font-family="DM Serif Display, serif" font-size="12" fill="#1d7a5f">Reglib/</text>
+      <text x="696" y="144" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#4a4740">Core.lean</text>
+      <text x="696" y="158" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#4a4740">Chapter2_Part*.lean</text>
+      <text x="696" y="172" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#4a4740">Compliance.lean</text>
+      <text x="696" y="186" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#4a4740">GoldProbe.lean</text>
+      <text x="696" y="200" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#8a8780">lake build ✓</text>
+
+      <!-- Top label: Gold path -->
+      <rect x="326" y="30" width="120" height="40" rx="6" fill="#fef0d0" stroke="#b86e00" stroke-width="1"/>
+      <text x="386" y="46" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#b86e00">gold_standard</text>
+      <text x="386" y="60" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">143 rules (Regs 4–23)</text>
+
+      <line x1="386" y1="70" x2="510" y2="130" stroke="#b86e00" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+      <text x="430" y="95" font-family="Outfit, sans-serif" font-size="10" fill="#b86e00">Reglib_gold/</text>
+
+      <!-- Bottom labels -->
+      <text x="75" y="210" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">source</text>
+      <text x="228" y="240" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">extraction</text>
+      <text x="386" y="240" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">structured data</text>
+      <text x="540" y="210" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">codegen</text>
+      <text x="696" y="230" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">lean library</text>
+    </svg>
+  </div>
+
+  <!-- ── Section 3: Definitions pipeline ── -->
+  <h2>3. Definitions extraction — how it works</h2>
+  <p>Regulation 2 of SEBI ICDR 2018 defines 68 statutory terms across sub-clauses <code>(a)</code> through <code>(mmm)</code>. These definitions are the semantic foundation for every rule — without them, type assignments in <code>Core.lean</code> were reverse-engineered guesses from how rules use terms. Now they are grounded in the statute itself.</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">Two-pass definitions extraction</div>
+    <svg width="100%" viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#8a8780" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+
+      <!-- Pass 1 -->
+      <rect x="20" y="60" width="160" height="80" rx="8" fill="#deeaf7" stroke="#2d5a8e" stroke-width="1"/>
+      <text x="100" y="82" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#2d5a8e">Pass 1</text>
+      <text x="100" y="100" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#1a1814">Identify sub-clauses</text>
+      <text x="100" y="116" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">sub_clause, term,</text>
+      <text x="100" y="130" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">definition_text</text>
+
+      <line x1="180" y1="100" x2="218" y2="100" stroke="#8a8780" stroke-width="1.2" marker-end="url(#a2)"/>
+
+      <!-- Per-def loop -->
+      <rect x="219" y="60" width="160" height="80" rx="8" fill="#e8e4f8" stroke="#5340b8" stroke-width="1"/>
+      <text x="299" y="82" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#5340b8">Pass 2 (per def)</text>
+      <text x="299" y="100" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#1a1814">Structure record</text>
+      <text x="299" y="116" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">lean_type_hint,</text>
+      <text x="299" y="130" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">maps_to_field, refs</text>
+
+      <line x1="379" y1="100" x2="417" y2="100" stroke="#8a8780" stroke-width="1.2" marker-end="url(#a2)"/>
+
+      <!-- Post-processing -->
+      <rect x="418" y="60" width="150" height="80" rx="8" fill="#fef0d0" stroke="#b86e00" stroke-width="1"/>
+      <text x="493" y="82" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#b86e00">Post-process</text>
+      <text x="493" y="100" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#1a1814">Add constructors</text>
+      <text x="493" y="116" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">LLM extracts enum</text>
+      <text x="493" y="130" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">variants from text</text>
+
+      <line x1="568" y1="100" x2="606" y2="100" stroke="#8a8780" stroke-width="1.2" marker-end="url(#a2)"/>
+
+      <!-- Output -->
+      <rect x="607" y="60" width="133" height="80" rx="8" fill="#ddf2ea" stroke="#1d7a5f" stroke-width="1"/>
+      <text x="673" y="82" text-anchor="middle" font-family="DM Serif Display, serif" font-size="12" fill="#1d7a5f">definitions.jsonl</text>
+      <text x="673" y="100" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">68 definitions</text>
+      <text x="673" y="116" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">65 auto + 3 patched</text>
+      <text x="673" y="132" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#1d7a5f">confidence ≈ 1.0</text>
+
+      <!-- Sub-labels -->
+      <text x="100" y="26" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">2-page sliding window</text>
+      <text x="299" y="26" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">one LLM call per sub-clause</text>
+      <text x="493" y="26" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">Inductive types only (7)</text>
+      <text x="673" y="26" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">ready for generate_reglib</text>
+    </svg>
+  </div>
+
+  <table>
+    <tr><th>Sub-clause</th><th>Term</th><th>Lean type hint</th><th>Key for Reglib</th></tr>
+    <tr><td>2(aa)</td><td>issuer</td><td>Structure</td><td>Root of Issuer struct</td></tr>
+    <tr><td>2(oo)</td><td>promoter</td><td>Structure</td><td>Promoter struct — 3 statutory limbs</td></tr>
+    <tr><td>2(ss)</td><td>qualified institutional buyer</td><td>Inductive</td><td>QualifiedInstitutionalBuyer — 14 constructors</td></tr>
+    <tr><td>2(eee)</td><td>specified securities</td><td>Inductive</td><td>SpecifiedSecurities — equity + convertible + SR</td></tr>
+    <tr><td>2(hh)</td><td>net worth</td><td>Nat → INR_Crore</td><td>Financial threshold field</td></tr>
+    <tr><td>2(lll)</td><td>wilful defaulter / fraudulent borrower</td><td>Structure</td><td>Disqualification flag on Issuer + Promoter</td></tr>
+    <tr><td>2(w)/(q)/(h)/(xx)/(nn)/(tt)</td><td>issue types</td><td>Inductive</td><td>IssueType — 6 constructors, gates issue-type-specific rules</td></tr>
+  </table>
+
+  <!-- ── Section 4: Core.lean structure ── -->
+  <h2>4. Core.lean structure</h2>
+  <p>The key improvement this week: <code>Core.lean</code> is now <strong>definition-grounded</strong>. Previously every type was inferred from how rules use terms (<em>maps_to inference</em>). Now Reg 2 definitions take precedence — the statute says what something is, not the rules that reference it.</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">Core.lean structure — Reglib.ICDR namespace</div>
+    <svg width="100%" viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- Type aliases block -->
+      <rect x="20" y="20" width="160" height="110" rx="8" fill="#f0ede8" stroke="#c8c5be" stroke-width="1"/>
+      <text x="100" y="40" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#5340b8">Type aliases</text>
+      <text x="100" y="58" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4740">INR_Crore := Nat</text>
+      <text x="100" y="72" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4740">Pct := Nat</text>
+      <text x="100" y="86" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4740">Months := Nat</text>
+      <text x="100" y="100" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4740">Years := Nat</text>
+      <text x="100" y="120" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#8a8780">domain primitives</text>
+
+      <!-- Inductives block -->
+      <rect x="200" y="20" width="180" height="150" rx="8" fill="#e8e4f8" stroke="#5340b8" stroke-width="1"/>
+      <text x="290" y="40" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#5340b8">Inductive types</text>
+      <text x="290" y="58" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">SpecifiedSecurities (3)</text>
+      <text x="290" y="72" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">IssueType (6)</text>
+      <text x="290" y="86" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">QualifiedInstBuyer (14)</text>
+      <text x="290" y="100" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">ConvertibleSecurity (3)</text>
+      <text x="290" y="114" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">InfrastructureSector (2*)</text>
+      <text x="290" y="130" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">PublicIssue (2)</text>
+      <text x="290" y="152" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#8a8780">* 2/9 constructors — known gap</text>
+
+      <!-- Promoter block -->
+      <rect x="400" y="20" width="160" height="150" rx="8" fill="#deeaf7" stroke="#2d5a8e" stroke-width="1"/>
+      <text x="480" y="40" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2d5a8e">Promoter struct</text>
+      <text x="480" y="58" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">named_in_offer_doc</text>
+      <text x="480" y="72" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">has_control</text>
+      <text x="480" y="86" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">board_acts_on_inst.</text>
+      <text x="480" y="100" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">acting_only_prof.</text>
+      <text x="480" y="114" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">holding_pct : Pct</text>
+      <text x="480" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">is_debarred</text>
+      <text x="480" y="142" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">is_wilful_defaulter</text>
+      <text x="480" y="154" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#8a8780">Reg 2(oo)(i–iii) grounded</text>
+
+      <!-- Issuer block -->
+      <rect x="580" y="20" width="160" height="150" rx="8" fill="#ddf2ea" stroke="#1d7a5f" stroke-width="1"/>
+      <text x="660" y="40" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#1d7a5f">Issuer struct</text>
+      <text x="660" y="58" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">61 fields total</text>
+      <text x="660" y="74" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">net_worth : INR_Crore</text>
+      <text x="660" y="88" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">net_tangible_assets_3yr</text>
+      <text x="660" y="102" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">  : List INR_Crore</text>
+      <text x="660" y="116" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">issue_type : IssueType</text>
+      <text x="660" y="130" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">promoters : List Promoter</text>
+      <text x="660" y="144" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#8a8780">... 56 more fields</text>
+      <text x="660" y="158" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#1d7a5f">deriving Repr</text>
+
+      <!-- Dependency arrows -->
+      <line x1="200" y1="95" x2="398" y2="95" stroke="#5340b8" stroke-width="0.8" stroke-dasharray="3 2"/>
+      <line x1="400" y1="115" x2="578" y2="115" stroke="#2d5a8e" stroke-width="0.8" stroke-dasharray="3 2"/>
+      <line x1="200" y1="70" x2="578" y2="70" stroke="#5340b8" stroke-width="0.8" stroke-dasharray="3 2"/>
+
+      <!-- Label row -->
+      <text x="100" y="200" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">Reg 2 primitives</text>
+      <text x="290" y="200" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">from constructors JSONL</text>
+      <text x="480" y="200" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">from Reg 2(oo)</text>
+      <text x="660" y="200" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">from rules maps_to</text>
+
+      <!-- Legend -->
+      <rect x="20" y="230" width="12" height="12" rx="2" fill="#ddf2ea" stroke="#1d7a5f" stroke-width="1"/>
+      <text x="36" y="241" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">definition-grounded (new)</text>
+      <rect x="220" y="230" width="12" height="12" rx="2" fill="#f0ede8" stroke="#c8c5be" stroke-width="1"/>
+      <text x="236" y="241" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">maps_to inference (prior approach)</text>
+    </svg>
+  </div>
+
+  <!-- ── Section 5: Reglib_gold ── -->
+  <h2>5. Reglib_gold — the test bed</h2>
+  <p>Rather than waiting for the full 301-regulation extraction, we use the verified gold standard (Regs 4–23) as the first complete test of the pipeline. <code>Reglib_gold</code> is a self-contained Lean library built from known-correct rules, giving us a clean benchmark for proof automation.</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">Reglib_gold composition</div>
+    <svg width="100%" viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- Outer container -->
+      <rect x="20" y="20" width="720" height="180" rx="12" fill="#fef9f0" stroke="#b86e00" stroke-width="1.5" stroke-dasharray="6 3"/>
+      <text x="40" y="44" font-family="DM Serif Display, serif" font-size="13" fill="#b86e00">Reglib_gold/</text>
+      <text x="40" y="60" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">143 gold rules · 68 definitions · Lean 4.28.0</text>
+
+      <!-- Core.lean -->
+      <rect x="40" y="72" width="150" height="108" rx="8" fill="#ddf2ea" stroke="#1d7a5f" stroke-width="1"/>
+      <text x="115" y="92" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#1d7a5f">Core.lean</text>
+      <text x="115" y="108" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">Issuer (61 fields)</text>
+      <text x="115" y="122" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">Promoter (8 fields)</text>
+      <text x="115" y="136" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">IssueType (6)</text>
+      <text x="115" y="150" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">QIBCategory (14)</text>
+      <text x="115" y="166" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#1d7a5f">definition-grounded</text>
+
+      <!-- Chapter files -->
+      <rect x="210" y="72" width="150" height="108" rx="8" fill="#deeaf7" stroke="#2d5a8e" stroke-width="1"/>
+      <text x="285" y="92" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2d5a8e">Chapter2_Part*.lean</text>
+      <text x="285" y="108" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">Regs 4–23 predicates</text>
+      <text x="285" y="122" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">reg_5_1_a, reg_6_1_a...</text>
+      <text x="285" y="136" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">81 real predicates</text>
+      <text x="285" y="150" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">49 proviso stubs</text>
+      <text x="285" y="166" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#2d5a8e">from gold JSONL</text>
+
+      <!-- Compliance -->
+      <rect x="380" y="72" width="150" height="108" rx="8" fill="#e8e4f8" stroke="#5340b8" stroke-width="1"/>
+      <text x="455" y="92" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#5340b8">Compliance.lean</text>
+      <text x="455" y="108" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">ipo_eligible gate</text>
+      <text x="455" y="122" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">sample_compliant</text>
+      <text x="455" y="136" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">  _issuer</text>
+      <text x="455" y="152" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">sample_passes_reg5 ✓</text>
+      <text x="455" y="166" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#5340b8">real closed proof</text>
+
+      <!-- GoldProbe -->
+      <rect x="550" y="72" width="160" height="108" rx="8" fill="#fef0d0" stroke="#b86e00" stroke-width="1"/>
+      <text x="630" y="92" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#b86e00">GoldProbe.lean</text>
+      <text x="630" y="108" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">81 sorry theorems</text>
+      <text x="630" y="122" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">→ LeanCopilot targets</text>
+      <text x="630" y="136" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">49 trivial provisos</text>
+      <text x="630" y="150" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">→ closed by trivial</text>
+      <text x="630" y="166" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#b86e00">paper data source</text>
+    </svg>
+  </div>
+
+  <div class="callout amber">
+    <strong>Why gold first?</strong> The full 301-regulation extraction is ongoing. Reglib_gold lets us validate the entire proof automation pipeline — Core.lean types, rule predicates, LeanDojo loop, proof success rate — using the 143 rules we've already verified for correctness. The architecture is identical to the full Reglib; only the rule count changes.
+  </div>
+
+  <!-- ── Section 6: LeanCopilot / LeanDojo / ReProver ── -->
+  <h2>6. LeanCopilot · LeanDojo · ReProver — how they fit</h2>
+  <p>All three tools come from the same research group (Song, Yang &amp; Anandkumar, Caltech — <em>lean-dojo</em> GitHub org). They are distinct tools for distinct purposes:</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">Tool roles — interactive vs automated</div>
+    <svg width="100%" viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#8a8780" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+
+      <!-- LeanCopilot -->
+      <rect x="20" y="30" width="200" height="130" rx="8" fill="#deeaf7" stroke="#2d5a8e" stroke-width="1"/>
+      <text x="120" y="52" text-anchor="middle" font-family="DM Serif Display, serif" font-size="14" fill="#2d5a8e">LeanCopilot</text>
+      <text x="120" y="70" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">VS Code extension</text>
+      <text x="120" y="90" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#4a4740">Interactive tactic</text>
+      <text x="120" y="104" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#4a4740">suggestions in editor</text>
+      <text x="120" y="122" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2d5a8e">suggest_tactics</text>
+      <text x="120" y="136" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2d5a8e">search_proof</text>
+      <text x="120" y="152" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#8a8780">our use: pattern discovery</text>
+
+      <!-- LeanDojo -->
+      <rect x="280" y="30" width="200" height="130" rx="8" fill="#e8e4f8" stroke="#5340b8" stroke-width="1"/>
+      <text x="380" y="52" text-anchor="middle" font-family="DM Serif Display, serif" font-size="14" fill="#5340b8">LeanDojo</text>
+      <text x="380" y="70" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">Python library</text>
+      <text x="380" y="90" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#4a4740">Programmatic access</text>
+      <text x="380" y="104" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#4a4740">to Lean kernel</text>
+      <text x="380" y="122" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#5340b8">Dojo(theorem)</text>
+      <text x="380" y="136" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#5340b8">dojo.run_tac(state, t)</text>
+      <text x="380" y="152" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#8a8780">our use: APOLLO loop</text>
+
+      <!-- ReProver -->
+      <rect x="540" y="30" width="200" height="130" rx="8" fill="#fef0d0" stroke="#b86e00" stroke-width="1"/>
+      <text x="640" y="52" text-anchor="middle" font-family="DM Serif Display, serif" font-size="14" fill="#b86e00">ReProver</text>
+      <text x="640" y="70" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">Neural tactic model</text>
+      <text x="640" y="90" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#4a4740">ByteT5 fine-tuned</text>
+      <text x="640" y="104" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#4a4740">on Mathlib proofs</text>
+      <text x="640" y="122" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">~600 MB, runs locally</text>
+      <text x="640" y="136" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">no internet call</text>
+      <text x="640" y="152" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#8a8780">Qwen2.5 for domain context</text>
+
+      <!-- Arrow: LeanCopilot calls ReProver -->
+      <path d="M220 80 Q250 50 278 80" fill="none" stroke="#8a8780" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#a3)"/>
+      <text x="250" y="46" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#8a8780">calls</text>
+
+      <!-- Arrow: LeanDojo can call ReProver or Qwen -->
+      <path d="M480 80 Q510 50 538 80" fill="none" stroke="#8a8780" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#a3)"/>
+      <text x="510" y="46" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#8a8780">or Qwen</text>
+
+      <!-- Timeline labels -->
+      <rect x="20" y="180" width="200" height="30" rx="4" fill="#edf5ff" stroke="#2d5a8e" stroke-width="0.5"/>
+      <text x="120" y="200" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#2d5a8e">Phase 1 — now (pattern discovery)</text>
+
+      <rect x="280" y="180" width="200" height="30" rx="4" fill="#ede8fc" stroke="#5340b8" stroke-width="0.5"/>
+      <text x="380" y="200" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#5340b8">Phase 2 — next (automation)</text>
+
+      <rect x="540" y="180" width="200" height="30" rx="4" fill="#fef8e8" stroke="#b86e00" stroke-width="0.5"/>
+      <text x="640" y="200" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" fill="#b86e00">Both phases (underlying model)</text>
+    </svg>
+  </div>
+
+  <!-- ── Section 7: APOLLO loop ── -->
+  <h2>7. APOLLO automation loop — verify_one.py</h2>
+  <p>Once tactic patterns are discovered via LeanCopilot, <code>verify_one.py</code> automates the process across all 81 GoldProbe theorems using LeanDojo. The loop runs entirely locally — no cloud calls, no VS Code.</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">verify_one.py — APOLLO loop internals</div>
+    <svg width="100%" viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#8a8780" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="a4g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#1d7a5f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="a4r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#c04830" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+
+      <!-- Step 1: Pick theorem -->
+      <rect x="20" y="20" width="140" height="56" rx="8" fill="#f0ede8" stroke="#c8c5be" stroke-width="1"/>
+      <text x="90" y="42" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4740">GoldProbe.lean</text>
+      <text x="90" y="60" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">next sorry theorem</text>
+
+      <line x1="160" y1="48" x2="196" y2="48" stroke="#8a8780" stroke-width="1.2" marker-end="url(#a4)"/>
+
+      <!-- Step 2: LeanDojo elaborates -->
+      <rect x="197" y="20" width="155" height="56" rx="8" fill="#e8e4f8" stroke="#5340b8" stroke-width="1"/>
+      <text x="274" y="38" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#5340b8">LeanDojo REPL</text>
+      <text x="274" y="54" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">elaborates + gets</text>
+      <text x="274" y="68" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">proof state</text>
+
+      <line x1="352" y1="48" x2="388" y2="48" stroke="#8a8780" stroke-width="1.2" marker-end="url(#a4)"/>
+
+      <!-- Step 3: Build prompt -->
+      <rect x="389" y="20" width="155" height="56" rx="8" fill="#fef0d0" stroke="#b86e00" stroke-width="1"/>
+      <text x="466" y="38" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#b86e00">Prompt builder</text>
+      <text x="466" y="54" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">state + rule text</text>
+      <text x="466" y="68" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">+ definition text</text>
+
+      <line x1="544" y1="48" x2="580" y2="48" stroke="#8a8780" stroke-width="1.2" marker-end="url(#a4)"/>
+
+      <!-- Step 4: LLM -->
+      <rect x="581" y="20" width="155" height="56" rx="8" fill="#deeaf7" stroke="#2d5a8e" stroke-width="1"/>
+      <text x="658" y="38" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2d5a8e">Qwen2.5:14b</text>
+      <text x="658" y="54" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">suggests tactic</text>
+      <text x="658" y="68" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">sequence</text>
+
+      <!-- Down arrow from LLM -->
+      <line x1="658" y1="76" x2="658" y2="116" stroke="#8a8780" stroke-width="1.2" marker-end="url(#a4)"/>
+
+      <!-- Step 5: Try tactic -->
+      <rect x="581" y="117" width="155" height="56" rx="8" fill="#e8e4f8" stroke="#5340b8" stroke-width="1"/>
+      <text x="658" y="135" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#5340b8">LeanDojo kernel</text>
+      <text x="658" y="151" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">tries tactic against</text>
+      <text x="658" y="165" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">Lean type checker</text>
+
+      <!-- Retry loop -->
+      <path d="M581 145 L520 145 L520 48 L581 48" fill="none" stroke="#8a8780" stroke-width="1" stroke-dasharray="4 2" marker-end="url(#a4)"/>
+      <text x="510" y="105" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">retry</text>
+      <text x="510" y="119" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#8a8780">(max 5)</text>
+
+      <!-- Success output -->
+      <line x1="658" y1="173" x2="560" y2="224" stroke="#1d7a5f" stroke-width="1.2" marker-end="url(#a4g)"/>
+      <rect x="440" y="225" width="175" height="52" rx="8" fill="#ddf2ea" stroke="#1d7a5f" stroke-width="1"/>
+      <text x="527" y="245" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#1d7a5f">ProofFinished</text>
+      <text x="527" y="261" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">tactic → results.jsonl</text>
+      <text x="527" y="275" text-anchor="middle" font-family="Outfit, sans-serif" font-size="9" fill="#1d7a5f">paper metric: proof rate</text>
+
+      <!-- Fail output -->
+      <line x1="658" y1="173" x2="720" y2="224" stroke="#c04830" stroke-width="1.2" marker-end="url(#a4r)"/>
+      <rect x="635" y="225" width="105" height="52" rx="8" fill="#fce8e4" stroke="#c04830" stroke-width="1"/>
+      <text x="687" y="245" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#c04830">Unproved</text>
+      <text x="687" y="261" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">logged for</text>
+      <text x="687" y="275" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#4a4740">manual review</text>
+    </svg>
+  </div>
+
+  <div class="callout green">
+    <strong>What the proof rate tells us.</strong> If APOLLO closes ≥60% of the 81 real-predicate theorems automatically, that validates the pipeline for the paper. The remaining rules become the training signal for improving either the tactic generation prompt or the rule extraction quality. The definitions JSONL is what makes the LLM prompt domain-aware — it provides the statutory meaning of each field, not just its name.
+  </div>
+
+  <!-- ── Section 8: Files produced ── -->
+  <h2>8. Files and scripts produced this week</h2>
+
+  <table>
+    <tr><th>File</th><th>Purpose</th><th>Status</th></tr>
+    <tr><td>definitions_icdr_reg2.jsonl</td><td>68 Reg 2 definitions with lean_type_hint, maps_to_field, constructors</td><td>✓ done</td></tr>
+    <tr><td>scripts/patch_definitions.py</td><td>Adds 3 missing amendment sub-clauses (oa, bbbb, eeea)</td><td>✓ done</td></tr>
+    <tr><td>scripts/add_inductive_constructors.py</td><td>LLM post-processing: adds constructors field to Inductive types</td><td>✓ done</td></tr>
+    <tr><td>scripts/generate_reglib.py</td><td>Updated: --defs flag, data-driven inductives, grounded Promoter/Issuer</td><td>✓ done</td></tr>
+    <tr><td>Reglib/ICDR/definitions/Core.lean</td><td>Regenerated: 61-field Issuer, grounded types, real IssueType inductive</td><td>✓ done</td></tr>
+    <tr><td>Reglib/lakefile.lean</td><td>LeanCopilot dependency, Lean 4.28.0 toolchain, Lake 5 syntax</td><td>✓ done</td></tr>
+    <tr><td>Reglib/ICDR/CopilotProbe.lean</td><td>Manual probe file; sample_passes_reg5 closes as real proof</td><td>✓ done</td></tr>
+    <tr><td>scripts/generate_gold_probe.py</td><td>Generates GoldProbe.lean with 81 LC targets + 49 trivial stubs</td><td>○ next</td></tr>
+    <tr><td>Reglib_gold/</td><td>Full Lean library from gold standard rules + definitions</td><td>○ next</td></tr>
+    <tr><td>scripts/verify_one.py</td><td>APOLLO loop: LeanDojo + Qwen tactic generation, results logging</td><td>○ next</td></tr>
+  </table>
+
+  <!-- ── Section 9: Next steps ── -->
+  <h2>9. Immediate next steps</h2>
+  <ul class="checklist">
+    <li>
+      <span class="check pending">1</span>
+      <span class="check-label"><strong>Build Reglib_gold</strong> — run generate_reglib.py with gold standard + definitions, copy lakefile, lake build</span>
+      <span class="check-tag">~30 min</span>
+    </li>
+    <li>
+      <span class="check pending">2</span>
+      <span class="check-label"><strong>Generate GoldProbe.lean</strong> — run generate_gold_probe.py, add import to Reglib_gold/Reglib.lean, lake build GoldProbe</span>
+      <span class="check-tag">~15 min</span>
+    </li>
+    <li>
+      <span class="check pending">3</span>
+      <span class="check-label"><strong>Fix LeanCopilot Windows build</strong> — clone to C:\compliance (no spaces), re-run lake update + lake build LeanCopilot. Or use WSL.</span>
+      <span class="check-tag">~1 hr</span>
+    </li>
+    <li>
+      <span class="check pending">4</span>
+      <span class="check-label"><strong>Interactive LeanCopilot session</strong> — open GoldProbe.lean in VS Code, run search_proof on reg_5_1_a through reg_5_1_d, record which tactics close which rule types</span>
+      <span class="check-tag">~1 hr</span>
+    </li>
+    <li>
+      <span class="check pending">5</span>
+      <span class="check-label"><strong>Write verify_one.py</strong> — APOLLO loop skeleton using LeanDojo API, hardcode discovered tactic patterns as first-pass candidates, Qwen fallback</span>
+      <span class="check-tag">~2 hrs</span>
+    </li>
+    <li>
+      <span class="check pending">6</span>
+      <span class="check-label"><strong>Run APOLLO on GoldProbe</strong> — measure proof success rate on 81 theorems; produce proof_results.jsonl; this is the first paper data point</span>
+      <span class="check-tag">~2 hrs</span>
+    </li>
+  </ul>
+
+  <div class="callout">
+    <strong>Strategic note (unchanged):</strong> Full 301-regulation extraction remains the parallel priority. The gold pipeline (steps 1–6 above) runs independently and validates the architecture without blocking on the full corpus. Both tracks can proceed simultaneously.
+  </div>
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    <span>SEBI ICDR Formal Compliance Pipeline</span>
+    <span>Week ending May 23, 2026</span>
+    <span>Lean 4.28.0 · LeanDojo / ReProver · Qwen2.5:14b</span>
+  </div>
+
+</div>
+</body>
+</html>
